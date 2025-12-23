@@ -1,0 +1,12 @@
+[
+  {"id": 1, "name": "پک آزمایش خانگی", "provider": "آزمایشگاه کوچک", "providerLogo": "/placeholders/logo-tile.svg", "price": 150000, "oldPrice": 190000, "discount": 21, "image": "/placeholders/product-card.svg"},
+  {"id": 2, "name": "راهنمای انتخاب رشته نمایشی", "provider": "مرکز مسیر", "providerLogo": "/placeholders/logo-tile.svg", "price": 175000, "oldPrice": 220000, "discount": 20, "image": "/placeholders/product-card.svg"},
+  {"id": 3, "name": "بسته تمرین هوش مصنوعی نوجوان", "provider": "کدآموز", "providerLogo": "/placeholders/logo-tile.svg", "price": 260000, "oldPrice": 320000, "discount": 19, "image": "/placeholders/product-card.svg"},
+  {"id": 4, "name": "کلاس یوگای مدرسه", "provider": "نفس تازه", "providerLogo": "/placeholders/logo-tile.svg", "price": 140000, "oldPrice": 185000, "discount": 24, "image": "/placeholders/product-card.svg"},
+  {"id": 5, "name": "مجله مهارت‌های نوشتن", "provider": "قلم چیستان", "providerLogo": "/placeholders/logo-tile.svg", "price": 120000, "oldPrice": 150000, "discount": 20, "image": "/placeholders/product-card.svg"},
+  {"id": 6, "name": "کیت نجوم ساده", "provider": "کهکشانک", "providerLogo": "/placeholders/logo-tile.svg", "price": 230000, "oldPrice": 290000, "discount": 21, "image": "/placeholders/product-card.svg"},
+  {"id": 7, "name": "پروژه‌های کدنویسی بدون اینترنت", "provider": "خانه خلاقیت", "providerLogo": "/placeholders/logo-tile.svg", "price": 245000, "oldPrice": 300000, "discount": 18, "image": "/placeholders/product-card.svg"},
+  {"id": 8, "name": "چالش روزانه ریاضی", "provider": "استودیو آفتاب", "providerLogo": "/placeholders/logo-tile.svg", "price": 155000, "oldPrice": 200000, "discount": 22, "image": "/placeholders/product-card.svg"},
+  {"id": 9, "name": "آزمایش‌های ایمن شیمی", "provider": "آکادمی پرسشگر", "providerLogo": "/placeholders/logo-tile.svg", "price": 240000, "oldPrice": 305000, "discount": 21, "image": "/placeholders/product-card.svg"},
+  {"id": 10, "name": "پکیج هنر کاغذ و تا", "provider": "خانه هنر", "providerLogo": "/placeholders/logo-tile.svg", "price": 165000, "oldPrice": 210000, "discount": 21, "image": "/placeholders/product-card.svg"}
+]

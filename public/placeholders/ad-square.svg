@@ -1,0 +1,14 @@
+<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="جایگاه تبلیغاتی">
+  <defs>
+    <linearGradient id="gradAd" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#38BDF8" stop-opacity="0.16" />
+      <stop offset="1" stop-color="#A78BFA" stop-opacity="0.26" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" rx="28" fill="#EEF2FF" />
+  <rect x="24" y="24" width="552" height="552" rx="24" fill="url(#gradAd)" stroke="#CBD5E1" stroke-width="2" />
+  <circle cx="160" cy="220" r="56" fill="#38BDF8" fill-opacity="0.35" />
+  <circle cx="360" cy="380" r="90" fill="#FB923C" fill-opacity="0.35" />
+  <text x="300" y="310" text-anchor="middle" font-family="Vazirmatn, sans-serif" font-size="28" fill="#0F172A" opacity="0.8">بنر نمایشی</text>
+  <text x="300" y="344" text-anchor="middle" font-family="Vazirmatn, sans-serif" font-size="18" fill="#475569" opacity="0.8">ابعاد مربع</text>
+</svg>

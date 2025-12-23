@@ -1,0 +1,12 @@
+[
+  {"id": 1, "name": "مرکز آینده روشن", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 2, "name": "آکادمی فردا", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 3, "name": "مدرسه پژوهشگران", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 4, "name": "باشگاه هوش", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 5, "name": "خانه هنر", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 6, "name": "مرکز شهر یادگیر", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 7, "name": "آزمایشگاه کوچک", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 8, "name": "کدآموز", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 9, "name": "مسیر روشن", "logo": "/placeholders/logo-tile.svg"},
+  {"id": 10, "name": "آکادمی سخن", "logo": "/placeholders/logo-tile.svg"}
+]

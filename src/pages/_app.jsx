@@ -3,6 +3,7 @@ import "../styles/variables.css";
 import "../styles/base.css";
 import "../styles/typography.css";
 import "../styles/layout.css";
+import "../styles/home.css";
 
 function App({ Component, pageProps }) {
   const meta = {
