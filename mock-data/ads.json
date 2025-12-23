@@ -3,7 +3,7 @@
     "id": 1,
     "title": "کارگاه خلاقیت تابستان",
     "subtitle": "کودک و نوجوان",
-    "image": "/placeholders/ad-square.svg",
+    "image": "placeholders/ad-square.svg",
     "background": "linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(167, 139, 250, 0.2))",
     "alt": "کارگاه خلاقیت تابستان برای کودکان"
   },
@@ -11,7 +11,7 @@
     "id": 2,
     "title": "اردوی مهارت‌های زندگی",
     "subtitle": "مخصوص دوره متوسطه",
-    "image": "/placeholders/ad-square.svg",
+    "image": "placeholders/ad-square.svg",
     "background": "linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(56, 189, 248, 0.16))",
     "alt": "اردوی مهارت‌های زندگی با رویکرد تعاملی"
   },
@@ -19,7 +19,7 @@
     "id": 3,
     "title": "دوره فشرده زبان",
     "subtitle": "سطح مقدماتی تا پیشرفته",
-    "image": "/placeholders/ad-square.svg",
+    "image": "placeholders/ad-square.svg",
     "background": "linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(56, 189, 248, 0.12))",
     "alt": "دوره زبان فشرده با مربی نمایشی"
   },
@@ -27,7 +27,7 @@
     "id": 4,
     "title": "باشگاه برنامه‌نویسی",
     "subtitle": "پروژه محور",
-    "image": "/placeholders/ad-square.svg",
+    "image": "placeholders/ad-square.svg",
     "background": "linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(74, 222, 128, 0.18))",
     "alt": "باشگاه برنامه‌نویسی برای نوجوانان"
   }

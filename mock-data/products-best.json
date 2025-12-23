@@ -1,12 +1,12 @@
 [
-  {"id": 1, "name": "بسته تمرین ریاضی ۸", "provider": "استودیو آفتاب", "providerLogo": "/placeholders/logo-tile.svg", "price": 180000, "oldPrice": 240000, "discount": 25, "image": "/placeholders/product-card.svg"},
-  {"id": 2, "name": "کلاس تندخوانی نمایشی", "provider": "آموزشکده نو", "providerLogo": "/placeholders/logo-tile.svg", "price": 210000, "oldPrice": 280000, "discount": 20, "image": "/placeholders/product-card.svg"},
-  {"id": 3, "name": "پک علوم تجربی", "provider": "آزمایشگاه کوچک", "providerLogo": "/placeholders/logo-tile.svg", "price": 195000, "oldPrice": 260000, "discount": 25, "image": "/placeholders/product-card.svg"},
-  {"id": 4, "name": "کارگاه نقاشی دیجیتال", "provider": "خانه هنر", "providerLogo": "/placeholders/logo-tile.svg", "price": 235000, "oldPrice": 310000, "discount": 24, "image": "/placeholders/product-card.svg"},
-  {"id": 5, "name": "اردوی مهارت رباتیک", "provider": "موتور آینده", "providerLogo": "/placeholders/logo-tile.svg", "price": 320000, "oldPrice": 400000, "discount": 20, "image": "/placeholders/product-card.svg"},
-  {"id": 6, "name": "مینی بوت‌کمپ برنامه‌نویسی", "provider": "کدآموز", "providerLogo": "/placeholders/logo-tile.svg", "price": 275000, "oldPrice": 350000, "discount": 21, "image": "/placeholders/product-card.svg"},
-  {"id": 7, "name": "مهارت‌های مطالعه فعال", "provider": "مرکز همراه", "providerLogo": "/placeholders/logo-tile.svg", "price": 165000, "oldPrice": 210000, "discount": 22, "image": "/placeholders/product-card.svg"},
-  {"id": 8, "name": "پروژه تحقیقاتی مدرسه", "provider": "آکادمی پرسشگر", "providerLogo": "/placeholders/logo-tile.svg", "price": 245000, "oldPrice": 310000, "discount": 21, "image": "/placeholders/product-card.svg"},
-  {"id": 9, "name": "دوره بیان و سخنوری", "provider": "صدای نو", "providerLogo": "/placeholders/logo-tile.svg", "price": 190000, "oldPrice": 255000, "discount": 25, "image": "/placeholders/product-card.svg"},
-  {"id": 10, "name": "تمرین‌های هوش هیجانی", "provider": "لَب‌لبخند", "providerLogo": "/placeholders/logo-tile.svg", "price": 205000, "oldPrice": 260000, "discount": 21, "image": "/placeholders/product-card.svg"}
+  {"id": 1, "name": "بسته تمرین ریاضی ۸", "provider": "استودیو آفتاب", "providerLogo": "placeholders/logo-tile.svg", "price": 180000, "oldPrice": 240000, "discount": 25, "image": "placeholders/product-card.svg"},
+  {"id": 2, "name": "کلاس تندخوانی نمایشی", "provider": "آموزشکده نو", "providerLogo": "placeholders/logo-tile.svg", "price": 210000, "oldPrice": 280000, "discount": 20, "image": "placeholders/product-card.svg"},
+  {"id": 3, "name": "پک علوم تجربی", "provider": "آزمایشگاه کوچک", "providerLogo": "placeholders/logo-tile.svg", "price": 195000, "oldPrice": 260000, "discount": 25, "image": "placeholders/product-card.svg"},
+  {"id": 4, "name": "کارگاه نقاشی دیجیتال", "provider": "خانه هنر", "providerLogo": "placeholders/logo-tile.svg", "price": 235000, "oldPrice": 310000, "discount": 24, "image": "placeholders/product-card.svg"},
+  {"id": 5, "name": "اردوی مهارت رباتیک", "provider": "موتور آینده", "providerLogo": "placeholders/logo-tile.svg", "price": 320000, "oldPrice": 400000, "discount": 20, "image": "placeholders/product-card.svg"},
+  {"id": 6, "name": "مینی بوت‌کمپ برنامه‌نویسی", "provider": "کدآموز", "providerLogo": "placeholders/logo-tile.svg", "price": 275000, "oldPrice": 350000, "discount": 21, "image": "placeholders/product-card.svg"},
+  {"id": 7, "name": "مهارت‌های مطالعه فعال", "provider": "مرکز همراه", "providerLogo": "placeholders/logo-tile.svg", "price": 165000, "oldPrice": 210000, "discount": 22, "image": "placeholders/product-card.svg"},
+  {"id": 8, "name": "پروژه تحقیقاتی مدرسه", "provider": "آکادمی پرسشگر", "providerLogo": "placeholders/logo-tile.svg", "price": 245000, "oldPrice": 310000, "discount": 21, "image": "placeholders/product-card.svg"},
+  {"id": 9, "name": "دوره بیان و سخنوری", "provider": "صدای نو", "providerLogo": "placeholders/logo-tile.svg", "price": 190000, "oldPrice": 255000, "discount": 25, "image": "placeholders/product-card.svg"},
+  {"id": 10, "name": "تمرین‌های هوش هیجانی", "provider": "لَب‌لبخند", "providerLogo": "placeholders/logo-tile.svg", "price": 205000, "oldPrice": 260000, "discount": 21, "image": "placeholders/product-card.svg"}
 ]

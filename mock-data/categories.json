@@ -1,12 +1,12 @@
 [
-  {"id": 1, "name": "کودک و نوجوان", "image": "/placeholders/category-circle.svg"},
-  {"id": 2, "name": "علوم پایه", "image": "/placeholders/category-circle.svg"},
-  {"id": 3, "name": "ریاضیات و منطق", "image": "/placeholders/category-circle.svg"},
-  {"id": 4, "name": "زبان‌های خارجی", "image": "/placeholders/category-circle.svg"},
-  {"id": 5, "name": "هنر و خلاقیت", "image": "/placeholders/category-circle.svg"},
-  {"id": 6, "name": "دانشگاه تا دکتری", "image": "/placeholders/category-circle.svg"},
-  {"id": 7, "name": "مهارت‌های زندگی", "image": "/placeholders/category-circle.svg"},
-  {"id": 8, "name": "فناوری و کدنویسی", "image": "/placeholders/category-circle.svg"},
-  {"id": 9, "name": "کنکور و ارشد", "image": "/placeholders/category-circle.svg"},
-  {"id": 10, "name": "مدیریت و کسب‌وکار", "image": "/placeholders/category-circle.svg"}
+  {"id": 1, "name": "کودک و نوجوان", "image": "placeholders/category-circle.svg"},
+  {"id": 2, "name": "علوم پایه", "image": "placeholders/category-circle.svg"},
+  {"id": 3, "name": "ریاضیات و منطق", "image": "placeholders/category-circle.svg"},
+  {"id": 4, "name": "زبان‌های خارجی", "image": "placeholders/category-circle.svg"},
+  {"id": 5, "name": "هنر و خلاقیت", "image": "placeholders/category-circle.svg"},
+  {"id": 6, "name": "دانشگاه تا دکتری", "image": "placeholders/category-circle.svg"},
+  {"id": 7, "name": "مهارت‌های زندگی", "image": "placeholders/category-circle.svg"},
+  {"id": 8, "name": "فناوری و کدنویسی", "image": "placeholders/category-circle.svg"},
+  {"id": 9, "name": "کنکور و ارشد", "image": "placeholders/category-circle.svg"},
+  {"id": 10, "name": "مدیریت و کسب‌وکار", "image": "placeholders/category-circle.svg"}
 ]

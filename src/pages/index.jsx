@@ -24,7 +24,7 @@ const bannerPromos = [
     kicker: "ویژه تابستان",
     title: "مسیرهای جذاب بدون نیاز به پرداخت",
     subtitle: "تمام بنرها صرفاً برای نمایش تجربه کاربری هستند.",
-    image: "/placeholders/banner-wide.svg",
+    image: "placeholders/banner-wide.svg",
     alt: "بنر ویژه تابستان",
   },
   {
@@ -32,7 +32,7 @@ const bannerPromos = [
     kicker: "پیشنهاد هدیه",
     title: "کارت‌های تجربه آموزشی نمایشی",
     subtitle: "امکان تست رابط کاربری برای خانواده‌ها و مربیان.",
-    image: "/placeholders/banner-wide.svg",
+    image: "placeholders/banner-wide.svg",
     alt: "بنر پیشنهاد هدیه",
   },
 ];
@@ -49,7 +49,10 @@ const HomePage = () => {
       <Head>
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
-        <link rel="canonical" href="/" />
+        <link
+          rel="canonical"
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/`}
+        />
         <meta property="og:title" content={meta.title} />
         <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />

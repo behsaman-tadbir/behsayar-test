@@ -20,7 +20,7 @@ const AboutSolicoSplit = () => {
         </div>
         <div className="about-split__media">
           <img
-            src="/placeholders/banner-wide.svg"
+            src="placeholders/banner-wide.svg"
             alt="تصویر نمادین سولیکو"
             width="1200"
             height="360"
