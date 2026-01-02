@@ -70,3 +70,110 @@
 @media(min-width:769px){
   .header-search--muted{min-width:min(360px,46vw) !important;max-width:560px !important;flex:1}
 }
+
+
+/* =========================
+   Step C – Header/Auth polish + Responsive rules
+   ========================= */
+
+/* Header login button (desktop) */
+.auth-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(17,24,39,.14);
+  background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+  box-shadow:0 10px 24px rgba(17,24,39,.08);
+  font-weight:700;
+  font-size:.95rem;
+  line-height:1;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.auth-trigger:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(17,24,39,.12);border-color:rgba(124,58,237,.22)}
+.auth-trigger:active{transform:translateY(0)}
+.auth-ico{font-size:1.05rem;opacity:.9}
+
+/* Inline popover */
+.auth-popover{
+  width:min(320px, 92vw);
+  margin-top:10px;
+  border-radius:16px;
+  border:1px solid rgba(124,58,237,.18);
+  background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,250,252,.92));
+  box-shadow:0 18px 44px rgba(17,24,39,.14);
+  overflow:hidden;
+}
+.auth-form{padding:14px}
+.auth-row{display:grid;gap:6px;margin-bottom:10px}
+.auth-label{font-weight:700;font-size:.84rem;color:rgba(17,24,39,.72)}
+.auth-input{
+  height:44px;
+  border-radius:12px;
+  border:1px solid rgba(17,24,39,.14);
+  background:rgba(255,255,255,.9);
+  padding:0 12px;
+  outline:none;
+}
+.auth-input:focus{
+  border-color:rgba(124,58,237,.45);
+  box-shadow:0 0 0 4px rgba(124,58,237,.16);
+}
+.auth-submit{width:100%;height:44px;border-radius:12px}
+
+/* User menu (avatar + dropdown) */
+.user-menu__trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(17,24,39,.14);
+  background:rgba(255,255,255,.84);
+  box-shadow:0 10px 24px rgba(17,24,39,.08);
+}
+.um-avatar img{width:36px;height:36px;border-radius:999px;object-fit:cover}
+.user-menu__dropdown{
+  width:min(320px, 92vw);
+  margin-top:10px;
+  border-radius:16px;
+  border:1px solid rgba(124,58,237,.18);
+  background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,250,252,.92));
+  box-shadow:0 18px 44px rgba(17,24,39,.14);
+  overflow:hidden;
+}
+.um-head{padding:12px 14px;border-bottom:1px solid rgba(17,24,39,.08)}
+.um-credit{font-weight:900;color:rgba(234,88,12,.95);margin-bottom:6px}
+.user-menu__link,.user-menu__logout{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+  font-weight:700;
+}
+.user-menu__link:hover,.user-menu__logout:hover{background:rgba(124,58,237,.06)}
+
+/* Main nav dropdown should open UNDER the categories button (not inside a box) */
+.main-nav .nav-item.has-dropdown{position:relative}
+.main-nav .dropdown-panel{
+  position:absolute;
+  inset-inline-end:0;
+  top:calc(100% + 10px);
+  z-index:3500;
+}
+
+/* Responsive: header shows only brand; auth/search/nav hidden */
+@media (max-width: 768px){
+  .site-header .header-search--muted,
+  .site-header .main-nav,
+  .site-header .header-left--dk2{display:none !important;}
+
+  .header-top--dk2{padding:10px 0}
+  .brand-img--plain{width:44px;height:44px}
+  .brand-title--grad{font-size:1.2rem}
+}
+
+/* Mobile bottom-nav: make sure items are tappable */
+@media (max-width: 768px){
+  .bottom-nav .bn-item{min-height:56px}
+}

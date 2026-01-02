@@ -275,7 +275,37 @@
     });
   }
 
-  // ---------- UI: Categories dropdown (Desktop) ----------
+  
+  function bindMobileCats() {
+    const btn = qs('#bnCatsBtn');
+    const sheet = qs('#mobileCatsSheet');
+    if (!btn || !sheet) return;
+    if (markBound(btn, 'mobileCats')) return;
+
+    const open = () => {
+      sheet.classList.add('is-open');
+      sheet.setAttribute('aria-hidden', 'false');
+      btn.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      sheet.classList.remove('is-open');
+      sheet.setAttribute('aria-hidden', 'true');
+      btn.setAttribute('aria-expanded', 'false');
+    };
+
+    on(btn, 'click', (e) => {
+      e.preventDefault();
+      if (sheet.classList.contains('is-open')) close();
+      else open();
+    });
+
+    // Close when user taps a link
+    qsa('a', sheet).forEach((a) => {
+      on(a, 'click', () => close());
+    });
+  }
+
+// ---------- UI: Categories dropdown (Desktop) ----------
   function bindCategoriesDropdown() {
     const items = qsa('.nav-item.has-dropdown');
     if (!items.length) return;
@@ -387,6 +417,7 @@
     bindUserMenu();
     bindSheets();
     bindMobileAuth();
+    bindMobileCats();
     bindCategoriesDropdown();
     syncAuthUI();
   }
