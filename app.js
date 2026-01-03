@@ -325,6 +325,8 @@
     const items = qsa('.nav-item.has-dropdown');
     if (!items.length) return;
 
+    const header = qs('.site-header');
+
     // Close open dropdown when user scrolls (prevents sticky open menus while browsing)
     let active = null; // { close, panel, openedAt }
     const ensureScrollClose = () => {
@@ -353,12 +355,18 @@
         panel.hidden = false;
         tgl.setAttribute('aria-expanded', 'true');
         item.classList.add('is-open');
+        if (header) {
+          // Allow dropdown panel to render outside collapsed header-bottom.
+          header.classList.add('is-nav-dropdown-open');
+          header.classList.remove('is-bottom-collapsed');
+        }
         active = { close, panel, openedAt: window.scrollY };
       };
       const close = () => {
         panel.hidden = true;
         tgl.setAttribute('aria-expanded', 'false');
         item.classList.remove('is-open');
+        if (header) header.classList.remove('is-nav-dropdown-open');
         if (active && active.panel === panel) active = null;
       };
 

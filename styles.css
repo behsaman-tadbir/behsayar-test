@@ -5,6 +5,22 @@
   font-style:normal;
   font-display:swap;
 }
+
+/* === Patch: Search hint wrapping + dropdown visibility inside collapsible header-bottom === */
+.header-search { flex-wrap: nowrap; }
+.header-search input { min-width: 0; }
+.header-search .search-hint { white-space: nowrap; }
+
+@media (min-width: 769px) {
+  /* When categories dropdown is open, header-bottom must not clip the panel */
+  .site-header.is-nav-dropdown-open .header-bottom {
+    overflow: visible;
+    max-height: 420px;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
 @font-face{
   font-family:"Vazirmatn";
   src:url("fonts/Vazirmatn-Medium.woff2") format("woff2");
