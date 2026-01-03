@@ -616,19 +616,20 @@ body.modal-open{overflow:hidden}
 /* === MOBILE HEADER FIX (auth-left, brand-right, no-wrap) === */
 @media (max-width: 768px) {
   /* Force header top to stay on one line */
-  .header-top--dk2 {
+  .site-header .header-top--dk2 {
     flex-wrap: nowrap !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 10px !important;    justify-content: space-between !important;
   }
 
   /* Left: auth */
-  .header-left--dk2 {
+  .site-header .header-left--dk2 {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
+    justify-content: flex-end !important; /* physical left in RTL */
     flex: 0 0 auto !important;
     white-space: nowrap !important;
+    min-width: 0 !important;
   }
   .auth-area {
     display: flex !important;
@@ -637,13 +638,12 @@ body.modal-open{overflow:hidden}
   }
 
   /* Right: brand */
-  .header-right--dk2 {
+  .site-header .header-right--dk2 {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-  }
+    justify-content: flex-start !important; /* physical right in RTL */
+    flex: 0 0 auto !important;
+    min-width: 0 !important;  }
   .site-header .brand {
     min-width: 0 !important;
   }
@@ -680,4 +680,12 @@ body.modal-open{overflow:hidden}
   #userMenuDropdown {
     z-index: 9999 !important;
   }
+  /* Prevent auth controls from taking full width */
+  .site-header .auth-trigger,
+  .site-header .header-user-menu {
+    width: auto !important;
+    max-width: none !important;
+  }
+
 }
+
