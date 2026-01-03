@@ -1,0 +1,65 @@
+
+/* === Mobile header: 50/50 split (left auth, right brand) === */
+@media (max-width: 768px) {
+  /* Keep header visible; hide only the things we don't want in mobile header */
+  .site-header .header-search,
+  .site-header .header-search--muted,
+  .site-header .header-bottom {
+    display: none !important;
+  }
+
+  /* One-line layout */
+  .site-header .header-top--dk2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  /* Left half: auth (login button or avatar menu) */
+  .site-header .header-left--dk2 {
+    display: flex !important; /* override legacy hides */
+    flex: 0 0 50%;
+    max-width: 50%;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 0;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* Right half: brand */
+  .site-header .header-right--dk2 {
+    display: flex !important;
+    flex: 0 0 50%;
+    max-width: 50%;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+
+  /* Prevent brand pushing layout */
+  .site-header .brand-link--plain {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .site-header .brand-title--grad {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Keep auth chip from expanding */
+  .site-header .auth-trigger,
+  .site-header .user-menu__trigger {
+    max-width: 100%;
+  }
+
+  /* If you still keep bottom-nav auth, hide it to avoid duplicates */
+  #bnAuthBtn {
+    display: none !important;
+  }
+}
