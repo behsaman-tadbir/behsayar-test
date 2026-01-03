@@ -325,36 +325,41 @@
     const items = qsa('.nav-item.has-dropdown');
     if (!items.length) return;
 
+    // Close open dropdown when user scrolls (prevents sticky open menus while browsing)
+    let active = null; // { close, panel, openedAt }
+    const ensureScrollClose = () => {
+      if (markBound(window, 'catsScrollClose')) return;
+      let ticking = false;
+      on(window, 'scroll', () => {
+        if (!active || !active.panel || active.panel.hidden) return;
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          const dy = Math.abs(window.scrollY - (active.openedAt || 0));
+          if (dy >= 12) active.close();
+        });
+      }, { passive: true });
+    };
+    ensureScrollClose();
+
     items.forEach((item) => {
       const tgl = qs('.nav-dropdown-toggle', item);
       const panel = qs('.dropdown-panel', item);
       if (!tgl || !panel) return;
       if (markBound(tgl, 'cats')) return;
 
-            let openScrollY = 0;
-      let scrollUnbind = null;
-
-const open = () => {
+      const open = () => {
         panel.hidden = false;
-        openScrollY = window.scrollY;
-        if (!scrollUnbind) {
-          const onScroll = () => {
-            if (Math.abs(window.scrollY - openScrollY) > 24) close();
-          };
-          window.addEventListener('scroll', onScroll, { passive: true });
-          scrollUnbind = () => window.removeEventListener('scroll', onScroll);
-        }
         tgl.setAttribute('aria-expanded', 'true');
         item.classList.add('is-open');
+        active = { close, panel, openedAt: window.scrollY };
       };
       const close = () => {
         panel.hidden = true;
-        if (scrollUnbind) {
-          scrollUnbind();
-          scrollUnbind = null;
-        }
         tgl.setAttribute('aria-expanded', 'false');
         item.classList.remove('is-open');
+        if (active && active.panel === panel) active = null;
       };
 
       on(tgl, 'click', (e) => {
