@@ -650,3 +650,22 @@ body.modal-open{overflow:hidden}
     display: none !important;
   }
 }
+
+/* === Mobile header auth visibility fix (override legacy hides) === */
+@media (max-width: 768px){
+  /* keep header visible; hide only search + header-bottom in mobile header */
+  .site-header .header-search--muted{display:none !important;}
+  .site-header .header-bottom{display:none !important;}
+
+  /* IMPORTANT: show auth area on mobile (it was hidden by legacy rule) */
+  .site-header .header-left--dk2{display:flex !important;}
+
+  /* one-line layout: brand right, auth left */
+  .site-header .header-top--dk2{align-items:center;justify-content:space-between;gap:10px;flex-wrap:nowrap;}
+  .site-header .header-right--dk2{flex-wrap:nowrap;}
+  .site-header .header-left--dk2{padding-top:0;}
+
+  /* prevent brand from pushing auth to next line */
+  .site-header .brand-link--plain{max-width:72vw;}
+  .site-header .brand-title--grad{white-space:nowrap;}
+}
