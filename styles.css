@@ -226,3 +226,74 @@
   border: 1px solid rgba(15,23,42,.10);
   padding: 10px;
 }
+
+/* === StepF: Brand/Search tweaks (requested) === */
+.page-home .site-header .brand-title{
+  font-weight:900;
+  font-size:2.15rem;
+  line-height:1;
+  letter-spacing:-0.2px;
+  background:linear-gradient(90deg, rgba(14,165,233,0.95), rgba(124,58,237,0.92));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.page-home .site-header .brand-img{
+  width:65px;
+  height:65px;
+  object-fit:contain;
+  display:block;
+}
+
+/* Muted search: icon right of "جستجو" (desktop) */
+.header-search--muted{
+  position:relative;
+}
+
+.header-search--muted .search-hint{
+  position:absolute;
+  right:38px;
+  top:50%;
+  transform:translateY(-50%);
+  font-weight:800;
+  font-size:0.92rem;
+  color:rgba(51,65,85,0.58);
+  pointer-events:none;
+  user-select:none;
+}
+
+.header-search--muted input{
+  padding-right:96px;
+}
+
+@media (min-width: 769px){
+  .header-search--muted .search-btn{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:18px;
+    height:18px;
+    border:none;
+    color:rgba(51,65,85,0.72);
+    opacity:1;
+  }
+  .header-search--muted .search-ico{
+    width:18px;
+    height:18px;
+  }
+}
+
+/* Mobile: keep compact brand sizes */
+@media (max-width: 768px){
+  .page-home .site-header .brand-title{
+    font-size:1.35rem;
+  }
+  .page-home .site-header .brand-img{
+    width:44px;
+    height:44px;
+  }
+  .header-search--muted .search-hint{display:none;}
+  .header-search--muted input{padding-right:12px;}
+}
