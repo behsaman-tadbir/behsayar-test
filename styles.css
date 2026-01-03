@@ -603,69 +603,13 @@ body.modal-open{overflow:hidden}
 }
 
 
-
-/* ===== Mobile header layout: auth left, compact search center, brand right ===== */
+/* Step S: Mobile header - remove search, show auth left like desktop */
 @media (max-width: 768px) {
-  .site-header .header-top--dk2 {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 10px;
-    padding-block: 8px;
-  }
-
-  /* Let brand + search become direct grid items */
-  .site-header .header-right--dk2 { display: contents; }
-
-  /* Left: auth area (same behavior as desktop) */
-  .site-header .header-left--dk2 {
-    grid-column: 1;
-    display: flex !important;
-    justify-self: start;
-    align-items: center;
-  }
-
-  /* Center: compact search */
-  .site-header .header-search {
-    grid-column: 2;
-    justify-self: center;
-    width: 100%;
-    max-width: 320px;
-    min-width: 0;
-    padding: 0 14px;
-    height: 40px;
-    border-radius: 12px;
-  }
-  .site-header .header-search input[type="search"] {
-    min-width: 0;
-    font-size: 0.92rem;
-  }
-  .site-header .header-search .search-hint { display: none; }
-  .site-header .header-search .search-btn {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0;
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Right: brand */
-  .site-header .brand-link {
-    grid-column: 3;
-    justify-self: end;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .site-header .brand-img {
-    width: 44px;
-    height: 44px;
-  }
-  .site-header .brand-title {
-    font-size: 1.35rem;
-    line-height: 1;
-  }
-
-  /* Avoid duplicated auth entry in bottom nav when header auth is visible */
-  #bnAuthBtn { display: none; }
+  .site-header .header-search { display: none !important; }
+  .site-header .header-left,
+  .site-header .auth-area { display: flex !important; align-items: center; }
+  .site-header .auth-trigger { display: inline-flex !important; }
+  .site-header .header-user-menu { display: inline-flex !important; }
+  .site-header .header-top--dk2 { align-items: center; }
 }
+
