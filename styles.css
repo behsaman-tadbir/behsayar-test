@@ -791,7 +791,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
     align-items: center !important;
     justify-content: space-between !important;
     flex-wrap: nowrap !important;
-    gap: 12px !important;
+    gap: 0px !important;
   }
   .site-header .header-right--dk2,
   .site-header .header-left--dk2{
@@ -802,6 +802,11 @@ body.modal-open{overflow:hidden}.auth-trigger {
     align-items: center !important;
     white-space: nowrap !important;
     min-width: 0 !important;
+  }
+  .auth-ico {
+    font-size: 2rem;
+    display: none;
+    color: #fff;
   }
   /* RTL intention: brand right, auth left */
   .site-header .header-right--dk2{ justify-content: flex-start !important; }
