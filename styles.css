@@ -863,7 +863,9 @@ body.modal-open{overflow:hidden}
     display: flex !important;
     flex: 0 0 50%;
     max-width: 50%;
-    justify-content: flex-start;
+    /* In RTL, flex-start aligns to the RIGHT. We want auth on the LEFT edge. */
+    justify-content: flex-end;
+    align-items: center;
     padding-top: 0;
     white-space: nowrap;
   }
@@ -873,9 +875,9 @@ body.modal-open{overflow:hidden}
     display: flex !important;
     flex: 0 0 50%;
     max-width: 50%;
-    justify-content: flex-end;
+    /* In RTL, flex-start aligns to the RIGHT edge (brand must stay on the right). */
+    justify-content: flex-start;
     align-items: center;
-    flex-direction: row-reverse;
     flex-wrap: nowrap;
     min-width: 0;
   }
