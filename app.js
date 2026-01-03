@@ -440,19 +440,6 @@
     }, { passive: true });
   }
 
-        const goingDown = y > lastY;
-        const goingUp = y < lastY - DELTA_SHOW;
-
-        if (goingDown && y >= THRESHOLD_HIDE) {
-          header.classList.add('is-bottom-collapsed');
-        } else if (goingUp) {
-          header.classList.remove('is-bottom-collapsed');
-        }
-
-        lastY = y;
-      });
-    }, { passive: true });
-  }
 
 
   // ---------- UI sync ----------
