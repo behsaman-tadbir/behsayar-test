@@ -783,3 +783,27 @@ body.modal-open{overflow:hidden}.auth-trigger {
   .site-header .header-right--dk2,
   .site-header .header-left--dk2{min-width:0;}
 }
+
+/* === Mobile: force header split one-line (left/right 50%) === */
+@media (max-width: 768px){
+  .site-header .header-top--dk2{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+  }
+  .site-header .header-right--dk2,
+  .site-header .header-left--dk2{
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    width: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    min-width: 0 !important;
+  }
+  /* RTL intention: brand right, auth left */
+  .site-header .header-right--dk2{ justify-content: flex-start !important; }
+  .site-header .header-left--dk2{ justify-content: flex-end !important; }
+}
