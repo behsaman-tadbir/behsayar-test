@@ -613,3 +613,71 @@ body.modal-open{overflow:hidden}
   .site-header .header-top--dk2 { align-items: center; }
 }
 
+/* === MOBILE HEADER FIX (auth-left, brand-right, no-wrap) === */
+@media (max-width: 768px) {
+  /* Force header top to stay on one line */
+  .header-top--dk2 {
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  /* Left: auth */
+  .header-left--dk2 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+  .auth-area {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  /* Right: brand */
+  .header-right--dk2 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .site-header .brand {
+    min-width: 0 !important;
+  }
+  .site-header .brand-title {
+    font-size: 1.35rem !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+  }
+  .site-header .brand-img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  /* No search in mobile header */
+  .header-search {
+    display: none !important;
+  }
+
+  /* Auth switch: login button vs user menu (header) */
+  #headerAuthBtn {
+    display: inline-flex !important;
+  }
+  #headerUserMenu {
+    display: none !important;
+  }
+  html.is-auth #headerAuthBtn {
+    display: none !important;
+  }
+  html.is-auth #headerUserMenu {
+    display: inline-flex !important;
+  }
+
+  /* Keep user menu dropdown above everything */
+  #userMenuDropdown {
+    z-index: 9999 !important;
+  }
+}
