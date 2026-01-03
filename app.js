@@ -535,3 +535,110 @@
     boot();
   }
 })();
+
+
+/* =========================
+   Home hero slider (post-slider)
+   - Builds dots inside #sliderDots
+   - Auto-rotates (disabled for prefers-reduced-motion)
+   - Pauses on hover/focus
+   ========================= */
+(function () {
+  "use strict";
+
+  function initHeroSlider() {
+    var slidesWrap = document.getElementById("postSlides");
+    var dotsWrap = document.getElementById("sliderDots");
+    if (!slidesWrap || !dotsWrap) return;
+
+    var slides = Array.prototype.slice.call(slidesWrap.querySelectorAll(".post-slide"));
+    if (!slides.length) return;
+
+    // If dots already exist, don't duplicate (defensive)
+    if (dotsWrap.children && dotsWrap.children.length > 0) return;
+
+    var prefersReduced = false;
+    try {
+      prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch (e) {}
+
+    var current = Math.max(0, slides.findIndex(function (s) { return s.classList.contains("is-active"); }));
+    if (current === -1) current = 0;
+
+    function setActive(next) {
+      next = (next + slides.length) % slides.length;
+      slides[current].classList.remove("is-active");
+      dots[current].classList.remove("is-active");
+      dots[current].setAttribute("aria-selected", "false");
+
+      current = next;
+
+      slides[current].classList.add("is-active");
+      dots[current].classList.add("is-active");
+      dots[current].setAttribute("aria-selected", "true");
+    }
+
+    // Build dots as buttons for accessibility
+    var dots = slides.map(function (_, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "dot" + (i === current ? " is-active" : "");
+      b.setAttribute("aria-label", "اسلاید " + (i + 1));
+      b.setAttribute("aria-selected", i === current ? "true" : "false");
+      b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { setActive(i); restart(); });
+      dotsWrap.appendChild(b);
+      return b;
+    });
+
+    // Improve semantics a bit
+    dotsWrap.setAttribute("role", "tablist");
+
+    var timer = null;
+    var intervalMs = 5500;
+
+    function start() {
+      if (prefersReduced) return;
+      stop();
+      timer = window.setInterval(function () { setActive(current + 1); }, intervalMs);
+    }
+
+    function stop() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function restart() {
+      stop();
+      start();
+    }
+
+    // Pause on hover/focus to avoid fighting user
+    var pause = function () { stop(); };
+    var resume = function () { start(); };
+
+    slidesWrap.addEventListener("mouseenter", pause);
+    slidesWrap.addEventListener("mouseleave", resume);
+    slidesWrap.addEventListener("focusin", pause);
+    slidesWrap.addEventListener("focusout", resume);
+
+    // Keyboard: left/right (RTL-friendly: right arrow = previous feels natural)
+    slidesWrap.setAttribute("tabindex", "0");
+    slidesWrap.addEventListener("keydown", function (e) {
+      var key = e.key || e.code;
+      if (key === "ArrowLeft") { e.preventDefault(); setActive(current + 1); restart(); }
+      if (key === "ArrowRight") { e.preventDefault(); setActive(current - 1); restart(); }
+    });
+
+    start();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initHeroSlider);
+  } else {
+    initHeroSlider();
+  }
+})();
+
