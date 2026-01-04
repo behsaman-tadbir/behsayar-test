@@ -233,11 +233,6 @@
 /* =========================
    Header tweaks: brand prominence + muted search icon on the right
    ========================= */
-@media (min-width: 769px){
-  /* Make logo + product name the center of attention */
-    .site-header .brand-title--grad{font-size:1.55rem;font-weight:900;letter-spacing:-0.6px;}
-
-  }
 
 @media (max-width: 768px){
   /* Mobile header: show brand nicely */
