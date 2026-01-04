@@ -537,32 +537,74 @@
 })();
 
 /* === Home Slider (RTL: right → left) === */
+/* === Home Slider (RTL: enter from right, exit to left) === */
 (() => {
-  const slides = document.querySelectorAll('.post-slide');
-  if (!slides.length) return;
+  const root = document.querySelector('.post-slider');
+  const slidesWrap = document.querySelector('.post-slides');
+  const slides = Array.from(document.querySelectorAll('.post-slide'));
+  if (!root || !slidesWrap || slides.length < 2) return;
+
+  const DURATION = 600; // باید با CSS هماهنگ باشد
+  const INTERVAL = 5000;
 
   let current = 0;
+  let timer = null;
+  let busy = false;
 
+  // حالت پایه: همه بیرون از راست
   slides.forEach((s, i) => {
     s.classList.remove('is-active', 'is-exit-left');
+    s.style.pointerEvents = 'none';
     if (i === 0) s.classList.add('is-active');
   });
 
-  setInterval(() => {
+  const goNext = () => {
+    if (busy) return;
+    busy = true;
+
     const prev = current;
-    current = (current + 1) % slides.length;
+    const next = (current + 1) % slides.length;
 
-    slides[prev].classList.remove('is-active');
-    slides[prev].classList.add('is-exit-left');
+    const prevEl = slides[prev];
+    const nextEl = slides[next];
 
-    slides[current].classList.remove('is-exit-left');
-    slides[current].classList.add('is-active');
+    // next را آماده کن (بیرون از راست) و بعد فعالش کن
+    nextEl.classList.remove('is-exit-left');
+    // با یک فریم فاصله تا مرورگر ترنزیشن را درست اعمال کند
+    requestAnimationFrame(() => {
+      // خروج قبلی به چپ
+      prevEl.classList.remove('is-active');
+      prevEl.classList.add('is-exit-left');
 
-    /* پاکسازی بعد از انیمیشن */
-    setTimeout(() => {
-      slides[prev].classList.remove('is-exit-left');
-      slides[prev].style.transform = 'translateX(100%)';
-    }, 650);
+      // ورود بعدی از راست
+      nextEl.classList.add('is-active');
 
-  }, 5000);
+      current = next;
+
+      // پاکسازی بعد از اتمام ترنزیشن
+      window.setTimeout(() => {
+        // اسلاید قبلی را فقط به حالت پایه برگردان (بیرون از راست)
+        prevEl.classList.remove('is-exit-left');
+        busy = false;
+      }, DURATION + 50);
+    });
+  };
+
+  const start = () => {
+    stop();
+    timer = window.setInterval(goNext, INTERVAL);
+  };
+
+  const stop = () => {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+  };
+
+  // اگر تب inactive شد، تایمر را متوقف کن تا با برگشت “خالی” نشود
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+    else start();
+  });
+
+  start();
 })();
