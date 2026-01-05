@@ -1010,35 +1010,6 @@ img{
   font-size:0.9rem;
 }
 
-/* ===== Popular centers ===== */
-.section-head--centers{
-  margin-bottom:12px;
-}
-.logo-rail{
-  display:flex;
-  gap:12px;
-  overflow-x:auto;
-  padding:6px 4px 10px;
-  -webkit-overflow-scrolling:touch;
-  scroll-snap-type:x mandatory;
-}
-.logo-chip{
-  min-width:120px;
-  height:74px;
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 10px 22px rgba(15,23,42,0.06);
-  display:grid;
-  place-items:center;
-  scroll-snap-align:start;
-  border:1px solid rgba(15,23,42,0.06);
-}
-.logo-chip img{
-  width:66px;
-  height:40px;
-  object-fit:contain;
-}
-
 /* ===== About split ===== */
 .home-section--about{
   padding:26px 0 34px;
