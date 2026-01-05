@@ -973,26 +973,92 @@ img{
   display:grid;
   gap:10px;
   border:1px solid rgba(99,102,241,0.10)
+  position: relative;
 }
 .product-card--new{
   border:1px solid rgba(34,197,94,0.14);
   background:linear-gradient(135deg,#ffffff,#f0fdf4)
 }
+/* ردیف بالا: تخفیف سمت راست، ارائه‌دهنده سمت چپ (RTL) */
 .product-top{
   display:flex;
   align-items:center;
-  justify-content:space-between
+  justify-content:space-between;
+  gap:10px;
 }
+
+/* درصد تخفیف: بزرگ‌تر و چشم‌گیرتر */
 .product-off{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:5px 10px;
+  padding:6px 12px;
   border-radius:999px;
-  background:rgba(245,158,11,0.18);
-  color:#92400e;
+  font-weight:950;
+  font-size:0.95rem;
+  letter-spacing:-0.2px;
+  background: linear-gradient(135deg, rgba(239,68,68,0.22), rgba(220,38,38,0.18));
+  color:#7f1d1d;
+  border:1px solid rgba(220,38,38,0.30);
+}
+
+/* وقتی داخل بخش تخفیف‌ها هستیم، Badge قرمزتر و قوی‌تر شود */
+.rail--deals .product-off{
+  background: linear-gradient(135deg, rgba(239,68,68,0.30), rgba(220,38,38,0.24));
+  border-color: rgba(220,38,38,0.38);
+  color:#7f1d1d;
+}
+
+.product-provider .product-logo{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  object-fit:cover;
+  border:1px solid rgba(15,23,42,0.10);
+  background:#fff;
+}
+.product-provider .provider-name{
   font-weight:900;
-  font-size:0.8rem
+  font-size:0.88rem;
+  color:rgba(15,23,42,0.80);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:110px;
+}
+/* موبایل: متن ارائه‌دهنده کمی کوچک‌تر و جمع‌وجورتر */
+@media (max-width:768px){
+  .product-off{
+    font-size:0.92rem;
+    padding:6px 10px;
+  }
+  .product-provider .provider-name{
+    font-size:0.84rem;
+    max-width:88px;
+  }
+}
+
+/* ===== Deals Rail Theme (قرمز و متمایز) ===== */
+.rail--deals{
+  background: linear-gradient(135deg, #fff1f2, #ffffff);
+  border:1px solid rgba(220,38,38,0.14);
+}
+
+.rail-head--deals{
+  background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(255,255,255,0.92));
+  border:1px solid rgba(220,38,38,0.16);
+}
+
+.rail--deals .rail-link{
+  color:#dc2626;
+}
+
+/* ارائه‌دهنده (لوگو + نام کنار هم) */
+.product-provider{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
 }
 .product-logo{
   width:34px;
