@@ -287,17 +287,6 @@ img{
 }
 .nav-link {
     display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: #f8fafc;
-    color: #0f172a;
-    font-weight: 800;
-    border: 1px solid #e2e8f0;
-    text-decoration: none;
-    cursor: pointer;
-    white-space: nowrap;
  } 
 .nav-link:hover{
   background:#e2e8f0;
