@@ -994,76 +994,83 @@ img{
   color:var(--text-1);
   font-size:0.95rem
 }
+/* ===== Product prices (FIXED: pure CSS) ===== */
 .product-prices{
   display:flex;
   align-items:baseline;
   gap:10px;
-  .price-new{
-    font-weight:900;
-    color:var(--text-1)
-  }
-  .price-old{
-    color:#64748b;
-    text-decoration:line-through;
-    font-size:0.9rem
-  }
-  .section-head--centers{
-    margin-bottom:12px
-  }
-  .logo-rail{
-    display:flex;
-    gap:12px;
-    overflow-x:auto;
-    padding:6px 4px 10px;
-    -webkit-overflow-scrolling:touch;
-    scroll-snap-type:x mandatory
-  }
-  .logo-chip{
-    min-width:120px;
-    height:74px;
-    background:#fff;
-    border-radius:16px;
-    box-shadow:0 10px 22px rgba(15,23,42,0.06);
-    display:grid;
-    place-items:center;
-    scroll-snap-align:start;
-    border:1px solid rgba(15,23,42,0.06)
-  }
-  .logo-chip img{
-    width:66px;
-    height:40px;
-    object-fit:contain
-  }
-  .home-section--about{
-    padding:26px 0 34px
-  }
-  .about-split{
-    background:linear-gradient(135deg,#eef2ff,#dcfce7);
-    border-radius:18px;
-    padding:18px;
-    display:grid;
-    grid-template-columns:1.2fr 1fr;
-    gap:16px;
-    align-items:center;
-    box-shadow:var(--shadow-md)
-  }
-  .about-text h2{
-    font-size:1.4rem;
-    font-weight:900;
-    color:var(--text-1);
-    margin-bottom:10px}
-  .about-text p{
-    color:#334155;
-    margin-bottom:14px;
-    max-width:70ch
-  }
-  .about-image img{
-    width:100%;
-    height:260px;
-    object-fit:cover;
-    border-radius:16px;
-    border:1px solid rgba(15,23,42,0.08)
-  }
+}
+.product-prices .price-new{
+  font-weight:900;
+  color:var(--text-1);
+}
+.product-prices .price-old{
+  color:#64748b;
+  text-decoration:line-through;
+  font-size:0.9rem;
+}
+
+/* ===== Popular centers ===== */
+.section-head--centers{
+  margin-bottom:12px;
+}
+.logo-rail{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding:6px 4px 10px;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;
+}
+.logo-chip{
+  min-width:120px;
+  height:74px;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 22px rgba(15,23,42,0.06);
+  display:grid;
+  place-items:center;
+  scroll-snap-align:start;
+  border:1px solid rgba(15,23,42,0.06);
+}
+.logo-chip img{
+  width:66px;
+  height:40px;
+  object-fit:contain;
+}
+
+/* ===== About split ===== */
+.home-section--about{
+  padding:26px 0 34px;
+}
+.about-split{
+  background:linear-gradient(135deg,#eef2ff,#dcfce7);
+  border-radius:18px;
+  padding:18px;
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:16px;
+  align-items:center;
+  box-shadow:var(--shadow-md);
+}
+.about-text h2{
+  font-size:1.4rem;
+  font-weight:900;
+  color:var(--text-1);
+  margin-bottom:10px;
+}
+.about-text p{
+  color:#334155;
+  margin-bottom:14px;
+  max-width:70ch;
+}
+.about-image img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:16px;
+  border:1px solid rgba(15,23,42,0.08);
+}
 
 
 /* =====================================
