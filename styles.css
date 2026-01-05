@@ -1415,6 +1415,28 @@ body.modal-open{overflow:hidden}.auth-trigger {
   color: #fff;
 }
 
+@media (min-width: 769px) {
+
+  .site-header .header-bottom{
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform .22s ease, opacity .18s ease;
+    will-change: transform;
+  }
+
+  .site-header.is-bottom-collapsed .header-bottom{
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* وقتی dropdown باز است */
+  .site-header.is-nav-dropdown-open .header-bottom{
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
 
 
 /* ===== Step J2: Header-bottom pro collapse + text-only nav + underline hover ===== */
