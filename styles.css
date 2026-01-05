@@ -1560,56 +1560,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
    Slider Responsive UX (Mobile)
    ========================= */
 
-@media (max-width: 768px){
 
-  /* اسلایدر دیگر نسبت 3:2 قفل نباشد، طبیعی شود */
-  .post-slider{
-    aspect-ratio: auto;
-  }
-
-  /* اسلاید به کارت عمودی تبدیل می‌شود */
-  .post-slider .post-slide{
-    display: flex;
-    flex-direction: column;
-    transform: translateX(100%);
-  }
-
-  .post-slider .post-slide.is-active{
-    transform: translateX(0);
-  }
-
-  /* تصویر فقط بخش بالایی کارت */
-  .post-slider .post-slide__bg{
-    height: 220px;
-    border-radius: 18px 18px 0 0;
-  }
-
-  /* متن از روی عکس خارج می‌شود */
-  .post-slider .post-title{
-    position: static;
-    margin: 0;
-    border-radius: 0 0 18px 18px;
-    background: #fff;
-    color: #0f172a;
-    backdrop-filter: none;
-    text-shadow: none;
-    padding: 14px 16px;
-    font-size: 1.1rem;
-    line-height: 1.8;
-  }
-
-  /* متن و تصویر حس یک کارت واحد داشته باشند */
-  .post-slider .post-slide{
-    background: #fff;
-    border-radius: 18px;
-    overflow: hidden;
-  }
-
-  /* دات‌ها کمی پایین‌تر بیایند */
-  .post-slider .slider-dots{
-    bottom: 10px;
-  }
-}
 
 /* Categories: center and balance */
 .category-circles{
@@ -1633,190 +1584,6 @@ body.modal-open{overflow:hidden}.auth-trigger {
   }
 }
 
-/* === Mobile header: brand right, auth left (remove search from header) === */
-@media (max-width: 768px) {/* brand (logo + title) should stay on the right */
-  .site-header .header-right--dk2 {
-    display: flex !important;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 1 1 auto;
-    min-width: 0;
-  }/* remove search from mobile header */
-  .site-header .header-search {
-    display: none !important;
-  }
-
-  /* prevent brand wrapping */
-  .site-header .brand-link {
-    max-width: 100%;
-    min-width: 0;
-  }
-  .site-header .brand-title {
-    white-space: nowrap;
-  }
-
-  /* avoid duplicate login entry: bottom nav auth button hidden when header auth is present */
-  #bnAuthBtn {
-    display: none !important;
-  }
-}
-
-
-/* === Mobile header: 50/50 split (left auth, right brand) === */
-@media (max-width: 768px) {
-  /* Keep header visible; hide only the things we don't want in mobile header */
-  .site-header .header-search,
-  .site-header .header-search--muted,
-  .site-header .header-bottom {
-    display: none !important;
-  }.site-header .header-right--dk2 {
-    display: flex !important;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 0 0 50%;
-    max-width: 50%;
-    min-width: 0;
-    flex-wrap: nowrap;
-  }
-
-  /* Prevent brand overflow */
-  .site-header .brand-link--plain {
-    max-width: 100%;
-    min-width: 0;
-  }
-
-  .site-header .brand-title--grad {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Keep auth control compact so it doesn't wrap */
-  .site-header .auth-trigger,
-  .site-header .user-menu__trigger {
-    max-width: 100%;
-  }
-
-  /* Avoid duplicate login entry: bottom nav auth hidden when header auth is present */
-  #bnAuthBtn {
-    display: none !important;
-  }
-}
-
-/* === Mobile header: 50/50 split (left auth, right brand) === */
-@media (max-width: 768px) {
-  /* Keep header visible; hide only the things we don't want in mobile header */
-  .site-header .header-search,
-  .site-header .header-search--muted,
-  .site-header .header-bottom {
-    display: none !important;
-  }/* RIGHT 50%: brand */
-  .site-header .header-right--dk2 {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 0 0 50%;
-    max-width: 50%;
-    min-width: 0;
-    flex-wrap: nowrap;
-  }
-
-  /* Brand should never wrap and never push auth to a new line */
-  .site-header .brand-link--plain {
-    max-width: 100%;
-    min-width: 0;
-    overflow: hidden;
-  }
-  .site-header .brand-title--grad {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Avoid duplicate login entry: keep bottom nav auth hidden when header auth is visible */
-  #bnAuthBtn {
-    display: none !important;
-  }
-}
-
-/* === Mobile header: 50/50 split (left auth, right brand) === */
-@media (max-width: 768px) {
-  /* Keep header visible; hide only the things we don't want in mobile header */
-  .site-header .header-search,
-  .site-header .header-search--muted,
-  .site-header .header-bottom {
-    display: none !important;
-  }/* Right half: brand */
-  .site-header .header-right--dk2 {
-    display: flex !important;
-    flex: 0 0 50%;
-    max-width: 50%;
-    justify-content: flex-end;
-    align-items: center;
-    flex-wrap: nowrap;
-    min-width: 0;
-  }
-
-  /* Prevent brand pushing layout */
-  .site-header .brand-link--plain {
-    max-width: 100%;
-    min-width: 0;
-    overflow: hidden;
-  }
-  .site-header .brand-title--grad {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Keep auth chip from expanding */
-  .site-header .auth-trigger,
-  .site-header .user-menu__trigger {
-    max-width: 100%;
-  }
-
-  /* If you still keep bottom-nav auth, hide it to avoid duplicates */
-  #bnAuthBtn {
-    display: none !important;
-  }
-}
-
-/* === Mobile header: 50/50 split (left auth, right brand) === */
-@media (max-width: 768px) {
-  /* Keep header visible; hide only the things we don't want in mobile header */
-  .site-header .header-search,
-  .site-header .header-search--muted,
-  .site-header .header-bottom {
-    display: none !important;
-  }/* Right half: brand */
-  .site-header .header-right--dk2 {
-    display: flex !important;
-    flex: 0 0 50%;
-    max-width: 50%;
-    /* In RTL, flex-start aligns to the RIGHT edge (brand must stay on the right). */
-    justify-content: flex-start;
-    align-items: center;
-    flex-wrap: nowrap;
-    min-width: 0;
-  }
-
-  /* Prevent brand from pushing auth */
-  .site-header .brand-link--plain {
-    max-width: 100%;
-    min-width: 0;
-  }
-  .site-header .brand-title--grad {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
-
-  /* Avoid duplicate login entry: bottom nav auth button hidden when header auth is present */
-  #bnAuthBtn {
-    display: none !important;
-  }
-}
 
 /* === Header layout single source of truth (desktop + mobile) === */
 .site-header .header-top--dk2{
@@ -1876,4 +1643,55 @@ body.modal-open{overflow:hidden}.auth-trigger {
   /* RTL intention: brand right, auth left */
   .site-header .header-right--dk2{ justify-content: flex-start !important; }
   .site-header .header-left--dk2{ justify-content: flex-end !important; }
+}
+
+@media (max-width: 768px){
+
+  /* اسلایدر دیگر نسبت 3:2 قفل نباشد، طبیعی شود */
+  .post-slider{
+    aspect-ratio: auto;
+  }
+
+  /* اسلاید به کارت عمودی تبدیل می‌شود */
+  .post-slider .post-slide{
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+  }
+
+  .post-slider .post-slide.is-active{
+    transform: translateX(0);
+  }
+
+  /* تصویر فقط بخش بالایی کارت */
+  .post-slider .post-slide__bg{
+    height: 220px;
+    border-radius: 18px 18px 0 0;
+  }
+
+  /* متن از روی عکس خارج می‌شود */
+  .post-slider .post-title{
+    position: static;
+    margin: 0;
+    border-radius: 0 0 18px 18px;
+    background: #fff;
+    color: #0f172a;
+    backdrop-filter: none;
+    text-shadow: none;
+    padding: 14px 16px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  /* متن و تصویر حس یک کارت واحد داشته باشند */
+  .post-slider .post-slide{
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  /* دات‌ها کمی پایین‌تر بیایند */
+  .post-slider .slider-dots{
+    bottom: 10px;
+  }
 }
