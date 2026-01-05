@@ -1424,22 +1424,24 @@ body.modal-open{overflow:hidden}.auth-trigger {
 
 /* === Desktop: auto-collapse header bottom on scroll (Step J) === */
 @media (min-width: 769px) {
-  .site-header .header-bottom {
-    overflow: hidden;
-    max-height: 120px;
-    transition:
-      max-height 0.22s ease,
-      padding 0.22s ease,
-      margin 0.22s ease;
-    will-change: max-height;
+  .site-header .header-bottom{
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform .22s ease, opacity .22s ease;
+    will-change: transform, opacity;
   }
 
-  .site-header.is-bottom-collapsed .header-bottom {
-    max-height: 0;
-    margin-top: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+  .site-header.is-bottom-collapsed .header-bottom{
+    transform: translateY(-110%);
+    opacity: 0;
     pointer-events: none;
+  }
+
+  /* وقتی منوی کشویی بازه، همیشه bottom دیده بشه */
+  .site-header.is-nav-dropdown-open .header-bottom{
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
