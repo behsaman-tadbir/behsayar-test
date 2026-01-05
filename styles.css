@@ -1415,30 +1415,58 @@ body.modal-open{overflow:hidden}.auth-trigger {
   color: #fff;
 }
 
-/* === Desktop: real slide-collapse for header-bottom (NO fade) === */
+/* === Desktop: auto-collapse header bottom on scroll (Step J) === */
 @media (min-width: 769px) {
-  .site-header .header-bottom{
+  .site-header .header-bottom {
     overflow: hidden;
-    max-height: 160px; /* اگر منوی تو بلندتره 200 بذار */
-    transition: max-height 0.22s ease, margin 0.22s ease, padding 0.22s ease;
+    max-height: 120px;
+    transition:
+      max-height 0.22s ease,
+      padding 0.22s ease,
+      margin 0.22s ease;
     will-change: max-height;
   }
 
-  .site-header.is-bottom-collapsed .header-bottom{
+  .site-header.is-bottom-collapsed .header-bottom {
     max-height: 0;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
     pointer-events: none;
   }
-
-  /* وقتی dropdown باز است، collapse غیرفعال */
-  .site-header.is-nav-dropdown-open .header-bottom{
-    max-height: 420px;
-    overflow: visible;
-    pointer-events: auto;
-  }
 }
+
+/* ===== Step J2: Header-bottom pro collapse + text-only nav + underline hover ===== */
+@media (min-width: 769px) {
+  .header-bottom {
+    margin: 10px auto 0;
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+/* Make header-bottom nav items text-like (no boxes), but still tappable */
+  .header-bottom .nav-link {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 10px 10px;
+    line-height: 1.1;
+  }
+
+  /* Professional hover: underline at bottom edge */
+  .header-bottom .nav-link:hover,
+  .header-bottom .nav-link:focus-visible {
+    box-shadow: inset 0 -2px 0 rgba(14, 165, 233, 0.85) !important;
+    outline: none;
+  }
+
+  /* Cats emphasis: bigger + bolder + slightly darker + same style family */
+  .header-bottom .nav-link--cats,
+  .header-bottom .nav-dropdown-toggle.nav-link--cats {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: rgba(15, 23, 42, 0.86);
+  }
 
   /* Dropdown panel items: one per line, clean */
   .dropdown-panel .dropdown-grid {
