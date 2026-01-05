@@ -784,19 +784,25 @@ img{
   z-index: 5;
 }
 .ads-rubik{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
+
 .ad-tile{
-  position:relative;
-  border-radius:16px;
-  padding:14px;
-  min-height:124px;
-  overflow:hidden;
-  background:linear-gradient(135deg,#dbeafe,#dcfce7);
-  box-shadow:0 12px 24px rgba(15,23,42,0.06);
-  transition:transform 220ms ease
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 12px 24px rgba(15,23,42,0.06);
+}
+
+.ad-tile img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 .ad-tile:nth-child(2){
   background:linear-gradient(135deg,#fce7f3,#fef3c7)
@@ -811,16 +817,18 @@ img{
   transform:translateY(-3px)
 }
 .ad-badge{
-  position:absolute;
-  top:12px;
-  right:12px;
-  font-size:0.75rem;
-  font-weight:800;
-  background:rgba(15,23,42,0.75);
-  color:#fff;
-  padding:4px 8px;
-  border-radius:999px
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: rgba(15,23,42,0.8);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 999px;
 }
+
 .ad-title{
   font-weight:900;
   color:var(--text-1);
@@ -832,6 +840,20 @@ img{
   font-size:0.85rem;
   margin-top:6px
 }
+.ad-overlay{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  background: linear-gradient(
+    to top,
+    rgba(15,23,42,0.6),
+    rgba(15,23,42,0.0) 60%
+  );
+}
+
 .category-circles{
   display:grid;
   grid-template-columns:repeat(6,1fr);
