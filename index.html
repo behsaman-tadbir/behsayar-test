@@ -284,126 +284,645 @@
 </div>
 </section>
 <!-- =========================
-       SECTION 4: Best Sellers Rail
-       ========================= -->
+     SECTION: Best Sellers (8 items)
+     ========================= -->
 <section class="home-section">
-<div class="container">
-<div class="rail">
-<div class="rail-head rail-head--best">
-<h2 class="rail-title">پرفروش‌ترین‌ها</h2>
-<p class="rail-sub">محصولات محبوب کاربران در این ماه</p>
-<a class="rail-link" href="services.html">مشاهده همه</a>
-</div>
-<div aria-label="لیست افقی پرفروش‌ها" class="rail-track" tabindex="0">
-<!-- کارت محصول -->
-<article class="product-card" data-product-id="math-boost">
-<div class="product-top">
-<span class="product-off">٪ ۳۰</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="کلاس تقویتی ریاضی" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/math-boost.png"/></div>
-<div class="product-name">کلاس تقویتی ریاضی</div>
-<div class="product-prices">
-<span class="price-new">۹۹۰,۰۰۰</span>
-<span class="price-old">۱,۴۲۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=math-boost">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="math-boost" type="button">افزودن به سبد</button></div></article>
-<article class="product-card" data-product-id="digital-skills">
-<div class="product-top">
-<span class="product-off">٪ ۲۰</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="دوره مهارت‌های دیجیتال" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/digital-skills.png"/></div>
-<div class="product-name">دوره مهارت‌های دیجیتال</div>
-<div class="product-prices">
-<span class="price-new">۷۵۰,۰۰۰</span>
-<span class="price-old">۹۳۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=digital-skills">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="digital-skills" type="button">افزودن به سبد</button></div></article>
-<article class="product-card" data-product-id="english-teens">
-<div class="product-top">
-<span class="product-off">٪ ۴۰</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="زبان انگلیسی نوجوان" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/english-teens.png"/></div>
-<div class="product-name">زبان انگلیسی نوجوان</div>
-<div class="product-prices">
-<span class="price-new">۶۲۰,۰۰۰</span>
-<span class="price-old">۱,۰۳۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=english-teens">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="english-teens" type="button">افزودن به سبد</button></div></article>
-<article class="product-card" data-product-id="english-teens">
-<div class="product-top">
-<span class="product-off">٪ ۴۰</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="زبان انگلیسی نوجوان" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/english-teens.png"/></div>
-<div class="product-name">زبان انگلیسی نوجوان</div>
-<div class="product-prices">
-<span class="price-new">۶۲۰,۰۰۰</span>
-<span class="price-old">۱,۰۳۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=english-teens">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="english-teens" type="button">افزودن به سبد</button></div></article>
-<article class="product-card" data-product-id="academic-counseling">
-<div class="product-top">
-<span class="product-off">٪ ۱۵</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="مشاوره تحصیلی" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/academic-counseling.png"/></div>
-<div class="product-name">مشاوره تحصیلی</div>
-<div class="product-prices">
-<span class="price-new">۳۹۰,۰۰۰</span>
-<span class="price-old">۴۶۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=academic-counseling">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="academic-counseling" type="button">افزودن به سبد</button></div></article>
-</div>
-</div>
-</div>
+  <div class="container">
+    <div class="rail rail--best">
+      <div class="rail-head rail-head--best">
+        <h2 class="rail-title">پرفروش‌ترین‌ها</h2>
+        <p class="rail-sub">محبوب‌ترین دوره‌ها و محصولات آموزشی</p>
+        <a class="rail-link" href="services.html?sort=best">مشاهده همه</a>
+      </div>
+
+      <div class="rail-track" aria-label="لیست افقی پرفروش‌ترین‌ها" tabindex="0">
+
+        <article class="product-card" data-product-id="best-001">
+          <div class="product-top">
+            <span class="product-off">٪ ۳۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="پکیج ریاضی پایه" loading="lazy" src="images/products/best-1.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">پکیج ریاضی پایه (تقویتی)</div>
+          <div class="product-prices">
+            <span class="price-new">۶۴۰,۰۰۰</span>
+            <span class="price-old">۹۱۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-001">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-001">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-002">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره فارسی و نگارش" loading="lazy" src="images/products/best-2.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">فارسی و نگارش (جمع‌بندی)</div>
+          <div class="product-prices">
+            <span class="price-new">۴۹۰,۰۰۰</span>
+            <span class="price-old">۶۵۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-002">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-002">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-003">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="برنامه‌ریزی آزمون‌های هفتگی" loading="lazy" src="images/products/best-3.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">برنامه‌ریزی آزمون‌های هفتگی</div>
+          <div class="product-prices">
+            <span class="price-new">۷۹۰,۰۰۰</span>
+            <span class="price-old">۹۸۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-003">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-003">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-004">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۸</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره مکالمه زبان سطح A2" loading="lazy" src="images/products/best-4.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">مکالمه زبان (سطح A2)</div>
+          <div class="product-prices">
+            <span class="price-new">۸۹۰,۰۰۰</span>
+            <span class="price-old">۱,۰۸۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-004">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-004">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-005">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره عربی پایه" loading="lazy" src="images/products/best-5.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">عربی پایه (مفهومی + تستی)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۲۰,۰۰۰</span>
+            <span class="price-old">۶۱۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-005">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-005">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-006">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۲</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره شیمی کنکور" loading="lazy" src="images/products/best-6.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">شیمی کنکور (تست‌محور)</div>
+          <div class="product-prices">
+            <span class="price-new">۹۴۰,۰۰۰</span>
+            <span class="price-old">۱,۲۰۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-006">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-006">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-007">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۹</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره مهارت‌های ارائه و سخنوری" loading="lazy" src="images/products/best-7.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">مهارت‌های ارائه و سخنوری</div>
+          <div class="product-prices">
+            <span class="price-new">۶۹۰,۰۰۰</span>
+            <span class="price-old">۸۵۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-007">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-007">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="best-008">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۶</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره تحلیل آزمون و رفع اشکال" loading="lazy" src="images/products/best-8.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">تحلیل آزمون و رفع اشکال (VIP)</div>
+          <div class="product-prices">
+            <span class="price-new">۱,۰۹۰,۰۰۰</span>
+            <span class="price-old">۱,۲۹۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=best-008">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="best-008">افزودن به سبد</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     SECTION: Newest (8 items)
+     ========================= -->
+<section class="home-section">
+  <div class="container">
+    <div class="rail rail--new">
+      <div class="rail-head rail-head--new">
+        <h2 class="rail-title">جدیدترین‌ها</h2>
+        <p class="rail-sub">تازه اضافه‌شده‌ها برای شروع سریع</p>
+        <a class="rail-link" href="services.html?sort=new">مشاهده همه</a>
+      </div>
+
+      <div class="rail-track" aria-label="لیست افقی جدیدترین‌ها" tabindex="0">
+
+        <article class="product-card product-card--new" data-product-id="new-001">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره هندسه پایه" loading="lazy" src="images/products/new-1.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">هندسه پایه (آموزش + تمرین)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۹۰,۰۰۰</span>
+            <span class="price-old">۷۸۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-001">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-001">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-002">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره لغت و درک مطلب" loading="lazy" src="images/products/new-2.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">لغت و درک مطلب (تقویت سریع)</div>
+          <div class="product-prices">
+            <span class="price-new">۴۹۰,۰۰۰</span>
+            <span class="price-old">۶۱۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-002">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-002">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-003">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۸</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره آموزش فتوشاپ مقدماتی" loading="lazy" src="images/products/new-3.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">فتوشاپ مقدماتی (پروژه‌محور)</div>
+          <div class="product-prices">
+            <span class="price-new">۸۴۰,۰۰۰</span>
+            <span class="price-old">۱,۰۲۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-003">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-003">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-004">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره روش مطالعه و تست‌زنی" loading="lazy" src="images/products/new-4.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">روش مطالعه و تست‌زنی (کارگاهی)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۹۰,۰۰۰</span>
+            <span class="price-old">۶۹۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-004">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-004">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-005">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۲</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره ادبیات کنکور" loading="lazy" src="images/products/new-5.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">ادبیات کنکور (آرایه + قرابت)</div>
+          <div class="product-prices">
+            <span class="price-new">۹۶۰,۰۰۰</span>
+            <span class="price-old">۱,۲۳۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-005">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-005">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-006">
+          <div class="product-top">
+            <span class="product-off">٪ ۲۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره فیزیک پایه" loading="lazy" src="images/products/new-6.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">فیزیک پایه (مفهومی)</div>
+          <div class="product-prices">
+            <span class="price-new">۸۱۰,۰۰۰</span>
+            <span class="price-old">۱,۰۱۲,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-006">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-006">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-007">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۷</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره مهارت‌های کامپیوتر نوجوان" loading="lazy" src="images/products/new-7.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">کامپیوتر نوجوان (مهارت‌محور)</div>
+          <div class="product-prices">
+            <span class="price-new">۶۲۰,۰۰۰</span>
+            <span class="price-old">۷۴۵,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-007">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-007">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card product-card--new" data-product-id="new-008">
+          <div class="product-top">
+            <span class="product-off">٪ ۱۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره جمع‌بندی آزمون" loading="lazy" src="images/products/new-8.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">جمع‌بندی آزمون (هفته آخر)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۱۰,۰۰۰</span>
+            <span class="price-old">۶۰۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=new-008">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="new-008">افزودن به سبد</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
 </section>
 <!-- =========================
-       SECTION 5: Newest Rail (Different theme)
-       ========================= -->
+     SECTION: Biggest Deals (8 items)
+     ========================= -->
 <section class="home-section">
-<div class="container">
-<div class="rail rail--new">
-<div class="rail-head rail-head--new">
-<h2 class="rail-title">جدیدترین‌ها</h2>
-<p class="rail-sub">آخرین محصولات و خدمات اضافه‌شده</p>
-<a class="rail-link" href="services.html">مشاهده همه</a>
-</div>
-<div aria-label="لیست افقی جدیدترین‌ها" class="rail-track" tabindex="0">
-<article class="product-card product-card--new" data-product-id="online-exam-grade9">
-<div class="product-top">
-<span class="product-off">٪ ۱۰</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="آزمون آنلاین پایه نهم" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/online-exam-grade9.png"/></div>
-<div class="product-name">آزمون آنلاین پایه نهم</div>
-<div class="product-prices">
-<span class="price-new">۲۹۰,۰۰۰</span>
-<span class="price-old">۳۲۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=online-exam-grade9">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="online-exam-grade9" type="button">افزودن به سبد</button></div></article>
-<article class="product-card product-card--new" data-product-id="online-science">
-<div class="product-top">
-<span class="product-off">٪ ۲۵</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="کلاس آنلاین علوم" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/online-science.png"/></div>
-<div class="product-name">کلاس آنلاین علوم</div>
-<div class="product-prices">
-<span class="price-new">۵۴۰,۰۰۰</span>
-<span class="price-old">۷۲۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=online-science">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="online-science" type="button">افزودن به سبد</button></div></article>
-<article class="product-card product-card--new" data-product-id="public-speaking">
-<div class="product-top">
-<span class="product-off">٪ ۳۵</span>
-<img alt="لوگوی ارائه‌دهنده" class="product-logo" src="images/placeholder.svg"/>
-</div><div class="product-media"><img alt="دوره مهارت سخنوری" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg';" src="images/products/public-speaking.png"/></div>
-<div class="product-name">دوره مهارت سخنوری</div>
-<div class="product-prices">
-<span class="price-new">۴۱۰,۰۰۰</span>
-<span class="price-old">۶۳۰,۰۰۰</span>
-</div>
-<div class="product-actions"><a class="btn btn-secondary" href="product.html?pid=public-speaking">مشاهده</a><button class="btn btn-primary js-add-to-cart" data-product-id="public-speaking" type="button">افزودن به سبد</button></div></article>
-</div>
-</div>
-</div>
+  <div class="container">
+    <div class="rail rail--deals">
+      <div class="rail-head rail-head--deals">
+        <h2 class="rail-title">بیشترین تخفیف‌ها</h2>
+        <p class="rail-sub">پیشنهادهای قرمز و وسوسه‌انگیز این هفته</p>
+        <a class="rail-link" href="services.html?sort=discount">مشاهده همه</a>
+      </div>
+
+      <div class="rail-track" aria-label="لیست افقی بیشترین تخفیف‌ها" tabindex="0">
+
+        <article class="product-card" data-product-id="deal-001">
+          <div class="product-top">
+            <span class="product-off">٪ ۷۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="پکیج جمع‌بندی کنکور فشرده" loading="lazy"
+                 src="images/products/deal-1.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">پکیج جمع‌بندی کنکور (فشرده)</div>
+          <div class="product-prices">
+            <span class="price-new">۹۹۰,۰۰۰</span>
+            <span class="price-old">۳,۳۰۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-001">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-001">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-002">
+          <div class="product-top">
+            <span class="product-off">٪ ۶۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره ریاضی ویژه امتحان" loading="lazy"
+                 src="images/products/deal-2.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">دوره حل‌مسئله ریاضی (ویژه امتحان)</div>
+          <div class="product-prices">
+            <span class="price-new">۶۹۰,۰۰۰</span>
+            <span class="price-old">۱,۹۷۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-002">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-002">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-003">
+          <div class="product-top">
+            <span class="product-off">٪ ۶۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="پکیج تست‌زنی زیست سطح‌بندی" loading="lazy"
+                 src="images/products/deal-3.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">پکیج تست‌زنی زیست (سطح‌بندی)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۴۰,۰۰۰</span>
+            <span class="price-old">۱,۳۵۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-003">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-003">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-004">
+          <div class="product-top">
+            <span class="product-off">٪ ۵۸</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره مکالمه سریع زبان" loading="lazy"
+                 src="images/products/deal-4.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">دوره مکالمه سریع زبان (ترم فشرده)</div>
+          <div class="product-prices">
+            <span class="price-new">۷۹۰,۰۰۰</span>
+            <span class="price-old">۱,۸۸۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-004">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-004">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-005">
+          <div class="product-top">
+            <span class="product-off">٪ ۵۵</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/gaj.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">گاج</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره نکته و تست علوم متوسطه اول" loading="lazy"
+                 src="images/products/deal-5.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">نکته‌ و تست علوم (متوسطه اول)</div>
+          <div class="product-prices">
+            <span class="price-new">۴۵۰,۰۰۰</span>
+            <span class="price-old">۱,۰۰۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-005">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-005">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-006">
+          <div class="product-top">
+            <span class="product-off">٪ ۵۲</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/kheilisabz.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">خیلی سبز</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="آموزش نگارش و املا دبستان" loading="lazy"
+                 src="images/products/deal-6.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">آموزش نگارش و املا (دبستان)</div>
+          <div class="product-prices">
+            <span class="price-new">۳۹۰,۰۰۰</span>
+            <span class="price-old">۸۱۵,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-006">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-006">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-007">
+          <div class="product-top">
+            <span class="product-off">٪ ۵۰</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/poresh.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">پرش</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره ICDL کاربردی" loading="lazy"
+                 src="images/products/deal-7.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">دوره ICDL کاربردی (از صفر)</div>
+          <div class="product-prices">
+            <span class="price-new">۵۹۰,۰۰۰</span>
+            <span class="price-old">۱,۱۸۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-007">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-007">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="product-card" data-product-id="deal-008">
+          <div class="product-top">
+            <span class="product-off">٪ ۴۸</span>
+            <div class="product-provider" aria-label="ارائه‌دهنده">
+              <img class="product-logo" alt="لوگو" src="images/providers/ghalamchi.png"
+                   onerror="this.onerror=null;this.src='images/placeholder.svg';">
+              <span class="provider-name">قلمچی</span>
+            </div>
+          </div>
+          <div class="product-media">
+            <img alt="دوره برنامه‌ریزی و آزمون" loading="lazy"
+                 src="images/products/deal-8.png"
+                 onerror="this.onerror=null;this.src='images/placeholder.svg';">
+          </div>
+          <div class="product-name">برنامه‌ریزی درسی و آزمون (ماهانه)</div>
+          <div class="product-prices">
+            <span class="price-new">۴۹۰,۰۰۰</span>
+            <span class="price-old">۹۴۰,۰۰۰</span>
+          </div>
+          <div class="product-actions">
+            <a class="btn btn-outline" href="product.html?pid=deal-008">مشاهده</a>
+            <button class="btn btn-primary js-add-to-cart" type="button" data-product-id="deal-008">افزودن به سبد</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
 </section>
+
 <!-- =========================
        SECTION 6: Popular Centers (Logo Rail)
        ========================= -->
