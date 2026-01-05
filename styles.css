@@ -1061,7 +1061,7 @@ img{
 .about-split{
   background:linear-gradient(135deg,#eef2ff,#dcfce7);
   border-radius:18px;
-  padding:18px;
+  padding:48px;
   display:grid;
   grid-template-columns:1.2fr 1fr;
   gap:16px;
@@ -1081,7 +1081,6 @@ img{
 }
 .about-image img{
   width:100%;
-  height:100px;
   object-fit:cover;
   border-radius:16px;
 }
