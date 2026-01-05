@@ -400,8 +400,8 @@
     let ticking = false;
     let isCollapsed = header.classList.contains('is-bottom-collapsed');
 
-    const HIDE_AT = 80;      // collapse after user has scrolled a bit
-    const SHOW_AT = 40;      // expand when near top
+    const HIDE_AT = 96;      // collapse after user has scrolled a bit
+    const SHOW_AT = 48;      // expand when near top
     const MIN_DELTA = 2;     // ignore micro scroll noise
     const UP_DELTA = 18;     // user intent to go up
 
@@ -412,6 +412,16 @@
         ticking = false;
 
         const y = window.scrollY || 0;
+
+        // Dropdown open should pin header-bottom visible
+        if (header.classList.contains('is-nav-dropdown-open')) {
+          if (isCollapsed) {
+            header.classList.remove('is-bottom-collapsed');
+            isCollapsed = false;
+          }
+          lastY = y;
+          return;
+        }
 
         // Always show near very top
         if (y <= 8) {
