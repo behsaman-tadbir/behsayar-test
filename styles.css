@@ -675,18 +675,14 @@ img{
 .home-section{
   padding:20px 0
 }
-.section-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:14px
-}
+
 .section-title{
   font-size:1.35rem;
   font-weight:800;
   color:var(--text-1)
+  text-align: center
 }
+
 .hero-grid{
   display:grid;
   grid-template-columns:2fr 1fr;
