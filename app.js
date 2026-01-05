@@ -389,62 +389,64 @@
   }
 
   // ---------- UI: Header Bottom Auto Collapse (Desktop) ----------
-function bindHeaderBottomCollapse() {
-  const header = document.querySelector('.site-header');
-  const bottom = document.querySelector('.header-bottom');
-  if (!header || !bottom) return;
+  function bindHeaderBottomCollapse() {
+    const header = qs('.site-header');
+    const bottom = qs('.header-bottom');
+    if (!header || !bottom) return;
+    if (markBound(window, 'headerBottomCollapse')) return;
 
-  let lastY = window.scrollY || 0;
-  let collapsed = header.classList.contains('is-bottom-collapsed');
-  let ticking = false;
+    // Hysteresis-based collapse to avoid flicker ("پرپر زدن")
+    let lastY = window.scrollY || 0;
+    let ticking = false;
+    let isCollapsed = header.classList.contains('is-bottom-collapsed');
 
-  const COLLAPSE_AFTER = 90; // بعد از این مقدار اجازه جمع شدن
-  const TOP_UNLOCK = 20;     // نزدیک بالا همیشه باز
+    const HIDE_AT = 80;      // collapse after user has scrolled a bit
+    const SHOW_AT = 40;      // expand when near top
+    const MIN_DELTA = 2;     // ignore micro scroll noise
+    const UP_DELTA = 18;     // user intent to go up
 
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
+    on(window, 'scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
 
-    requestAnimationFrame(() => {
-      ticking = false;
+        const y = window.scrollY || 0;
 
-      const y = window.scrollY || 0;
-
-      // اگر dropdown بازه، هیچ collapse نکن
-      if (header.classList.contains('is-nav-dropdown-open')) {
-        if (collapsed) {
-          header.classList.remove('is-bottom-collapsed');
-          collapsed = false;
+        // Always show near very top
+        if (y <= 8) {
+          if (isCollapsed) {
+            header.classList.remove('is-bottom-collapsed');
+            isCollapsed = false;
+          }
+          lastY = y;
+          return;
         }
-        lastY = y;
-        return;
-      }
 
-      // نزدیک بالای صفحه همیشه باز
-      if (y <= TOP_UNLOCK) {
-        if (collapsed) {
-          header.classList.remove('is-bottom-collapsed');
-          collapsed = false;
+        const delta = y - lastY;
+        if (Math.abs(delta) < MIN_DELTA) {
+          lastY = y;
+          return;
         }
+
+        if (!isCollapsed) {
+          // Collapse only if user is clearly going down and past HIDE_AT
+          if (delta > 0 && y >= HIDE_AT) {
+            header.classList.add('is-bottom-collapsed');
+            isCollapsed = true;
+          }
+        } else {
+          // Expand if user is going up with intent OR returns close to top
+          if (y <= SHOW_AT || delta <= -UP_DELTA) {
+            header.classList.remove('is-bottom-collapsed');
+            isCollapsed = false;
+          }
+        }
+
         lastY = y;
-        return;
-      }
-
-      const goingDown = y > lastY;
-      const goingUp = y < lastY;
-
-      if (goingDown && !collapsed && y >= COLLAPSE_AFTER) {
-        header.classList.add('is-bottom-collapsed');
-        collapsed = true;
-      } else if (goingUp && collapsed) {
-        header.classList.remove('is-bottom-collapsed');
-        collapsed = false;
-      }
-
-      lastY = y;
-    });
-  }, { passive: true });
-}
+      });
+    }, { passive: true });
+  }
 
 
 
