@@ -397,6 +397,12 @@
 
     // Hysteresis-based collapse to avoid flicker ("پرپر زدن")
     let lastY = window.scrollY || 0;
+     if (header.classList.contains('is-nav-dropdown-open')) {
+        header.classList.remove('is-bottom-collapsed');
+        isCollapsed = false; // اگر در کدت چنین متغیری هست
+        lastY = y;           // اگر در کدت چنین متغیری هست
+        return;
+      }
     let ticking = false;
     let isCollapsed = header.classList.contains('is-bottom-collapsed');
 
