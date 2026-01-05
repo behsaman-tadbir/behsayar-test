@@ -679,7 +679,7 @@ img{
 .section-title{
   font-size:1.35rem;
   font-weight:800;
-  color:var(--text-1)
+  color:var(--text-1);
   text-align: center
 }
 
