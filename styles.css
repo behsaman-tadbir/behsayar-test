@@ -1098,7 +1098,14 @@ img{
 
 
 /* ===== Step A: Header visual + layout (Desktop-first) ===== */
-.site-header{background:rgba(255,255,255,.82);backdrop-filter:saturate(140%) blur(10px)}
+.site-header{
+  background:rgba(255,255,255,.82);
+  backdrop-filter:saturate(140%) blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+  isolation: isolate;
+}
 
 .header-right--dk2{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap}
 .brand-link--plain:hover 
