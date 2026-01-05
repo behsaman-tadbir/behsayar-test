@@ -1676,6 +1676,6 @@ body.modal-open{overflow:hidden}.auth-trigger {
     line-height: 1.25;
 
     /* 👇 قلب ماجرا */
-    font-size: clamp(1.2rem, 2.6vw, 2.2rem);
+    font-size: clamp(1.2rem, 2.6vw, 2.7rem);
   }
 }
