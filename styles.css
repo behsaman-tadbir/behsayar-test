@@ -8,7 +8,6 @@
 
 /* === Patch: Search hint wrapping + dropdown visibility inside collapsible header-bottom === */
 .header-search { flex-wrap: nowrap; }
-.header-search input { min-width: 0; }
 .header-search .search-hint { white-space: nowrap; }
 
 @media (min-width: 769px) {
@@ -171,13 +170,6 @@ img{
   border-color:rgba(37,99,235,.35);
   box-shadow:0 14px 28px rgba(37,99,235,.12)
 }
-.input,input[type="text"],input[type="email"],input[type="password"],input[type="search"],select,textarea{
-  border:1px solid rgba(15,23,42,.12);
-  border-radius:14px;
-  background:rgba(255,255,255,.88);
-  padding:12px 12px;
-  min-height:44px
-}
 .product-media{
   width:100%;
   aspect-ratio:4/3;
@@ -246,7 +238,6 @@ img{
   border:none;
   background:transparent;
   outline:none;
-  font-size:0.95rem;
   color:#0f172a;
   width:100%;
   padding:6px 0
