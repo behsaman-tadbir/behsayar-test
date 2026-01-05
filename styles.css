@@ -1114,7 +1114,6 @@ img{
 
 /* Ensure dropdown panel is clickable above header layers */
 .nav-item.has-dropdown{z-index:3400}
-.nav-item.has-dropdown .dropdown-panel{z-index:9999}
 
 /* =========================
    Step C – Header/Auth polish + Responsive rules
