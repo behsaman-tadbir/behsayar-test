@@ -537,104 +537,118 @@ function ensureSeedUsers() {
   }
 
 
-  // ---------- UI sync ----------
-  function syncAuthUI() {
-    const user = getCurrentUser();
+// ---------- UI sync ----------
+function syncAuthUI() {
+  const user = getCurrentUser();
 
-    const authArea = qs('#authArea');
-    const loginBtn = qs('#headerAuthBtn');
-    const userMenu = qs('#headerUserMenu');
+  const loginBtn = qs('#headerAuthBtn');
+  const userMenu = qs('#headerUserMenu');
 
-    const mobileLoginForm = qs('#mobileLoginForm');
-    // Mobile account actions live inside the bottom sheet
-    const mobileUserMenu = qs('#mobileAccountActions');
+  const mobileLoginForm = qs('#mobileLoginForm');
+  // Mobile account actions live inside the bottom sheet
+  const mobileUserMenu = qs('#mobileAccountActions');
 
-    const bnText = qs('#bnAuthText');
+  const bnText = qs('#bnAuthText');
 
-    if (user) {
-      document.documentElement.classList.add('is-auth');
-      // Desktop
-      if (loginBtn) loginBtn.hidden = true;
-      if (userMenu) userMenu.hidden = false;
+  // ✅ Admin button next to cart (must exist in HTML)
+  const headerAdminBtn = qs('#headerAdminBtn');
+  const isAdmin = !!user && String(user.id) === '1003'; // MVP hard-safe
 
-      // Desktop menu fields
-      const avatar = qs('#userMenuAvatar');
-      if (avatar) avatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
-      const credit = qs('#userMenuCredit');
-      if (credit) credit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
-      const name = qs('#userMenuName');
-      if (name) name.textContent = user.fullName;
-      const meta = qs('#userMenuMeta');
-      if (meta) meta.textContent = user.roleLabel;
+  if (user) {
+    document.documentElement.classList.add('is-auth');
 
-      const ident = qs('#userMenuIdentity');
-      if (ident) ident.textContent = `کد: ${user.id} • کدملی: ${user.nationalId || '—'}`;
+    // Desktop
+    if (loginBtn) loginBtn.hidden = true;
+    if (userMenu) userMenu.hidden = false;
 
-      const parent = qs('#userMenuParent');
-      if (parent) {
-        if (user.role === 'student' && user.parentId) {
-          const users = LS.get(KEYS.USERS, {});
-          const p = users[user.parentId];
-          const pName = p?.fullName || '—';
-          const pPos = p?.positionTitle ? `(${p.positionTitle})` : '';
-          parent.textContent = `فرزندِ: ${pName} ${pPos}`;
-          parent.hidden = false;
-        } else {
-          parent.hidden = true;
-        }
+    // ✅ show/hide admin button in header
+    if (headerAdminBtn) headerAdminBtn.hidden = !isAdmin;
+
+    // Desktop menu fields
+    const avatar = qs('#userMenuAvatar');
+    if (avatar) avatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
+
+    const credit = qs('#userMenuCredit');
+    if (credit) credit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
+
+    const name = qs('#userMenuName');
+    if (name) name.textContent = user.fullName;
+
+    const meta = qs('#userMenuMeta');
+    if (meta) meta.textContent = user.roleLabel;
+
+    const ident = qs('#userMenuIdentity');
+    if (ident) ident.textContent = `کد: ${user.id} • کدملی: ${user.nationalId || '—'}`;
+
+    const parent = qs('#userMenuParent');
+    if (parent) {
+      if (user.role === 'student' && user.parentId) {
+        const users = LS.get(KEYS.USERS, {});
+        const p = users[user.parentId];
+        const pName = p?.fullName || '—';
+        const pPos = p?.positionTitle ? `(${p.positionTitle})` : '';
+        parent.textContent = `فرزندِ: ${pName} ${pPos}`;
+        parent.hidden = false;
+      } else {
+        parent.hidden = true;
       }
+    }
 
-// Toggle menu options (SAFE: handles duplicate IDs by hiding ALL matches)
-const adminLinks = qsa('#userMenuAdminPage');
-const ordersLinks = qsa('#userMenuOrders');
+    // ✅ Orders link: admins shouldn't see orders link (based on your logic)
+    const ordersLinks = qsa('#userMenuOrders');
+    ordersLinks.forEach((el) => { el.hidden = isAdmin; });
 
-adminLinks.forEach((el) => { el.hidden = user.role !== 'admin'; });
-ordersLinks.forEach((el) => { el.hidden = user.role === 'admin'; });
+    const orderCountTargets = ordersLinks.filter((el) => !el.hidden);
+    if (orderCountTargets.length && !isAdmin) {
+      const cnt = ordersForUser(user.id).length;
+      orderCountTargets.forEach((el) => {
+        el.textContent = cnt > 0 ? `سوابق خرید (${cnt})` : 'سوابق خرید';
+      });
+    }
 
-const orderCountTargets = ordersLinks.filter((el) => !el.hidden);
-if (orderCountTargets.length && user.role !== 'admin') {
-  const cnt = ordersForUser(user.id).length;
-  orderCountTargets.forEach((el) => {
-    el.textContent = cnt > 0 ? `سوابق خرید (${cnt})` : 'سوابق خرید';
+    // Mobile
+    if (mobileLoginForm) mobileLoginForm.hidden = true;
+    if (mobileUserMenu) mobileUserMenu.hidden = false;
+
+    const mAvatar = qs('#mobileUserAvatar');
+    if (mAvatar) mAvatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
+
+    const mCredit = qs('#mobileUserCredit');
+    if (mCredit) mCredit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
+
+    const mName = qs('#mobileUserName');
+    if (mName) mName.textContent = user.fullName;
+
+    const mMeta = qs('#mobileUserMeta');
+    if (mMeta) mMeta.textContent = user.roleLabel;
+
+    if (bnText) bnText.textContent = 'حساب';
+
+  } else {
+    document.documentElement.classList.remove('is-auth');
+
+    // Desktop
+    if (loginBtn) loginBtn.hidden = false;
+    if (userMenu) userMenu.hidden = true;
+
+    // ✅ admin button must be hidden when logged out
+    if (headerAdminBtn) headerAdminBtn.hidden = true;
+
+    // Mobile
+    if (mobileLoginForm) mobileLoginForm.hidden = false;
+    if (mobileUserMenu) mobileUserMenu.hidden = true;
+
+    if (bnText) bnText.textContent = 'ورود';
+  }
+
+  // avatar fallback if missing images
+  qsa('img').forEach((img) => {
+    if (!img.getAttribute('onerror')) {
+      img.onerror = () => { img.src = 'images/placeholder.svg'; };
+    }
   });
 }
 
-
-      // Mobile
-      if (mobileLoginForm) mobileLoginForm.hidden = true;
-      if (mobileUserMenu) mobileUserMenu.hidden = false;
-
-      const mAvatar = qs('#mobileUserAvatar');
-      if (mAvatar) mAvatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
-      const mCredit = qs('#mobileUserCredit');
-      if (mCredit) mCredit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
-      const mName = qs('#mobileUserName');
-      if (mName) mName.textContent = user.fullName;
-      const mMeta = qs('#mobileUserMeta');
-      if (mMeta) mMeta.textContent = user.roleLabel;
-
-      if (bnText) bnText.textContent = 'حساب';
-
-    } else {
-      document.documentElement.classList.remove('is-auth');
-      // Desktop
-      if (loginBtn) loginBtn.hidden = false;
-      if (userMenu) userMenu.hidden = true;
-
-      // Mobile
-      if (mobileLoginForm) mobileLoginForm.hidden = false;
-      if (mobileUserMenu) mobileUserMenu.hidden = true;
-
-      if (bnText) bnText.textContent = 'ورود';
-    }
-
-    // avatar fallback if missing images
-    qsa('img').forEach((img) => {
-      if (!img.getAttribute('onerror')) {
-        img.onerror = () => { img.src = 'images/placeholder.svg'; };
-      }
-    });
-  }
 
   
   // ---------- Cart (MVP) ----------
