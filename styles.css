@@ -196,12 +196,7 @@ img{
 .cart-badge[hidden]{
   display:none
 }
-.phone-ltr{
-  direction:ltr;
-  unicode-bidi:plaintext;
-  display:inline-block;
-  font-variant-numeric:tabular-nums
-}
+
 .site-header {
   background: #fff;
   border-bottom: 1px solid #2563eb;
