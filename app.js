@@ -37,7 +37,8 @@
   const KEYS = {
     USERS: 'bs_users',
     SESSION: 'bs_session',
-    CART: 'bs_cart'
+    CART: 'bs_cart',
+    ORDERS: 'bs_orders'
   };
 
   const DEMO_USERS = [
@@ -46,20 +47,29 @@
       password: '123',
       role: 'student',
       roleLabel: 'دانش‌آموز',
-      fullName: 'علی حسینی',
+      fullName: 'آرین حسینی',
       nationalId: '0016598255',
       fatherName: 'حسین',
-      credit: 20000000
+      mobile: '09121234567',
+      address: 'تهران، خیابان ولیعصر، کوچه ۱۲، پلاک ۸',
+      avatar: 'images/avatars/1001.png',
+      parentId: '1002',
+      credit: 5000000
     },
     {
       id: '1002',
       password: '123',
-      role: 'teacher',
-      roleLabel: 'معلم/ولی',
+      role: 'staff',
+      roleLabel: 'پرسنل',
       fullName: 'حسین حسینی',
       nationalId: '0025478844',
-      fatherName: 'پدر علی',
-      credit: 12000000
+      fatherName: 'مجید',
+      mobile: '09123334455',
+      address: 'تهران، سعادت‌آباد، خیابان سرو، پلاک ۲۱',
+      positionTitle: 'کارشناس فروش',
+      avatar: 'images/avatars/1002.png',
+      children: ['1001'],
+      credit: 5000000
     },
     {
       id: '1003',
@@ -69,17 +79,78 @@
       fullName: 'علیرضا داداشی',
       nationalId: '0012345678',
       fatherName: '',
-      credit: 50000000
+      mobile: '09120001122',
+      address: 'تهران، ونک، خیابان ملاصدرا',
+      avatar: 'images/avatars/1003.png',
+      credit: 5000000
     }
   ];
 
-  const formatIR = (n) => {
+  
+  function getOrders() {
+    return LS.get(KEYS.ORDERS, []);
+  }
+
+  function ordersForUser(userId) {
+    const all = getOrders();
+    return (Array.isArray(all) ? all : []).filter((o) => o.userId === userId);
+  }
+
+const formatIR = (n) => {
     const num = Number(n || 0);
     const s = num.toLocaleString('fa-IR');
     return s;
   };
 
-  function ensureSeedUsers() {
+  
+  const DEMO_ORDERS = [
+    {
+      id: 'TRK-24001',
+      userId: '1001',
+      createdAt: '1404/10/12',
+      status: 'موفق',
+      address: 'تحویل در مدرسه (شعبه مرکزی)',
+      paymentType: 'اعتباری/اقساط',
+      satisfaction: 5,
+      items: [
+        { productId: 'best-001', title: 'بهترین تست ریاضی', qty: 1, unitPrice: 910000 },
+        { productId: 'best-003', title: 'کتاب کمک‌آموزشی علوم', qty: 1, unitPrice: 780000 }
+      ]
+    },
+    {
+      id: 'TRK-24002',
+      userId: '1001',
+      createdAt: '1404/10/25',
+      status: 'موفق',
+      address: 'تهران، سعادت‌آباد، خیابان سرو، پلاک ۲۱',
+      paymentType: 'نقدی',
+      satisfaction: 4,
+      items: [
+        { productId: 'khi-001', title: 'خیلی سبز - عربی', qty: 1, unitPrice: 650000 }
+      ]
+    },
+    {
+      id: 'TRK-34001',
+      userId: '1002',
+      createdAt: '1404/09/18',
+      status: 'موفق',
+      address: 'تهران، سعادت‌آباد، خیابان سرو، پلاک ۲۱',
+      paymentType: 'اعتباری/اقساط',
+      satisfaction: 5,
+      items: [
+        { productId: 'srv-001', title: 'مشاوره برنامه‌ریزی درسی', qty: 1, unitPrice: 1200000 }
+      ]
+    }
+  ];
+
+  function ensureSeedOrders() {
+    const orders = LS.get(KEYS.ORDERS, null);
+    if (!orders || !Array.isArray(orders) || orders.length === 0) {
+      LS.set(KEYS.ORDERS, DEMO_ORDERS);
+    }
+  }
+
+function ensureSeedUsers() {
     const users = LS.get(KEYS.USERS, {});
     let changed = false;
 
@@ -482,7 +553,7 @@
 
       // Desktop menu fields
       const avatar = qs('#userMenuAvatar');
-      if (avatar) avatar.src = `images/avatars/${user.id}.png`;
+      if (avatar) avatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
       const credit = qs('#userMenuCredit');
       if (credit) credit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
       const name = qs('#userMenuName');
@@ -490,12 +561,41 @@
       const meta = qs('#userMenuMeta');
       if (meta) meta.textContent = user.roleLabel;
 
+      const ident = qs('#userMenuIdentity');
+      if (ident) ident.textContent = `کد: ${user.id} • کدملی: ${user.nationalId || '—'}`;
+
+      const parent = qs('#userMenuParent');
+      if (parent) {
+        if (user.role === 'student' && user.parentId) {
+          const users = LS.get(KEYS.USERS, {});
+          const p = users[user.parentId];
+          const pName = p?.fullName || '—';
+          const pPos = p?.positionTitle ? `(${p.positionTitle})` : '';
+          parent.textContent = `فرزندِ: ${pName} ${pPos}`;
+          parent.hidden = false;
+        } else {
+          parent.hidden = true;
+        }
+      }
+
+      // Toggle menu options
+      const adminLink = qs('#userMenuAdminPage');
+      const ordersLink = qs('#userMenuOrders');
+      if (adminLink) adminLink.hidden = user.role !== 'admin';
+      if (ordersLink) ordersLink.hidden = user.role === 'admin';
+
+      if (ordersLink && user.role !== 'admin') {
+        const cnt = ordersForUser(user.id).length;
+        ordersLink.textContent = cnt > 0 ? `سوابق خرید (${cnt})` : 'سوابق خرید';
+      }
+
+
       // Mobile
       if (mobileLoginForm) mobileLoginForm.hidden = true;
       if (mobileUserMenu) mobileUserMenu.hidden = false;
 
       const mAvatar = qs('#mobileUserAvatar');
-      if (mAvatar) mAvatar.src = `images/avatars/${user.id}.png`;
+      if (mAvatar) mAvatar.src = user.avatar ? user.avatar : `images/avatars/${user.id}.png`;
       const mCredit = qs('#mobileUserCredit');
       if (mCredit) mCredit.textContent = `اعتبار: ${formatIR(user.credit)} تومان`;
       const mName = qs('#mobileUserName');
@@ -526,9 +626,200 @@
     });
   }
 
-  // ---------- boot ----------
+  
+  // ---------- Cart (MVP) ----------
+  function parseFaNumber(str) {
+    const map = { '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9','٬':'',',':'', '٫':'.' };
+    return String(str || '').replace(/[۰-۹٬,٫]/g, (c) => map[c] ?? c);
+  }
+
+  function parsePriceIRR(text) {
+    const raw = parseFaNumber(text).replace(/[^\d.]/g, '');
+    const n = Number(raw || 0);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function getCart() {
+    return LS.get(KEYS.CART, { items: [] });
+  }
+
+  function setCart(cart) {
+    LS.set(KEYS.CART, cart);
+    syncCartUI();
+  }
+
+  function cartCount(cart = getCart()) {
+    return (cart.items || []).reduce((sum, it) => sum + Number(it.qty || 0), 0);
+  }
+
+  function cartTotal(cart = getCart()) {
+    return (cart.items || []).reduce((sum, it) => sum + (Number(it.qty || 0) * Number(it.unitPrice || 0)), 0);
+  }
+
+  function upsertCartItem(item) {
+    const cart = getCart();
+    cart.items = Array.isArray(cart.items) ? cart.items : [];
+    const idx = cart.items.findIndex((x) => x.productId === item.productId);
+    if (idx >= 0) {
+      cart.items[idx].qty = Number(cart.items[idx].qty || 0) + Number(item.qty || 1);
+    } else {
+      cart.items.push({ ...item, qty: Number(item.qty || 1) });
+    }
+    setCart(cart);
+  }
+
+  function changeCartQty(productId, delta) {
+    const cart = getCart();
+    cart.items = Array.isArray(cart.items) ? cart.items : [];
+    const idx = cart.items.findIndex((x) => x.productId === productId);
+    if (idx === -1) return;
+    const next = Number(cart.items[idx].qty || 0) + Number(delta || 0);
+    if (next <= 0) cart.items.splice(idx, 1);
+    else cart.items[idx].qty = next;
+    setCart(cart);
+    renderCartDrawer();
+  }
+
+  function removeCartItem(productId) {
+    const cart = getCart();
+    cart.items = Array.isArray(cart.items) ? cart.items : [];
+    cart.items = cart.items.filter((x) => x.productId !== productId);
+    setCart(cart);
+    renderCartDrawer();
+  }
+
+  function syncCartUI() {
+    const countEl = qs('#headerCartCount');
+    if (countEl) countEl.textContent = String(cartCount());
+  }
+
+  function openCartDrawer() {
+    const drawer = qs('#cartDrawer');
+    if (!drawer) return;
+    drawer.hidden = false;
+    const btn = qs('#headerCartBtn');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+    renderCartDrawer();
+  }
+
+  function closeCartDrawer() {
+    const drawer = qs('#cartDrawer');
+    if (!drawer) return;
+    drawer.hidden = true;
+    const btn = qs('#headerCartBtn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderCartDrawer() {
+    const drawer = qs('#cartDrawer');
+    const list = qs('#cartItems');
+    const totalEl = qs('#cartTotal');
+    const hintEl = qs('#cartHint');
+    const checkoutBtn = qs('#cartCheckoutBtn');
+    if (!drawer || !list || !totalEl) return;
+
+    const cart = getCart();
+    const items = Array.isArray(cart.items) ? cart.items : [];
+
+    if (items.length === 0) {
+      list.innerHTML = '<div class="muted">سبد خرید شما خالی است.</div>';
+      totalEl.textContent = '0';
+      if (hintEl) hintEl.textContent = 'برای اضافه کردن محصول، روی «افزودن به سبد» بزنید.';
+      if (checkoutBtn) checkoutBtn.classList.add('is-disabled');
+      return;
+    }
+
+    const rows = items.map((it) => {
+      const title = it.title || 'محصول';
+      const price = formatIR(it.unitPrice || 0);
+      return `
+        <div class="cart-item" data-pid="${it.productId}">
+          <div class="cart-item__meta">
+            <div class="cart-item__title">${title}</div>
+            <div class="cart-item__price">${price} تومان</div>
+          </div>
+          <div class="cart-item__qty">
+            <button class="cart-qty-btn" type="button" data-qty="-1" aria-label="کم کردن">−</button>
+            <span class="cart-qty-val">${it.qty}</span>
+            <button class="cart-qty-btn" type="button" data-qty="1" aria-label="زیاد کردن">+</button>
+          </div>
+          <button class="cart-item__remove" type="button" data-remove aria-label="حذف">حذف</button>
+        </div>
+      `;
+    }).join('');
+
+    list.innerHTML = rows;
+    totalEl.textContent = `${formatIR(cartTotal(cart))} تومان`;
+
+    const user = getCurrentUser();
+    if (hintEl) {
+      hintEl.textContent = user ? `اعتبار شما: ${formatIR(user.credit)} تومان` : 'برای ادامه و پرداخت، ابتدا وارد شوید.';
+    }
+    if (checkoutBtn) {
+      checkoutBtn.classList.toggle('is-disabled', !user);
+      checkoutBtn.setAttribute('href', user ? 'checkout.html' : '#');
+    }
+  }
+
+  function bindCartUI() {
+    const btn = qs('#headerCartBtn');
+    if (btn) btn.addEventListener('click', () => openCartDrawer());
+
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+
+      if (t.matches('[data-cart-close]')) {
+        closeCartDrawer();
+      }
+
+      const itemEl = t.closest('.cart-item');
+      if (itemEl && (t.matches('[data-qty]') || t.closest('[data-qty]'))) {
+        const btn = t.matches('[data-qty]') ? t : t.closest('[data-qty]');
+        const delta = Number(btn?.getAttribute('data-qty') || 0);
+        const pid = itemEl.getAttribute('data-pid');
+        if (pid) changeCartQty(pid, delta);
+      }
+
+      if (itemEl && (t.matches('[data-remove]') || t.closest('[data-remove]'))) {
+        const pid = itemEl.getAttribute('data-pid');
+        if (pid) removeCartItem(pid);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCartDrawer();
+    });
+  }
+
+  function bindAddToCart() {
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      const btn = t.closest('.js-add-to-cart');
+      if (!btn) return;
+
+      const pid = btn.getAttribute('data-product-id') || btn.getAttribute('data-id') || '';
+      const card = btn.closest('.product-card');
+      const titleEl = card ? card.querySelector('.product-title') : null;
+      const priceEl = card ? card.querySelector('.product-price .price-now') : null;
+
+      const title = titleEl ? titleEl.textContent.trim() : 'محصول';
+      const unitPrice = priceEl ? parsePriceIRR(priceEl.textContent) : 0;
+
+      if (!pid) return;
+      upsertCartItem({ productId: pid, title, unitPrice, qty: 1 });
+
+      // micro feedback
+      btn.classList.add('is-added');
+      setTimeout(() => btn.classList.remove('is-added'), 600);
+    });
+  }
+
+// ---------- boot ----------
   function boot() {
     ensureSeedUsers();
+    ensureSeedOrders();
     bindHeaderAuth();
     bindUserMenu();
     bindSheets();
@@ -536,7 +827,10 @@
     bindMobileCats();
     bindCategoriesDropdown();
     bindHeaderBottomCollapse();
+    bindCartUI();
+    bindAddToCart();
     syncAuthUI();
+    syncCartUI();
   }
 
   if (document.readyState === 'loading') {

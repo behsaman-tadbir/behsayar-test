@@ -69,11 +69,21 @@
 <div class="um-credit" id="userMenuCredit">اعتبار: —</div>
 <div class="um-name" id="userMenuName">نام و نام خانوادگی: —</div>
 <div class="um-meta" id="userMenuMeta">سمت: —</div>
+<div class="um-sub" id="userMenuIdentity">—</div>
+<div class="um-sub" id="userMenuParent">—</div>
 </div>
-<a class="user-menu__link" href="#" id="userMenuCart">سبد خرید</a>
-<a class="user-menu__link" href="#" id="userMenuCart">سوابق خرید</a>
+
+<a class="user-menu__link" href="dashboard.html" id="userMenuAdminPage" hidden>صفحه مدیر</a>
+<a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
 <a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
 <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
+</div>
+
+<button class="header-cart" id="headerCartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="سبد خرید">
+  <span class="header-cart__ico" aria-hidden="true">🛒</span>
+  <span class="header-cart__badge" id="headerCartCount" aria-label="تعداد اقلام سبد">0</span>
+</button>
+
 </div>
 </div>
 </div>
@@ -1096,5 +1106,33 @@
 </div>
 </div>
 </div>
+
+<!-- Cart Drawer -->
+<div class="cart-drawer" id="cartDrawer" hidden role="dialog" aria-modal="true" aria-label="سبد خرید">
+  <div class="cart-drawer__backdrop" data-cart-close></div>
+  <div class="cart-drawer__panel" role="document">
+    <div class="cart-drawer__head">
+      <div class="cart-drawer__title">سبد خرید</div>
+      <button class="cart-drawer__close" type="button" data-cart-close aria-label="بستن">×</button>
+    </div>
+    <div class="cart-drawer__body">
+      <div class="cart-items" id="cartItems"></div>
+    </div>
+    <div class="cart-drawer__foot">
+      <div class="cart-summary">
+        <div class="cart-summary__row">
+          <span>جمع کل</span>
+          <strong id="cartTotal">0</strong>
+        </div>
+        <div class="cart-summary__hint" id="cartHint"></div>
+      </div>
+      <div class="cart-actions">
+        <button class="btn btn-outline" type="button" data-cart-close>ادامه خرید</button>
+        <a class="btn btn-primary" href="checkout.html" id="cartCheckoutBtn">ادامه و پرداخت</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

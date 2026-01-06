@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css"/>
   <script defer src="app.js"></script>
 </head>
-<body class="page-home">
+<body class="page-products">
 <header class="site-header">
 <div class="container">
 <!-- ===== Header Top (Desktop) ===== -->
@@ -68,11 +68,21 @@
 <div class="um-credit" id="userMenuCredit">اعتبار: —</div>
 <div class="um-name" id="userMenuName">نام و نام خانوادگی: —</div>
 <div class="um-meta" id="userMenuMeta">سمت: —</div>
+<div class="um-sub" id="userMenuIdentity">—</div>
+<div class="um-sub" id="userMenuParent">—</div>
 </div>
-<a class="user-menu__link" href="#" id="userMenuCart">سبد خرید</a>
-<a class="user-menu__link" href="#" id="userMenuCart">سوابق خرید</a>
+
+<a class="user-menu__link" href="dashboard.html" id="userMenuAdminPage" hidden>صفحه مدیر</a>
+<a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
 <a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
 <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
+</div>
+
+<button class="header-cart" id="headerCartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="سبد خرید">
+  <span class="header-cart__ico" aria-hidden="true">🛒</span>
+  <span class="header-cart__badge" id="headerCartCount" aria-label="تعداد اقلام سبد">0</span>
+</button>
+
 </div>
 </div>
 </div>
@@ -658,74 +668,32 @@
     </div>
   </footer>
 
-  <script>
-    (function () {
-      const qs = (s, r=document) => r.querySelector(s);
-      const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
+  <!-- Cart Drawer -->
+<div class="cart-drawer" id="cartDrawer" hidden role="dialog" aria-modal="true" aria-label="سبد خرید">
+  <div class="cart-drawer__backdrop" data-cart-close></div>
+  <div class="cart-drawer__panel" role="document">
+    <div class="cart-drawer__head">
+      <div class="cart-drawer__title">سبد خرید</div>
+      <button class="cart-drawer__close" type="button" data-cart-close aria-label="بستن">×</button>
+    </div>
+    <div class="cart-drawer__body">
+      <div class="cart-items" id="cartItems"></div>
+    </div>
+    <div class="cart-drawer__foot">
+      <div class="cart-summary">
+        <div class="cart-summary__row">
+          <span>جمع کل</span>
+          <strong id="cartTotal">0</strong>
+        </div>
+        <div class="cart-summary__hint" id="cartHint"></div>
+      </div>
+      <div class="cart-actions">
+        <button class="btn btn-outline" type="button" data-cart-close>ادامه خرید</button>
+        <a class="btn btn-primary" href="checkout.html" id="cartCheckoutBtn">ادامه و پرداخت</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-      const search = qs('#productsSearch');
-      const catSel = qs('#productsCategory');
-      const sortSel = qs('#productsSort');
-      const grid = qs('#productsGrid');
-      if (!search || !catSel || !sortSel || !grid) return;
-
-      const cards = qsa('.product-card', grid);
-
-      function normalize(str){ return (str || '').toString().trim().toLowerCase(); }
-
-      function applyFilters(){
-        const q = normalize(search.value);
-        const cat = catSel.value;
-
-        cards.forEach(card => {
-          const title = normalize(card.dataset.title);
-          const c = card.dataset.cat || 'all';
-          const matchQ = !q || title.includes(q);
-          const matchCat = (cat === 'all') || (c === cat);
-          card.style.display = (matchQ && matchCat) ? '' : 'none';
-        });
-
-        applySort();
-      }
-
-      function applySort(){
-        const mode = sortSel.value;
-
-        const visible = cards.filter(c => c.style.display !== 'none');
-        const hidden = cards.filter(c => c.style.display === 'none');
-
-        const getNum = (el, key) => Number(el.dataset[key] || 0);
-
-        visible.sort((a,b) => {
-          if (mode === 'best') {
-            const w = {best:0, new:1, deal:2};
-            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
-          }
-          if (mode === 'new') {
-            const w = {new:0, best:1, deal:2};
-            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
-          }
-          if (mode === 'discount_desc') return getNum(b,'discount') - getNum(a,'discount');
-          if (mode === 'price_asc') return getNum(a,'price') - getNum(b,'price');
-          if (mode === 'price_desc') return getNum(b,'price') - getNum(a,'price');
-          return 0;
-        });
-
-        [...visible, ...hidden].forEach(el => grid.appendChild(el));
-      }
-
-      const url = new URL(window.location.href);
-      const urlCat = url.searchParams.get('cat');
-      const urlQ = url.searchParams.get('q');
-      if (urlCat) catSel.value = urlCat;
-      if (urlQ) search.value = urlQ;
-
-      search.addEventListener('input', applyFilters);
-      catSel.addEventListener('change', applyFilters);
-      sortSel.addEventListener('change', applySort);
-
-      applyFilters();
-    })();
-  </script>
 </body>
 </html>
