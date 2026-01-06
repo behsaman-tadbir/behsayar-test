@@ -2055,7 +2055,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 
 .checkout-msg {
-  margin-top: 10px;
+  margin-top: 90%;
   padding: 10px 12px;
   border-radius: var(--r-md);
   border: 1px solid rgba(56,189,248,.35);
