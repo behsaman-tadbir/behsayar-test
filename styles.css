@@ -1213,6 +1213,28 @@ img{
   }
 }
 
+#productsGrid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 768px){
+  #productsGrid{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  #productsCategory,
+  #productsSort{
+    flex: 1 1 160px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px){
+  #productsGrid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 @media(max-width:560px){.post-title{font-size:1.25rem}} .auth-card{max-width:520px;margin:0 auto;background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.06)}.auth-title{font-size:1.35rem;font-weight:900;color:var(--text-1)}.auth-sub{margin-top:6px;color:var(--text-2);font-size:0.95rem}.auth-form{margin-top:14px;display:grid;gap:12px}.field{display:grid;gap:8px}.field span{font-weight:700;color:var(--text-1);font-size:0.9rem}.field input,.field select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(15,23,42,0.14);background:#f8fafc;outline:none;font-family:inherit}.field input:focus,.field select:focus{border-color:rgba(37,99,235,0.55);box-shadow:0 0 0 4px rgba(37,99,235,0.14)}.auth-note{min-height:22px;font-weight:700;color:#b45309}.auth-links{display:flex;gap:8px;justify-content:center;color:var(--text-2);font-size:0.9rem}.auth-links .link{font-weight:900;color:#2563eb}.cart-layout{display:grid;grid-template-columns:1.4fr 0.6fr;gap:14px;align-items:start}.cart-summary{position:sticky;top:92px}@media(max-width:768px){.cart-layout{grid-template-columns:1fr}.cart-summary{position:static;order:2}.cart-items{order:1}}
