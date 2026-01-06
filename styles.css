@@ -1922,10 +1922,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 .pay-modal {
   position: fixed;
   inset: 0;
-  z-index: 4000;     /* بالاتر از هدر/درآور */
-  isolation: isolate; /* قطع stacking context های عجیب */
-}
-
+  z-index: 1200;
 }
 .checkout-overlay[hidden],
 .pay-modal[hidden] { display: none !important; }
@@ -1940,37 +1937,18 @@ body.modal-open{overflow:hidden}.auth-trigger {
 
 .checkout-overlay__panel,
 .pay-modal__panel {
-  position: fixed; /* ✅ مهم */
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin: 0 auto;
   width: min(980px, calc(100% - 24px));
   background: var(--surface);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
-  max-height: calc(100dvh - 48px); /* ✅ بهتر از 100vh برای موبایل */
+  top: 24px;
+  max-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  z-index: 20001; /* یک لایه بالاتر از بک‌دراپ */
 }
-@media (max-width: 768px) {
-  .checkout-overlay__panel,
-  .pay-modal__panel {
-    top: 0;
-    left: 0;
-    transform: none;
-    width: 100vw;
-    max-height: 100dvh;
-    border-radius: 0;
-  }
-}
-.checkout-overlay__panel,
-.pay-modal__panel{
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-
 
 .pay-modal__panel {
   width: min(520px, calc(100% - 24px));
