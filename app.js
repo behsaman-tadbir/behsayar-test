@@ -736,6 +736,7 @@ function ensureSeedUsers() {
         <div class="cart-item" data-pid="${it.productId}">
           <div class="cart-item__meta">
             <div class="cart-item__title">${title}</div>
+            ${it.meta ? `<div class="cart-item__meta">${it.meta}</div>` : ''}
             <div class="cart-item__price">${price} تومان</div>
           </div>
           <div class="cart-item__qty">
