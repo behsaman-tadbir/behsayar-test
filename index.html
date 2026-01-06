@@ -1134,5 +1134,110 @@
   </div>
 </div>
 
+
+<!-- Checkout Overlay (MVP) -->
+<div class="checkout-overlay" id="checkoutOverlay" hidden role="dialog" aria-modal="true" aria-label="تسویه حساب">
+  <div class="checkout-overlay__backdrop" data-checkout-close></div>
+  <div class="checkout-overlay__panel" role="document">
+    <div class="checkout-head">
+      <div class="checkout-head__title">تسویه حساب</div>
+      <button class="checkout-head__close" type="button" data-checkout-close aria-label="بستن">×</button>
+    </div>
+
+    <div class="checkout-body">
+      <div class="checkout-grid">
+        <section class="checkout-card">
+          <div class="checkout-card__title">خلاصه سفارش</div>
+          <div class="checkout-items" id="checkoutItems"></div>
+          <div class="checkout-totals">
+            <div class="checkout-row"><span>جمع کل</span><strong id="checkoutTotal">0</strong></div>
+            <div class="checkout-row"><span>میزان سود این خرید</span><strong id="checkoutSavings">0</strong></div>
+          </div>
+          <div class="checkout-discount">
+            <input class="input" id="checkoutDiscountCode" type="text" placeholder="کد تخفیف" autocomplete="off">
+            <button class="btn btn-outline" type="button" id="checkoutApplyDiscount">اعمال</button>
+          </div>
+          <div class="checkout-msg" id="checkoutMsg" hidden></div>
+        </section>
+
+        <aside class="checkout-side">
+          <section class="checkout-card checkout-card--credit">
+            <div class="checkout-card__title">اعتبار شما</div>
+            <div class="checkout-credit">
+              <div class="checkout-credit__value" id="checkoutCredit">0</div>
+              <div class="checkout-credit__unit">تومان</div>
+            </div>
+            <div class="checkout-remaining">
+              <span>باقیمانده پس از خرید</span>
+              <strong id="checkoutRemaining">0</strong>
+            </div>
+          </section>
+
+          <section class="checkout-card">
+            <div class="checkout-card__title">روش پرداخت</div>
+            <div class="checkout-paymethod">
+              <label class="radio">
+                <input type="radio" name="payMethod" value="cash" checked>
+                <span>پرداخت نقدی</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="payMethod" value="credit">
+                <span>اعتباری / اقساط</span>
+              </label>
+            </div>
+
+            <div class="checkout-method checkout-method--cash" id="checkoutCashBox">
+              <button class="btn btn-primary btn-block" type="button" id="checkoutPayCash">پرداخت نقدی</button>
+            </div>
+
+            <div class="checkout-method checkout-method--credit" id="checkoutCreditBox" hidden>
+              <div class="installments-title">انتخاب شرایط اقساط</div>
+              <div class="installments" id="installmentPlans"></div>
+              <div class="installments-preview" id="installmentPreview" hidden></div>
+              <button class="btn btn-primary btn-block" type="button" id="checkoutConfirmCredit" disabled>تایید و ثبت خرید</button>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal (Symbolic Gateway) -->
+<div class="pay-modal" id="payModal" hidden role="dialog" aria-modal="true" aria-label="درگاه پرداخت">
+  <div class="pay-modal__backdrop" data-pay-close></div>
+  <div class="pay-modal__panel" role="document">
+    <div class="pay-head">
+      <div class="pay-head__title">درگاه پرداخت</div>
+      <button class="pay-head__close" type="button" data-pay-close aria-label="بستن">×</button>
+    </div>
+    <form class="pay-form" id="payForm">
+      <div class="pay-row">
+        <label class="label">شماره کارت</label>
+        <input class="input" id="payCard" inputmode="numeric" autocomplete="cc-number" placeholder="____-____-____-____" required>
+      </div>
+      <div class="pay-grid">
+        <div class="pay-row">
+          <label class="label">تاریخ اعتبار</label>
+          <input class="input" id="payExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" required>
+        </div>
+        <div class="pay-row">
+          <label class="label">CVV2</label>
+          <input class="input" id="payCvv" inputmode="numeric" autocomplete="cc-csc" placeholder="***" required>
+        </div>
+      </div>
+      <div class="pay-row">
+        <label class="label">رمز پویا</label>
+        <input class="input" id="payOtp" inputmode="numeric" placeholder="******" required>
+      </div>
+      <div class="pay-actions">
+        <button class="btn btn-outline" type="button" data-pay-close>انصراف</button>
+        <button class="btn btn-primary" type="submit">پرداخت</button>
+      </div>
+      <div class="pay-hint" id="payHint"></div>
+    </form>
+  </div>
+</div>
+
 </body>
 </html>

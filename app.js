@@ -102,6 +102,16 @@ const formatIR = (n) => {
     return s;
   };
 
+  function escapeHTML(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+
   
   const DEMO_ORDERS = [
     {
@@ -736,7 +746,6 @@ function ensureSeedUsers() {
         <div class="cart-item" data-pid="${it.productId}">
           <div class="cart-item__meta">
             <div class="cart-item__title">${title}</div>
-            ${it.meta ? `<div class="cart-item__meta">${it.meta}</div>` : ''}
             <div class="cart-item__price">${price} تومان</div>
           </div>
           <div class="cart-item__qty">
@@ -758,8 +767,8 @@ function ensureSeedUsers() {
     }
     if (checkoutBtn) {
       checkoutBtn.classList.toggle('is-disabled', !user);
-      checkoutBtn.setAttribute('href', user ? 'checkout.html' : '#');
-    }
+      checkoutBtn.setAttribute('href', '#');
+}
   }
 
   function bindCartUI() {
@@ -830,6 +839,368 @@ function ensureSeedUsers() {
     });
   }
 
+  // ---------- Checkout (Overlay MVP) ----------
+  const PLANS_KEY = 'bs_plans';
+  const DEFAULT_PLANS = [
+    { id: 'p30_2', title: '۳۰٪ نقد + ۲ قسط', downPercent: 30, installments: 2 },
+    { id: 'p50_3', title: '۵۰٪ نقد + ۳ قسط', downPercent: 50, installments: 3 },
+    { id: 'p0_4',  title: '۴ قسط بدون پیش‌پرداخت', downPercent: 0, installments: 4 }
+  ];
+
+  function getPlans() {
+    const plans = LS.get(PLANS_KEY, null);
+    if (!plans || !Array.isArray(plans) || plans.length === 0) {
+      LS.set(PLANS_KEY, DEFAULT_PLANS);
+      return DEFAULT_PLANS;
+    }
+    return plans;
+  }
+
+  const checkoutState = {
+    discountCode: '',
+    discountPercent: 0,
+    payMethod: 'cash',
+    selectedPlanId: ''
+  };
+
+  function openCheckoutOverlay() {
+    const ov = qs('#checkoutOverlay');
+    if (!ov) return;
+    ov.hidden = false;
+    document.body.classList.add('modal-open');
+    renderCheckout();
+  }
+
+  function closeCheckoutOverlay() {
+    const ov = qs('#checkoutOverlay');
+    if (!ov) return;
+    ov.hidden = true;
+    document.body.classList.remove('modal-open');
+    checkoutState.selectedPlanId = '';
+    checkoutState.discountCode = '';
+    checkoutState.discountPercent = 0;
+    const msg = qs('#checkoutMsg');
+    if (msg) { msg.hidden = true; msg.textContent = ''; }
+  }
+
+  function openPayModal(totalText) {
+    const m = qs('#payModal');
+    if (!m) return;
+    m.hidden = false;
+    document.body.classList.add('modal-open');
+    const hint = qs('#payHint');
+    if (hint) hint.textContent = totalText ? `مبلغ قابل پرداخت: ${totalText}` : '';
+  }
+
+  function closePayModal() {
+    const m = qs('#payModal');
+    if (!m) return;
+    m.hidden = true;
+    document.body.classList.remove('modal-open');
+    const form = qs('#payForm');
+    form && form.reset();
+  }
+
+  function computeTotals(cart) {
+    const items = Array.isArray(cart.items) ? cart.items : [];
+    const total = cartTotal(cart);
+
+    // savings: difference between oldUnitPrice and unitPrice when available
+    const savings = items.reduce((sum, it) => {
+      const oldP = Number(it.oldUnitPrice || 0);
+      const newP = Number(it.unitPrice || 0);
+      const qty = Number(it.qty || 0);
+      const s = oldP > newP ? (oldP - newP) * qty : 0;
+      return sum + s;
+    }, 0);
+
+    const discount = Math.round(total * (checkoutState.discountPercent / 100));
+    const payable = Math.max(0, total - discount);
+
+    return { total, savings, discount, payable };
+  }
+
+  function renderCheckout() {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const cart = getCart();
+    const items = Array.isArray(cart.items) ? cart.items : [];
+
+    const itemsEl = qs('#checkoutItems');
+    const totalEl = qs('#checkoutTotal');
+    const savingsEl = qs('#checkoutSavings');
+    const creditEl = qs('#checkoutCredit');
+    const remEl = qs('#checkoutRemaining');
+
+    const cashBox = qs('#checkoutCashBox');
+    const creditBox = qs('#checkoutCreditBox');
+
+    const { total, savings, payable } = computeTotals(cart);
+
+    if (itemsEl) {
+      if (items.length === 0) {
+        itemsEl.innerHTML = '<div class="muted">سبد خرید شما خالی است.</div>';
+      } else {
+        itemsEl.innerHTML = items.map((it) => {
+          const name = escapeHTML(it.title || 'محصول');
+          const meta = it.meta ? `<div class="checkout-item__meta">${escapeHTML(it.meta)}</div>` : '';
+          const qty = Number(it.qty || 0);
+          const line = formatIR(qty * Number(it.unitPrice || 0));
+          return `
+            <div class="checkout-item">
+              <div class="checkout-item__left">
+                <div class="checkout-item__name">${name}</div>
+                ${meta}
+                <div class="checkout-item__qty">تعداد: ${qty}</div>
+              </div>
+              <div class="checkout-item__price">${line} تومان</div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    if (totalEl) totalEl.textContent = `${formatIR(payable)} تومان`;
+    if (savingsEl) savingsEl.textContent = `${formatIR(savings)} تومان`;
+    if (creditEl) creditEl.textContent = `${formatIR(user.credit)}`;
+    if (remEl) remEl.textContent = `${formatIR(Math.max(0, Number(user.credit || 0) - payable))} تومان`;
+
+    // method toggle
+    if (cashBox && creditBox) {
+      cashBox.hidden = checkoutState.payMethod !== 'cash';
+      creditBox.hidden = checkoutState.payMethod !== 'credit';
+    }
+
+    renderPlans(payable);
+  }
+
+  function renderPlans(payable) {
+    const host = qs('#installmentPlans');
+    const preview = qs('#installmentPreview');
+    const confirmBtn = qs('#checkoutConfirmCredit');
+    if (!host) return;
+
+    const plans = getPlans();
+    host.innerHTML = plans.map((p) => {
+      const meta = p.downPercent > 0
+        ? `پیش‌پرداخت: ${p.downPercent}٪ • تعداد اقساط: ${p.installments}`
+        : `بدون پیش‌پرداخت • تعداد اقساط: ${p.installments}`;
+      const sel = checkoutState.selectedPlanId === p.id ? ' is-selected' : '';
+      return `
+        <div class="plan${sel}" role="button" tabindex="0" data-plan="${p.id}">
+          <div class="plan__title">${escapeHTML(p.title)}</div>
+          <div class="plan__meta">${escapeHTML(meta)}</div>
+        </div>
+      `;
+    }).join('');
+
+    const p = plans.find((x) => x.id === checkoutState.selectedPlanId);
+    if (!p) {
+      if (preview) preview.hidden = true;
+      if (confirmBtn) confirmBtn.disabled = true;
+      return;
+    }
+
+    const down = Math.round(payable * (p.downPercent / 100));
+    const rest = Math.max(0, payable - down);
+    const each = p.installments > 0 ? Math.ceil(rest / p.installments) : 0;
+
+    if (preview) {
+      preview.hidden = false;
+      preview.innerHTML = `
+        <div><strong>پیش‌پرداخت:</strong> ${formatIR(down)} تومان</div>
+        <div><strong>مبلغ هر قسط:</strong> ${formatIR(each)} تومان</div>
+        <div class="muted">زمان‌بندی اقساط پس از تایید نمایش داده می‌شود.</div>
+      `;
+    }
+    if (confirmBtn) confirmBtn.disabled = false;
+  }
+
+  function finalizeOrder({ paymentType, installmentPlan }) {
+    const user = getCurrentUser();
+    if (!user) return { ok: false, msg: 'ابتدا وارد شوید.' };
+
+    const cart = getCart();
+    const items = Array.isArray(cart.items) ? cart.items : [];
+    if (items.length === 0) return { ok: false, msg: 'سبد خرید خالی است.' };
+
+    const { payable, savings, discount } = computeTotals(cart);
+
+    // credit check for credit method
+    if (paymentType !== 'نقدی') {
+      if (Number(user.credit || 0) < payable) {
+        return { ok: false, msg: 'اعتبار کافی نیست.' };
+      }
+      // deduct credit
+      const users = LS.get(KEYS.USERS, {});
+      const nextUser = { ...user, credit: Number(user.credit || 0) - payable };
+      users[user.id] = nextUser;
+      LS.set(KEYS.USERS, users);
+    }
+
+    const now = new Date();
+    const createdAt = now.toLocaleDateString('fa-IR');
+    const id = `TRK-${Math.floor(10000 + Math.random() * 89999)}`;
+
+    const order = {
+      id,
+      userId: user.id,
+      createdAt,
+      status: 'موفق',
+      address: user.address || '—',
+      paymentType,
+      discount,
+      savings,
+      installmentPlan: installmentPlan || null,
+      items: items.map((it) => ({
+        productId: it.productId,
+        title: it.title,
+        qty: it.qty,
+        unitPrice: it.unitPrice
+      }))
+    };
+
+    const orders = getOrders();
+    orders.push(order);
+    LS.set(KEYS.ORDERS, orders);
+
+    // clear cart
+    LS.set(KEYS.CART, { items: [] });
+    syncCartUI();
+    syncAuthUI();
+    renderCartDrawer();
+
+    return { ok: true, order };
+  }
+
+  function bindCheckoutUI() {
+    // open checkout from cart
+    on(document, 'click', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+
+      if (t.closest('#cartCheckoutBtn')) {
+        e.preventDefault();
+        const user = getCurrentUser();
+        if (!user) {
+          // open login popover/sheet
+          const desktopBtn = qs('#headerAuthBtn');
+          if (desktopBtn && !desktopBtn.hidden) desktopBtn.click();
+          const msg = qs('#cartHint');
+          if (msg) msg.textContent = 'برای ادامه و پرداخت، ابتدا وارد شوید.';
+          return;
+        }
+        closeCartDrawer();
+        openCheckoutOverlay();
+      }
+
+      if (t.matches('[data-checkout-close]')) {
+        closeCheckoutOverlay();
+      }
+
+      if (t.matches('[data-pay-close]')) {
+        closePayModal();
+      }
+
+      const plan = t.closest('[data-plan]');
+      if (plan) {
+        const pid = plan.getAttribute('data-plan');
+        checkoutState.selectedPlanId = pid || '';
+        renderCheckout();
+      }
+    });
+
+    // pay method change
+    on(document, 'change', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      if (t.matches('input[name="payMethod"]')) {
+        checkoutState.payMethod = t.value === 'credit' ? 'credit' : 'cash';
+        renderCheckout();
+      }
+    });
+
+    // discount apply
+    const applyBtn = qs('#checkoutApplyDiscount');
+    on(applyBtn, 'click', () => {
+      const input = qs('#checkoutDiscountCode');
+      const code = String(input?.value || '').trim().toUpperCase();
+      checkoutState.discountCode = code;
+
+      // demo codes
+      if (code === 'BEHSAYAR10') checkoutState.discountPercent = 10;
+      else if (code === 'FAMILY15') checkoutState.discountPercent = 15;
+      else checkoutState.discountPercent = 0;
+
+      const msg = qs('#checkoutMsg');
+      if (msg) {
+        if (checkoutState.discountPercent > 0) {
+          msg.textContent = `کد تخفیف اعمال شد (${checkoutState.discountPercent}٪).`;
+          msg.hidden = false;
+        } else if (code) {
+          msg.textContent = 'کد تخفیف معتبر نیست.';
+          msg.hidden = false;
+        } else {
+          msg.textContent = '';
+          msg.hidden = true;
+        }
+      }
+      renderCheckout();
+    });
+
+    // cash pay
+    const cashBtn = qs('#checkoutPayCash');
+    on(cashBtn, 'click', () => {
+      const user = getCurrentUser();
+      if (!user) return;
+      const cart = getCart();
+      const { payable } = computeTotals(cart);
+      if (payable <= 0) return;
+      openPayModal(`${formatIR(payable)} تومان`);
+    });
+
+    // pay form submit -> success
+    const payForm = qs('#payForm');
+    on(payForm, 'submit', (e) => {
+      e.preventDefault();
+      const res = finalizeOrder({ paymentType: 'نقدی' });
+      const msg = qs('#checkoutMsg');
+      if (!res.ok) {
+        if (msg) { msg.textContent = res.msg; msg.hidden = false; }
+        return;
+      }
+      closePayModal();
+      if (msg) {
+        msg.textContent = `پرداخت موفق بود. کد رهگیری: ${res.order.id}`;
+        msg.hidden = false;
+      }
+      renderCheckout();
+    });
+
+    // credit confirm
+    const creditConfirm = qs('#checkoutConfirmCredit');
+    on(creditConfirm, 'click', () => {
+      const plans = getPlans();
+      const p = plans.find((x) => x.id === checkoutState.selectedPlanId);
+      const msg = qs('#checkoutMsg');
+      if (!p) {
+        if (msg) { msg.textContent = 'لطفاً یک شرایط اقساط را انتخاب کنید.'; msg.hidden = false; }
+        return;
+      }
+      const res = finalizeOrder({ paymentType: 'اعتباری/اقساط', installmentPlan: p });
+      if (!res.ok) {
+        if (msg) { msg.textContent = res.msg; msg.hidden = false; }
+        return;
+      }
+      if (msg) {
+        msg.textContent = `خرید با موفقیت ثبت شد. کد رهگیری: ${res.order.id}`;
+        msg.hidden = false;
+      }
+      renderCheckout();
+    });
+  }
+
 // ---------- boot ----------
   function boot() {
     ensureSeedUsers();
@@ -843,6 +1214,7 @@ function ensureSeedUsers() {
     bindHeaderBottomCollapse();
     bindCartUI();
     bindAddToCart();
+    bindCheckoutUI();
     syncAuthUI();
     syncCartUI();
   }
