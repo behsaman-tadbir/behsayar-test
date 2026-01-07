@@ -1446,7 +1446,7 @@ function initProductsPage(){
   const grade = document.getElementById('productsGrade');
   const sort = document.getElementById('productsSort');
 
-  const cards = Array.from(grid.querySelectorAll('.product-card'));
+  const cards = Array.from(grid.querySelectorAll('.product-card[data-id]'));
 
   function norm(s){
     return (s || '').toString().trim().toLowerCase();
