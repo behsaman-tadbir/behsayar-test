@@ -1352,6 +1352,7 @@ function ensureSeedUsers() {
     bindOrdersUI();
     syncAuthUI();
     syncCartUI();
+    initProductsPage();
   }
 
   if (document.readyState === 'loading') {
