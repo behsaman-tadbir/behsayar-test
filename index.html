@@ -31,52 +31,71 @@
 </form>
 </div>
 <div class="header-left header-left--dk2">
-<div class="auth-area" id="authArea">
-<!-- Logged out -->
-<button aria-expanded="false" aria-haspopup="dialog" class="auth-trigger" id="headerAuthBtn" type="button"><span aria-hidden="true" class="auth-ico">⎆</span> ورود</button>
-<div class="auth-modal" hidden="" id="headerAuthPopover" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
-  <div class="auth-modal__dialog" role="document">
-    <div class="auth-modal__head">
-      <div class="auth-modal__title" id="authModalTitle">ورود به سامانه</div>
-      <button type="button" class="auth-modal__close" id="headerAuthClose" aria-label="بستن">×</button>
-    </div>
-<form class="auth-form" id="headerInlineLoginForm">
-<div class="auth-row">
-<label class="auth-label" for="headerLoginUsername">نام کاربری</label>
-<input autocomplete="username" class="auth-input" id="headerLoginUsername" inputmode="text" placeholder="نام کاربری خود را وارد کنید" required=""/>
-</div>
-<div class="auth-row">
-<label class="auth-label" for="headerLoginPassword">رمز عبور</label>
-<input autocomplete="current-password" class="auth-input" id="headerLoginPassword" placeholder="رمز عبور خود را وارد کنید" required="" type="password"/>
-</div>
-<p aria-live="polite" class="auth-msg" id="headerLoginMsg" role="status"></p>
-<button class="btn btn-primary auth-submit" type="submit">ورود</button>
-<div class="auth-links">
-<a href="register.html">ثبت‌نام</a>
-<a href="login.html">فراموشی رمز عبور</a>
-</div>
-</form>
-</div>
-</div>
-<!-- Logged in -->
-<div class="user-menu" hidden="" id="headerUserMenu">
-<button aria-expanded="false" class="user-menu__trigger" id="userMenuTrigger" type="button">
-<span class="um-avatar"><img alt="آواتار" id="userMenuAvatar" src="images/placeholder.svg"/></span>
-<span aria-hidden="true" class="um-caret">▾</span>
-</button>
-<div class="user-menu__dropdown" hidden="" id="userMenuDropdown">
-<div class="um-head">
-<div class="um-credit" id="userMenuCredit">اعتبار: —</div>
+  <div class="auth-area" id="authArea">
+    <!-- Logged out -->
+    <button aria-expanded="false" aria-haspopup="dialog" class="auth-trigger" id="headerAuthBtn" type="button">
+      <span aria-hidden="true" class="auth-ico">⎆</span> ورود
+    </button>
 
-<a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
-<a class="user-menu__link" href="#" id="userMenuAdminPage" hidden>صفحه مدیر</a>
-<a class="user-menu__link" href="#" id="userMenuPassword">تغییر کلمه عبور</a>
-<button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
+    <div class="auth-modal" hidden id="headerAuthPopover" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <div class="auth-modal__dialog" role="document">
+        <div class="auth-modal__head">
+          <div class="auth-modal__title" id="authModalTitle">ورود به سامانه</div>
+          <button type="button" class="auth-modal__close" id="headerAuthClose" aria-label="بستن">×</button>
+        </div>
+
+        <form class="auth-form" id="headerInlineLoginForm">
+          <div class="auth-row">
+            <label class="auth-label" for="headerLoginUsername">نام کاربری</label>
+            <input class="auth-input" id="headerLoginUsername" placeholder="نام کاربری خود را وارد کنید" required />
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="headerLoginPassword">رمز عبور</label>
+            <input class="auth-input" id="headerLoginPassword" placeholder="رمز عبور خود را وارد کنید" required type="password" />
+          </div>
+          <p class="auth-msg" id="headerLoginMsg" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary auth-submit" type="submit">ورود</button>
+          <div class="auth-links">
+            <a href="register.html">ثبت‌نام</a>
+            <a href="login.html">فراموشی رمز عبور</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Logged in -->
+    <div class="user-menu" hidden id="headerUserMenu">
+      <button aria-expanded="false" class="user-menu__trigger" id="userMenuTrigger" type="button">
+        <span class="um-avatar"><img alt="آواتار" id="userMenuAvatar" src="images/placeholder.svg"></span>
+        <span aria-hidden="true" class="um-caret">▾</span>
+      </button>
+
+      <div class="user-menu__dropdown" hidden id="userMenuDropdown">
+        <div class="um-head">
+          <div class="um-credit" id="userMenuCredit">اعتبار: —</div>
+          <div class="um-name" id="userMenuName">نام و نام خانوادگی: —</div>
+          <div class="um-meta" id="userMenuMeta">سمت: —</div>
+          <div class="um-sub" id="userMenuIdentity">—</div>
+          <div class="um-sub" id="userMenuParent">—</div>
+        </div>
+
+        <!-- فقط مدیر باید ببیند -->
+        <a class="user-menu__link" href="#" id="userMenuAdminPage" hidden data-admin-open>صفحه مدیر</a>
+
+        <a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
+        <a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
+        <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Button (کنار آواتار) -->
+  <button class="header-cart" id="headerCartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="سبد خرید">
+    <span class="header-cart__ico" aria-hidden="true">🛒</span>
+    <span class="header-cart__badge" id="headerCartCount" aria-label="تعداد اقلام سبد">0</span>
+  </button>
 </div>
-</div>
-</div>
-</div>
-</div>
+
 <!-- ===== Header Bottom / Main Nav ===== -->
 <div class="header-bottom">
 <nav aria-label="منوی اصلی" class="main-nav main-nav--muted">
