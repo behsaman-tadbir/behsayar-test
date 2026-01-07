@@ -1134,126 +1134,171 @@
   </div>
 </div>
 
-
-<!-- Orders Overlay (MVP) -->
-<div class="orders-overlay" id="ordersOverlay" hidden role="dialog" aria-modal="true" aria-label="سوابق خرید">
-  <div class="orders-overlay__backdrop" data-orders-close></div>
-  <div class="orders-overlay__panel" role="document">
-    <div class="orders-head">
-      <div class="orders-head__title" id="ordersOverlayTitle">سوابق خرید</div>
-      <button class="orders-head__close" type="button" data-orders-close aria-label="بستن">×</button>
+<!-- Admin Overlay (MVP) -->
+<div class="admin-overlay" id="adminOverlay" hidden role="dialog" aria-modal="true" aria-label="پنل مدیریت">
+  <div class="admin-overlay__backdrop" data-admin-close></div>
+  <div class="admin-overlay__panel" role="document">
+    <div class="admin-head">
+      <div class="admin-head__title">پنل مدیر سیستم</div>
+      <button class="admin-head__close" type="button" data-admin-close aria-label="بستن">×</button>
     </div>
-    <div class="orders-body">
-      <div class="orders-switch" id="ordersUserSwitch" hidden>
-        <label class="label" for="ordersUserSelect">نمایش برای</label>
-        <select class="input" id="ordersUserSelect"></select>
-      </div>
-      <div class="orders-list" id="ordersList"></div>
+
+    <div class="admin-tabs" role="tablist" aria-label="بخش‌های مدیریت">
+      <button class="admin-tab is-active" type="button" data-admin-tab="users" role="tab" aria-selected="true">مدیریت کاربران</button>
+      <button class="admin-tab" type="button" data-admin-tab="catalog" role="tab" aria-selected="false">محصولات و خدمات</button>
+      <button class="admin-tab" type="button" data-admin-tab="news" role="tab" aria-selected="false">اخبار و رویدادها</button>
+      <button class="admin-tab" type="button" data-admin-tab="reports" role="tab" aria-selected="false">گزارشات</button>
+    </div>
+
+    <div class="admin-body">
+      <!-- USERS -->
+      <section class="admin-section" id="adminTabUsers" data-admin-section="users">
+        <div class="admin-card">
+          <div class="admin-card__title">جستجو و فیلتر</div>
+          <div class="admin-grid">
+            <input class="input" id="adminUserQ" type="text" placeholder="نام / کد ملی / موبایل / کد کاربری">
+            <select class="input" id="adminUserRole">
+              <option value="">همه نقش‌ها</option>
+              <option value="student">دانش‌آموز</option>
+              <option value="staff">پرسنل</option>
+              <option value="admin">مدیر سیستم</option>
+            </select>
+            <button class="btn btn-outline" type="button" id="adminUsersExport">خروجی CSV</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card__title">افزایش اعتبار</div>
+          <div class="admin-grid admin-grid--credit">
+            <input class="input" id="adminCreditAmount" type="number" inputmode="numeric" placeholder="مبلغ (تومان)">
+            <select class="input" id="adminCreditMode">
+              <option value="single">فردی</option>
+              <option value="role">براساس نقش</option>
+              <option value="all">همه کاربران</option>
+            </select>
+            <select class="input" id="adminCreditTarget"></select>
+            <button class="btn btn-primary" type="button" id="adminCreditApply">اعمال</button>
+            <div class="admin-hint" id="adminCreditMsg" hidden></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card__title">لیست کاربران</div>
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="adminUsersTable">
+              <thead>
+                <tr>
+                  <th>کد</th>
+                  <th>نام</th>
+                  <th>نقش</th>
+                  <th>کد ملی</th>
+                  <th>موبایل</th>
+                  <th>اعتبار</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="admin-actions">
+            <button class="btn btn-outline" type="button" id="adminUserAddBtn">ثبت کاربر جدید</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CATALOG -->
+      <section class="admin-section" id="adminTabCatalog" data-admin-section="catalog" hidden>
+        <div class="admin-card">
+          <div class="admin-card__title">محصولات و خدمات</div>
+          <div class="admin-actions">
+            <button class="btn btn-outline" type="button" id="adminCatalogAdd">افزودن مورد جدید</button>
+          </div>
+          <div class="admin-list" id="adminCatalogList"></div>
+        </div>
+      </section>
+
+      <!-- NEWS -->
+      <section class="admin-section" id="adminTabNews" data-admin-section="news" hidden>
+        <div class="admin-card">
+          <div class="admin-card__title">اخبار و رویدادها</div>
+          <div class="admin-actions">
+            <button class="btn btn-outline" type="button" id="adminNewsAdd">افزودن خبر/رویداد</button>
+          </div>
+          <div class="admin-list" id="adminNewsList"></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="admin-section" id="adminTabReports" data-admin-section="reports" hidden>
+        <div class="admin-card">
+          <div class="admin-card__title">گزارش کلی فروش و رضایت</div>
+          <div class="admin-list" id="adminReportSummary"></div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card__title">گزارش جزئی خریدها</div>
+          <div class="admin-grid admin-grid--report">
+            <input class="input" id="adminReportQ" type="text" placeholder="نام پرسنل/دانش‌آموز">
+            <input class="input" id="adminReportDate" type="text" placeholder="تاریخ (مثلاً 1404/10/05)">
+            <button class="btn btn-outline" type="button" id="adminReportApply">اعمال فیلتر</button>
+          </div>
+          <div class="admin-list" id="adminReportDetails"></div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
 
-
-<!-- Checkout Overlay (MVP) -->
-<div class="checkout-overlay" id="checkoutOverlay" hidden role="dialog" aria-modal="true" aria-label="تسویه حساب">
-  <div class="checkout-overlay__backdrop" data-checkout-close></div>
-  <div class="checkout-overlay__panel" role="document">
-    <div class="checkout-head">
-      <div class="checkout-head__title">تسویه حساب</div>
-      <button class="checkout-head__close" type="button" data-checkout-close aria-label="بستن">×</button>
+<!-- Admin: Add/Edit User Modal -->
+<div class="admin-modal" id="adminUserModal" hidden role="dialog" aria-modal="true" aria-label="ثبت/ویرایش کاربر">
+  <div class="admin-modal__backdrop" data-admin-user-close></div>
+  <div class="admin-modal__panel" role="document">
+    <div class="admin-head">
+      <div class="admin-head__title" id="adminUserModalTitle">ثبت کاربر جدید</div>
+      <button class="admin-head__close" type="button" data-admin-user-close aria-label="بستن">×</button>
     </div>
-
-    <div class="checkout-body">
-      <div class="checkout-grid">
-        <section class="checkout-card">
-          <div class="checkout-card__title">خلاصه سفارش</div>
-          <div class="checkout-items" id="checkoutItems"></div>
-          <div class="checkout-totals">
-            <div class="checkout-row"><span>جمع کل</span><strong id="checkoutTotal">0</strong></div>
-            <div class="checkout-row"><span>میزان سود این خرید</span><strong id="checkoutSavings">0</strong></div>
-          </div>
-          <div class="checkout-discount">
-            <input class="input" id="checkoutDiscountCode" type="text" placeholder="کد تخفیف" autocomplete="off">
-            <button class="btn btn-outline" type="button" id="checkoutApplyDiscount">اعمال</button>
-          </div>
-        </section>
-
-        <aside class="checkout-side">
-          <section class="checkout-card checkout-card--credit">
-            <div class="checkout-card__title">اعتبار شما</div>
-            <div class="checkout-credit">
-              <div class="checkout-credit__value" id="checkoutCredit">0</div>
-              <div class="checkout-credit__unit">تومان</div>
-            </div>
-            <div class="checkout-remaining">
-              <span>باقیمانده پس از خرید</span>
-              <strong id="checkoutRemaining">0</strong>
-            </div>
-          </section>
-
-          <section class="checkout-card">
-            <div class="checkout-card__title">روش پرداخت</div>
-            <div class="checkout-paymethod">
-              <label class="radio">
-                <input type="radio" name="payMethod" value="cash" checked>
-                <span>پرداخت نقدی</span>
-              </label>
-              <label class="radio">
-                <input type="radio" name="payMethod" value="credit">
-                <span>اعتباری / اقساط</span>
-              </label>
-            </div>
-
-            <div class="checkout-method checkout-method--cash" id="checkoutCashBox">
-              <button class="btn btn-primary btn-block" type="button" id="checkoutPayCash">پرداخت نقدی</button>
-            </div>
-
-            <div class="checkout-method checkout-method--credit" id="checkoutCreditBox" hidden>
-              <div class="installments-title">انتخاب شرایط اقساط</div>
-              <div class="installments" id="installmentPlans"></div>
-              <div class="installments-preview" id="installmentPreview" hidden></div>
-              <div class="checkout-msg" id="checkoutMsg" hidden></div>
-              <button class="btn btn-primary btn-block" type="button" id="checkoutConfirmCredit" disabled>تایید و ثبت خرید</button>
-            </div>
-          </section>
-        </aside>
+    <form class="admin-form" id="adminUserForm">
+      <div class="admin-grid admin-grid--form">
+        <input class="input" id="auId" type="text" placeholder="کد/نام کاربری (مثلاً 1004)" required>
+        <input class="input" id="auPassword" type="text" placeholder="رمز عبور" required>
+        <select class="input" id="auRole" required>
+          <option value="student">دانش‌آموز</option>
+          <option value="staff">پرسنل</option>
+          <option value="admin">مدیر سیستم</option>
+        </select>
+        <input class="input" id="auFullName" type="text" placeholder="نام و نام خانوادگی" required>
+        <input class="input" id="auNationalId" type="text" placeholder="کد ملی">
+        <input class="input" id="auMobile" type="text" placeholder="موبایل">
+        <input class="input" id="auFatherName" type="text" placeholder="نام پدر">
+        <input class="input" id="auPosition" type="text" placeholder="سمت در سازمان (برای پرسنل)">
+        <input class="input" id="auParentId" type="text" placeholder="کد پرسنلِ والد (برای دانش‌آموز)">
+        <input class="input" id="auAvatar" type="text" placeholder="مسیر آواتار (قابل جایگزینی)">
+        <input class="input" id="auCredit" type="number" inputmode="numeric" placeholder="اعتبار (تومان)">
+        <input class="input" id="auAddress" type="text" placeholder="آدرس">
       </div>
-    </div>
+      <div class="admin-form__actions">
+        <button class="btn btn-outline" type="button" data-admin-user-close>انصراف</button>
+        <button class="btn btn-primary" type="submit">ذخیره</button>
+      </div>
+      <div class="admin-hint" id="adminUserFormMsg" hidden></div>
+    </form>
   </div>
 </div>
 
-<!-- Payment Modal (Symbolic Gateway) -->
-<div class="pay-modal" id="payModal" hidden role="dialog" aria-modal="true" aria-label="درگاه پرداخت">
-  <div class="pay-modal__backdrop" data-pay-close></div>
-  <div class="pay-modal__panel" role="document">
-    <div class="pay-head">
-      <div class="pay-head__title">درگاه پرداخت</div>
-      <button class="pay-head__close" type="button" data-pay-close aria-label="بستن">×</button>
+<!-- Admin: Add/Edit Item Modal (Catalog/News) -->
+<div class="admin-modal" id="adminItemModal" hidden role="dialog" aria-modal="true" aria-label="افزودن/ویرایش">
+  <div class="admin-modal__backdrop" data-admin-item-close></div>
+  <div class="admin-modal__panel" role="document">
+    <div class="admin-head">
+      <div class="admin-head__title" id="adminItemModalTitle">افزودن مورد</div>
+      <button class="admin-head__close" type="button" data-admin-item-close aria-label="بستن">×</button>
     </div>
-    <form class="pay-form" id="payForm">
-      <div class="pay-row">
-        <label class="label">شماره کارت</label>
-        <input class="input" id="payCard" inputmode="numeric" autocomplete="cc-number" placeholder="____-____-____-____" required>
+    <form class="admin-form" id="adminItemForm">
+      <div class="admin-grid admin-grid--form" id="adminItemFields"></div>
+      <div class="admin-form__actions">
+        <button class="btn btn-outline" type="button" data-admin-item-close>انصراف</button>
+        <button class="btn btn-primary" type="submit">ذخیره</button>
       </div>
-      <div class="pay-grid">
-        <div class="pay-row">
-          <label class="label">تاریخ اعتبار</label>
-          <input class="input" id="payExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" required>
-        </div>
-        <div class="pay-row">
-          <label class="label">CVV2</label>
-          <input class="input" id="payCvv" inputmode="numeric" autocomplete="cc-csc" placeholder="***" required>
-        </div>
-      </div>
-      <div class="pay-row">
-        <label class="label">رمز پویا</label>
-        <input class="input" id="payOtp" inputmode="numeric" placeholder="******" required>
-      </div>
-      <div class="pay-actions">
-        <button class="btn btn-outline" type="button" data-pay-close>انصراف</button>
-        <button class="btn btn-primary" type="submit">پرداخت</button>
-      </div>
-      <div class="pay-hint" id="payHint"></div>
+      <div class="admin-hint" id="adminItemFormMsg" hidden></div>
     </form>
   </div>
 </div>

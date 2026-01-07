@@ -38,7 +38,9 @@
     USERS: 'bs_users',
     SESSION: 'bs_session',
     CART: 'bs_cart',
-    ORDERS: 'bs_orders'
+    ORDERS: 'bs_orders',
+    PRODUCTS: 'bs_products',
+    NEWS: 'bs_news'
   };
 
   const DEMO_USERS = [
@@ -102,16 +104,6 @@ const formatIR = (n) => {
     return s;
   };
 
-  function escapeHTML(str) {
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-
   
   const DEMO_ORDERS = [
     {
@@ -153,11 +145,39 @@ const formatIR = (n) => {
     }
   ];
 
+  const DEMO_PRODUCTS = [
+    { id: 'prd-001', type: 'product', title: 'پک کتاب ریاضی دهم', price: 890000, category: 'کتاب' },
+    { id: 'prd-002', type: 'product', title: 'پک کتاب علوم نهم', price: 760000, category: 'کتاب' },
+    { id: 'prd-003', type: 'product', title: 'دفتر برنامه‌ریزی هفتگی', price: 120000, category: 'لوازم آموزشی' },
+    { id: 'srv-001', type: 'service', title: 'مشاوره برنامه‌ریزی درسی', price: 1200000, category: 'خدمت' }
+  ];
+
+  const DEMO_NEWS = [
+    { id: 'nw-001', title: 'شروع ثبت‌نام دوره‌های بهمن', date: '1404/11/01', body: 'ثبت‌نام دوره‌های جدید آغاز شد. ظرفیت محدود است.' },
+    { id: 'nw-002', title: 'وبینار رایگان خانواده و آموزش', date: '1404/11/07', body: 'وبینار تخصصی با محوریت مدیریت زمان و انگیزه دانش‌آموز.' }
+  ];
+
+
   function ensureSeedOrders() {
     const orders = LS.get(KEYS.ORDERS, null);
     if (!orders || !Array.isArray(orders) || orders.length === 0) {
       LS.set(KEYS.ORDERS, DEMO_ORDERS);
     }
+
+  function ensureSeedProducts() {
+    const items = LS.get(KEYS.PRODUCTS, null);
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      LS.set(KEYS.PRODUCTS, DEMO_PRODUCTS);
+    }
+  }
+
+  function ensureSeedNews() {
+    const items = LS.get(KEYS.NEWS, null);
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      LS.set(KEYS.NEWS, DEMO_NEWS);
+    }
+  }
+
   }
 
 function ensureSeedUsers() {
@@ -318,13 +338,6 @@ function ensureSeedUsers() {
     on(logoutBtn, 'click', () => {
       logout();
       syncAuthUI();
-    });
-
-    const ordersLink = qs('#userMenuOrders');
-    on(ordersLink, 'click', (e) => {
-      e.preventDefault();
-      close();
-      openOrdersOverlay();
     });
   }
 
@@ -753,6 +766,7 @@ function ensureSeedUsers() {
         <div class="cart-item" data-pid="${it.productId}">
           <div class="cart-item__meta">
             <div class="cart-item__title">${title}</div>
+            ${it.meta ? `<div class="cart-item__meta">${it.meta}</div>` : ''}
             <div class="cart-item__price">${price} تومان</div>
           </div>
           <div class="cart-item__qty">
@@ -774,8 +788,8 @@ function ensureSeedUsers() {
     }
     if (checkoutBtn) {
       checkoutBtn.classList.toggle('is-disabled', !user);
-      checkoutBtn.setAttribute('href', '#');
-}
+      checkoutBtn.setAttribute('href', user ? 'checkout.html' : '#');
+    }
   }
 
   function bindCartUI() {
@@ -846,499 +860,651 @@ function ensureSeedUsers() {
     });
   }
 
-  // ---------- Checkout (Overlay MVP) ----------
-  const PLANS_KEY = 'bs_plans';
-  const DEFAULT_PLANS = [
-    { id: 'p30_2', title: '۳۰٪ نقد + ۲ قسط', downPercent: 30, installments: 2 },
-    { id: 'p50_3', title: '۵۰٪ نقد + ۳ قسط', downPercent: 50, installments: 3 },
-    { id: 'p0_4',  title: '۴ قسط بدون پیش‌پرداخت', downPercent: 0, installments: 4 }
-  ];
 
-  function getPlans() {
-    const plans = LS.get(PLANS_KEY, null);
-    if (!plans || !Array.isArray(plans) || plans.length === 0) {
-      LS.set(PLANS_KEY, DEFAULT_PLANS);
-      return DEFAULT_PLANS;
-    }
-    return plans;
-  }
-
-  const checkoutState = {
-    discountCode: '',
-    discountPercent: 0,
-    payMethod: 'cash',
-    selectedPlanId: ''
+  // ---------- Admin Panel (Overlay MVP) ----------
+  const adminState = {
+    tab: 'users',
+    reportQ: '',
+    reportDate: ''
   };
 
-  function openCheckoutOverlay() {
-    const ov = qs('#checkoutOverlay');
-    if (!ov) return;
-    ov.hidden = false;
-    document.body.classList.add('modal-open');
-    renderCheckout();
+  function isAdmin() {
+    const u = getCurrentUser();
+    return !!u && u.role === 'admin';
   }
 
-  function closeCheckoutOverlay() {
-    const ov = qs('#checkoutOverlay');
+  function openAdminOverlay() {
+    const ov = qs('#adminOverlay');
+    if (!ov) return;
+    if (!isAdmin()) return;
+    ov.hidden = false;
+    document.body.classList.add('modal-open');
+    adminState.tab = 'users';
+    renderAdmin();
+  }
+
+  function closeAdminOverlay() {
+    const ov = qs('#adminOverlay');
     if (!ov) return;
     ov.hidden = true;
     document.body.classList.remove('modal-open');
-    checkoutState.selectedPlanId = '';
-    checkoutState.discountCode = '';
-    checkoutState.discountPercent = 0;
-    const msg = qs('#checkoutMsg');
-    if (msg) { msg.hidden = true; msg.textContent = ''; }
+    closeAdminUserModal();
+    closeAdminItemModal();
   }
 
-  function openPayModal(totalText) {
-    const m = qs('#payModal');
-    if (!m) return;
-    m.hidden = false;
-    document.body.classList.add('modal-open');
-    const hint = qs('#payHint');
-    if (hint) hint.textContent = totalText ? `مبلغ قابل پرداخت: ${totalText}` : '';
+  function setAdminTab(tab) {
+    adminState.tab = tab;
+    renderAdmin();
   }
 
-  function closePayModal() {
-    const m = qs('#payModal');
-    if (!m) return;
-    m.hidden = true;
-    document.body.classList.remove('modal-open');
-    const form = qs('#payForm');
-    form && form.reset();
+  function renderAdmin() {
+    const ov = qs('#adminOverlay');
+    if (!ov || ov.hidden) return;
+
+    // tabs
+    qsa('.admin-tab').forEach((b) => {
+      const t = b.getAttribute('data-admin-tab') || '';
+      const onTab = t === adminState.tab;
+      b.classList.toggle('is-active', onTab);
+      b.setAttribute('aria-selected', onTab ? 'true' : 'false');
+    });
+
+    // sections
+    qsa('[data-admin-section]').forEach((sec) => {
+      const s = sec.getAttribute('data-admin-section') || '';
+      sec.hidden = s !== adminState.tab;
+    });
+
+    if (adminState.tab === 'users') renderAdminUsers();
+    if (adminState.tab === 'catalog') renderAdminCatalog();
+    if (adminState.tab === 'news') renderAdminNews();
+    if (adminState.tab === 'reports') renderAdminReports();
   }
 
-  function computeTotals(cart) {
-    const items = Array.isArray(cart.items) ? cart.items : [];
-    const total = cartTotal(cart);
-
-    // savings: difference between oldUnitPrice and unitPrice when available
-    const savings = items.reduce((sum, it) => {
-      const oldP = Number(it.oldUnitPrice || 0);
-      const newP = Number(it.unitPrice || 0);
-      const qty = Number(it.qty || 0);
-      const s = oldP > newP ? (oldP - newP) * qty : 0;
-      return sum + s;
-    }, 0);
-
-    const discount = Math.round(total * (checkoutState.discountPercent / 100));
-    const payable = Math.max(0, total - discount);
-
-    return { total, savings, discount, payable };
+  function getUsersList() {
+    const users = LS.get(KEYS.USERS, {});
+    return Object.values(users || {});
   }
 
-  function renderCheckout() {
-    const user = getCurrentUser();
-    if (!user) return;
+  function roleLabel(role) {
+    if (role === 'student') return 'دانش‌آموز';
+    if (role === 'staff') return 'پرسنل';
+    if (role === 'admin') return 'مدیر سیستم';
+    return role || '—';
+  }
 
-    const cart = getCart();
-    const items = Array.isArray(cart.items) ? cart.items : [];
+  function normalize(s) {
+    return String(s || '').trim().toLowerCase();
+  }
 
-    const itemsEl = qs('#checkoutItems');
-    const totalEl = qs('#checkoutTotal');
-    const savingsEl = qs('#checkoutSavings');
-    const creditEl = qs('#checkoutCredit');
-    const remEl = qs('#checkoutRemaining');
+  function renderAdminUsers() {
+    const q = normalize(qs('#adminUserQ')?.value);
+    const role = String(qs('#adminUserRole')?.value || '');
 
-    const cashBox = qs('#checkoutCashBox');
-    const creditBox = qs('#checkoutCreditBox');
+    const tbody = qs('#adminUsersTable tbody');
+    if (!tbody) return;
 
-    const { total, savings, payable } = computeTotals(cart);
+    const list = getUsersList()
+      .filter((u) => {
+        if (role && u.role !== role) return false;
+        if (!q) return true;
+        const hay = [
+          u.id, u.fullName, u.nationalId, u.mobile, u.role,
+          u.fatherName, u.address, u.positionTitle
+        ].join(' ');
+        return normalize(hay).includes(q);
+      })
+      .sort((a, b) => String(a.id).localeCompare(String(b.id)));
 
-    if (itemsEl) {
-      if (items.length === 0) {
-        itemsEl.innerHTML = '<div class="muted">سبد خرید شما خالی است.</div>';
+    tbody.innerHTML = list.map((u) => {
+      return `
+        <tr data-uid="${escapeHTML(u.id)}">
+          <td><strong>${escapeHTML(u.id)}</strong></td>
+          <td>${escapeHTML(u.fullName || '—')}</td>
+          <td>${escapeHTML(roleLabel(u.role))}</td>
+          <td>${escapeHTML(u.nationalId || '—')}</td>
+          <td>${escapeHTML(u.mobile || '—')}</td>
+          <td>${formatIR(Number(u.credit || 0))}</td>
+        </tr>
+      `;
+    }).join('');
+
+    // credit target options
+    const mode = String(qs('#adminCreditMode')?.value || 'single');
+    const targetSel = qs('#adminCreditTarget');
+    if (targetSel) {
+      if (mode === 'single') {
+        targetSel.innerHTML = list.map((u) => `<option value="${escapeHTML(u.id)}">${escapeHTML(u.id)} — ${escapeHTML(u.fullName || '')}</option>`).join('');
+        targetSel.disabled = false;
+      } else if (mode === 'role') {
+        targetSel.innerHTML = `
+          <option value="student">دانش‌آموز</option>
+          <option value="staff">پرسنل</option>
+          <option value="admin">مدیر سیستم</option>
+        `;
+        targetSel.disabled = false;
       } else {
-        itemsEl.innerHTML = items.map((it) => {
-          const name = escapeHTML(it.title || 'محصول');
-          const meta = it.meta ? `<div class="checkout-item__meta">${escapeHTML(it.meta)}</div>` : '';
-          const qty = Number(it.qty || 0);
-          const line = formatIR(qty * Number(it.unitPrice || 0));
-          return `
-            <div class="checkout-item">
-              <div class="checkout-item__left">
-                <div class="checkout-item__name">${name}</div>
-                ${meta}
-                <div class="checkout-item__qty">تعداد: ${qty}</div>
-              </div>
-              <div class="checkout-item__price">${line} تومان</div>
-            </div>
-          `;
-        }).join('');
+        targetSel.innerHTML = `<option value="all">همه کاربران</option>`;
+        targetSel.disabled = true;
       }
     }
-
-    if (totalEl) totalEl.textContent = `${formatIR(payable)} تومان`;
-    if (savingsEl) savingsEl.textContent = `${formatIR(savings)} تومان`;
-    if (creditEl) creditEl.textContent = `${formatIR(user.credit)}`;
-    if (remEl) remEl.textContent = `${formatIR(Math.max(0, Number(user.credit || 0) - payable))} تومان`;
-
-    // method toggle
-    if (cashBox && creditBox) {
-      cashBox.hidden = checkoutState.payMethod !== 'cash';
-      creditBox.hidden = checkoutState.payMethod !== 'credit';
-    }
-
-    renderPlans(payable);
   }
 
-  function renderPlans(payable) {
-    const host = qs('#installmentPlans');
-    const preview = qs('#installmentPreview');
-    const confirmBtn = qs('#checkoutConfirmCredit');
-    if (!host) return;
+  function applyCredit() {
+    const amount = Number(qs('#adminCreditAmount')?.value || 0);
+    const mode = String(qs('#adminCreditMode')?.value || 'single');
+    const target = String(qs('#adminCreditTarget')?.value || '');
+    const out = qs('#adminCreditMsg');
+    if (!amount || amount === 0) {
+      if (out) { out.textContent = 'مبلغ معتبر وارد کنید.'; out.hidden = false; }
+      return;
+    }
 
-    const plans = getPlans();
-    host.innerHTML = plans.map((p) => {
-      const meta = p.downPercent > 0
-        ? `پیش‌پرداخت: ${p.downPercent}٪ • تعداد اقساط: ${p.installments}`
-        : `بدون پیش‌پرداخت • تعداد اقساط: ${p.installments}`;
-      const sel = checkoutState.selectedPlanId === p.id ? ' is-selected' : '';
+    const users = LS.get(KEYS.USERS, {});
+    const ids = Object.keys(users || {});
+    let touched = 0;
+
+    ids.forEach((id) => {
+      const u = users[id];
+      if (!u) return;
+
+      if (mode === 'single' && id !== target) return;
+      if (mode === 'role' && u.role !== target) return;
+
+      const next = { ...u, credit: Number(u.credit || 0) + amount };
+      users[id] = next;
+      touched += 1;
+    });
+
+    LS.set(KEYS.USERS, users);
+    syncAuthUI();
+
+    if (out) {
+      out.textContent = `اعتبار برای ${touched} کاربر به‌روزرسانی شد.`;
+      out.hidden = false;
+    }
+    renderAdminUsers();
+  }
+
+  function downloadText(filename, text) {
+    try {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    } catch (_) {}
+  }
+
+  function exportUsersCsv() {
+    const list = getUsersList().sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    const header = ['id','fullName','role','nationalId','mobile','credit','fatherName','positionTitle','parentId','address','avatar'].join(',');
+    const rows = list.map((u) => [
+      u.id, u.fullName, u.role, u.nationalId, u.mobile, Number(u.credit||0),
+      u.fatherName, u.positionTitle, u.parentId, u.address, u.avatar
+    ].map((x) => `"${String(x ?? '').replaceAll('"','""')}"`).join(','));
+    const csv = [header, ...rows].join('\n');
+    downloadText('users.csv', csv);
+  }
+
+  // --- User Modal ---
+  let adminEditingUserId = null;
+
+  function openAdminUserModal(userId) {
+    const m = qs('#adminUserModal');
+    if (!m) return;
+    const users = LS.get(KEYS.USERS, {});
+    const u = userId ? users[userId] : null;
+
+    adminEditingUserId = userId || null;
+
+    const title = qs('#adminUserModalTitle');
+    if (title) title.textContent = userId ? `ویرایش کاربر ${userId}` : 'ثبت کاربر جدید';
+
+    const setVal = (id, v) => { const el = qs(id); if (el) el.value = v ?? ''; };
+
+    setVal('#auId', u?.id || '');
+    setVal('#auPassword', u?.password || '123');
+    setVal('#auRole', u?.role || 'student');
+    setVal('#auFullName', u?.fullName || '');
+    setVal('#auNationalId', u?.nationalId || '');
+    setVal('#auMobile', u?.mobile || '');
+    setVal('#auFatherName', u?.fatherName || '');
+    setVal('#auPosition', u?.positionTitle || '');
+    setVal('#auParentId', u?.parentId || '');
+    setVal('#auAvatar', u?.avatar || `images/avatars/${(u?.id||'')}.png`);
+    setVal('#auCredit', u?.credit ?? 5000000);
+    setVal('#auAddress', u?.address || '');
+
+    const idEl = qs('#auId');
+    if (idEl) idEl.disabled = !!userId;
+
+    const msg = qs('#adminUserFormMsg');
+    if (msg) { msg.hidden = true; msg.textContent = ''; }
+
+    m.hidden = false;
+    document.body.classList.add('modal-open');
+  }
+
+  function closeAdminUserModal() {
+    const m = qs('#adminUserModal');
+    if (!m) return;
+    m.hidden = true;
+    // do not remove modal-open if main admin is still open
+    const adminOv = qs('#adminOverlay');
+    if (!adminOv || adminOv.hidden) document.body.classList.remove('modal-open');
+  }
+
+  function saveAdminUser() {
+    const msg = qs('#adminUserFormMsg');
+    const id = String(qs('#auId')?.value || '').trim();
+    const password = String(qs('#auPassword')?.value || '').trim();
+    const role = String(qs('#auRole')?.value || 'student');
+    const fullName = String(qs('#auFullName')?.value || '').trim();
+
+    if (!id || !password || !fullName) {
+      if (msg) { msg.textContent = 'کد، رمز عبور و نام الزامی است.'; msg.hidden = false; }
+      return;
+    }
+
+    const users = LS.get(KEYS.USERS, {});
+    if (!adminEditingUserId && users[id]) {
+      if (msg) { msg.textContent = 'این کد قبلاً ثبت شده است.'; msg.hidden = false; }
+      return;
+    }
+
+    const u = {
+      id,
+      password,
+      role,
+      roleLabel: roleLabel(role),
+      fullName,
+      nationalId: String(qs('#auNationalId')?.value || '').trim(),
+      mobile: String(qs('#auMobile')?.value || '').trim(),
+      fatherName: String(qs('#auFatherName')?.value || '').trim(),
+      positionTitle: String(qs('#auPosition')?.value || '').trim(),
+      parentId: String(qs('#auParentId')?.value || '').trim(),
+      avatar: String(qs('#auAvatar')?.value || '').trim() || `images/avatars/${id}.png`,
+      credit: Number(qs('#auCredit')?.value || 5000000),
+      address: String(qs('#auAddress')?.value || '').trim()
+    };
+
+    if (u.role !== 'student') u.parentId = '';
+    if (u.role !== 'staff') u.positionTitle = u.positionTitle || '';
+
+    users[id] = u;
+    LS.set(KEYS.USERS, users);
+
+    if (msg) { msg.textContent = 'ذخیره شد.'; msg.hidden = false; }
+    syncAuthUI();
+    renderAdminUsers();
+
+    setTimeout(() => closeAdminUserModal(), 300);
+  }
+
+  // --- Catalog/News storage ---
+  function getCatalog() { return LS.get(KEYS.PRODUCTS, []) || []; }
+  function setCatalog(list) { LS.set(KEYS.PRODUCTS, list); }
+  function getNews() { return LS.get(KEYS.NEWS, []) || []; }
+  function setNews(list) { LS.set(KEYS.NEWS, list); }
+
+  function renderAdminCatalog() {
+    const listEl = qs('#adminCatalogList');
+    if (!listEl) return;
+    const items = getCatalog().slice().sort((a,b) => String(a.id).localeCompare(String(b.id)));
+    if (!items.length) {
+      listEl.innerHTML = '<div class="admin-hint">موردی ثبت نشده است.</div>';
+      return;
+    }
+    listEl.innerHTML = items.map((it) => {
+      const type = it.type === 'service' ? 'خدمت' : 'محصول';
+      const price = formatIR(Number(it.price || 0));
       return `
-        <div class="plan${sel}" role="button" tabindex="0" data-plan="${p.id}">
-          <div class="plan__title">${escapeHTML(p.title)}</div>
-          <div class="plan__meta">${escapeHTML(meta)}</div>
+        <div class="admin-row" data-item-type="catalog" data-item-id="${escapeHTML(it.id)}">
+          <div class="admin-row__main">
+            <div class="admin-row__title">${escapeHTML(it.title || '—')}</div>
+            <div class="admin-row__meta">کد: ${escapeHTML(it.id)} • نوع: ${type} • دسته: ${escapeHTML(it.category || '—')} • قیمت: ${price} تومان</div>
+          </div>
+          <div class="admin-row__actions">
+            <button class="btn btn-outline" type="button" data-admin-edit>ویرایش</button>
+            <button class="btn btn-outline" type="button" data-admin-del>حذف</button>
+          </div>
         </div>
       `;
     }).join('');
+  }
 
-    const p = plans.find((x) => x.id === checkoutState.selectedPlanId);
-    if (!p) {
-      if (preview) preview.hidden = true;
-      if (confirmBtn) confirmBtn.disabled = true;
+  function renderAdminNews() {
+    const listEl = qs('#adminNewsList');
+    if (!listEl) return;
+    const items = getNews().slice().sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+    if (!items.length) {
+      listEl.innerHTML = '<div class="admin-hint">موردی ثبت نشده است.</div>';
       return;
     }
-
-    const down = Math.round(payable * (p.downPercent / 100));
-    const rest = Math.max(0, payable - down);
-    const each = p.installments > 0 ? Math.ceil(rest / p.installments) : 0;
-
-    if (preview) {
-      preview.hidden = false;
-      preview.innerHTML = `
-        <div><strong>پیش‌پرداخت:</strong> ${formatIR(down)} تومان</div>
-        <div><strong>مبلغ هر قسط:</strong> ${formatIR(each)} تومان</div>
-        <div class="muted">زمان‌بندی اقساط پس از تایید نمایش داده می‌شود.</div>
-      `;
-    }
-    if (confirmBtn) confirmBtn.disabled = false;
-  }
-
-  function finalizeOrder({ paymentType, installmentPlan }) {
-    const user = getCurrentUser();
-    if (!user) return { ok: false, msg: 'ابتدا وارد شوید.' };
-
-    const cart = getCart();
-    const items = Array.isArray(cart.items) ? cart.items : [];
-    if (items.length === 0) return { ok: false, msg: 'سبد خرید خالی است.' };
-
-    const { payable, savings, discount } = computeTotals(cart);
-
-    // credit check for credit method
-    if (paymentType !== 'نقدی') {
-      if (Number(user.credit || 0) < payable) {
-        return { ok: false, msg: 'اعتبار کافی نیست.' };
-      }
-      // deduct credit
-      const users = LS.get(KEYS.USERS, {});
-      const nextUser = { ...user, credit: Number(user.credit || 0) - payable };
-      users[user.id] = nextUser;
-      LS.set(KEYS.USERS, users);
-    }
-
-    const now = new Date();
-    const createdAt = now.toLocaleDateString('fa-IR');
-    const id = `TRK-${Math.floor(10000 + Math.random() * 89999)}`;
-
-    const order = {
-      id,
-      userId: user.id,
-      createdAt,
-      status: 'موفق',
-      address: user.address || '—',
-      paymentType,
-      discount,
-      savings,
-      installmentPlan: installmentPlan || null,
-      items: items.map((it) => ({
-        productId: it.productId,
-        title: it.title,
-        qty: it.qty,
-        unitPrice: it.unitPrice
-      }))
-    };
-
-    const orders = getOrders();
-    orders.push(order);
-    LS.set(KEYS.ORDERS, orders);
-
-    // clear cart
-    LS.set(KEYS.CART, { items: [] });
-    syncCartUI();
-    syncAuthUI();
-    renderCartDrawer();
-
-    return { ok: true, order };
-  }
-
-  // ---------- Orders (Overlay MVP) ----------
-  function openOrdersOverlay(targetUserId) {
-    const ov = qs('#ordersOverlay');
-    if (!ov) return;
-    const user = getCurrentUser();
-    if (!user) return;
-
-    // build user switcher for staff (own + children)
-    const select = qs('#ordersUserSelect');
-    const switchRow = qs('#ordersUserSwitch');
-    if (select && switchRow) {
-      const users = LS.get(KEYS.USERS, {});
-      const opts = [];
-      opts.push({ id: user.id, label: `خریدهای من (${user.fullName})` });
-      if (user.role === 'staff' && Array.isArray(user.children) && user.children.length) {
-        user.children.forEach((cid) => {
-          const cu = users[cid];
-          if (cu) opts.push({ id: cu.id, label: `خریدهای فرزند (${cu.fullName})` });
-        });
-      }
-
-      if (opts.length > 1) {
-        select.innerHTML = opts.map((o) => `<option value="${escapeHTML(o.id)}">${escapeHTML(o.label)}</option>`).join('');
-        switchRow.hidden = false;
-      } else {
-        select.innerHTML = '';
-        switchRow.hidden = true;
-      }
-    }
-
-    ov.hidden = false;
-    document.body.classList.add('modal-open');
-    const id = String(targetUserId || user.id);
-    if (select) select.value = id;
-    renderOrdersOverlay(id);
-  }
-
-  function closeOrdersOverlay() {
-    const ov = qs('#ordersOverlay');
-    if (!ov) return;
-    ov.hidden = true;
-    document.body.classList.remove('modal-open');
-  }
-
-  function orderTotal(o) {
-    const items = Array.isArray(o?.items) ? o.items : [];
-    return items.reduce((sum, it) => sum + (Number(it.qty || 0) * Number(it.unitPrice || 0)), 0);
-  }
-
-  function renderOrdersOverlay(userId) {
-    const list = qs('#ordersList');
-    const title = qs('#ordersOverlayTitle');
-    if (!list) return;
-
-    const users = LS.get(KEYS.USERS, {});
-    const u = users[userId];
-    if (title) title.textContent = u ? `سوابق خرید — ${u.fullName}` : 'سوابق خرید';
-
-    const orders = ordersForUser(userId)
-      .slice()
-      .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-
-    if (!orders.length) {
-      list.innerHTML = '<div class="orders-empty">هنوز خریدی ثبت نشده است.</div>';
-      return;
-    }
-
-    list.innerHTML = orders.map((o) => {
-      const total = orderTotal(o);
-      const items = Array.isArray(o.items) ? o.items : [];
-      const itemsHtml = items.map((it) => {
-        const name = escapeHTML(it.title || 'محصول');
-        const qty = Number(it.qty || 0);
-        const price = formatIR(Number(it.unitPrice || 0));
-        const line = formatIR(qty * Number(it.unitPrice || 0));
-        return `
-          <div class="orders-item">
-            <div class="orders-item__name">${name}</div>
-            <div class="orders-item__meta">تعداد: ${qty} • قیمت واحد: ${price}</div>
-            <div class="orders-item__price">${line} تومان</div>
-          </div>
-        `;
-      }).join('');
-
+    listEl.innerHTML = items.map((it) => {
       return `
-        <article class="orders-card">
-          <header class="orders-card__head">
-            <div class="orders-card__trk">کد رهگیری: <strong>${escapeHTML(o.id || '—')}</strong></div>
-            <div class="orders-card__date">${escapeHTML(o.createdAt || '—')}</div>
-          </header>
-          <div class="orders-card__meta">
-            <span class="pill">${escapeHTML(o.status || '—')}</span>
-            <span class="pill pill--muted">${escapeHTML(o.paymentType || '—')}</span>
-            <span class="pill pill--accent">مبلغ: ${formatIR(total)} تومان</span>
+        <div class="admin-row" data-item-type="news" data-item-id="${escapeHTML(it.id)}">
+          <div class="admin-row__main">
+            <div class="admin-row__title">${escapeHTML(it.title || '—')}</div>
+            <div class="admin-row__meta">تاریخ: ${escapeHTML(it.date || '—')}</div>
+            <div class="admin-row__meta">${escapeHTML(it.body || '')}</div>
           </div>
-          <div class="orders-card__addr">آدرس: ${escapeHTML(o.address || '—')}</div>
-          <div class="orders-card__items">${itemsHtml}</div>
-        </article>
+          <div class="admin-row__actions">
+            <button class="btn btn-outline" type="button" data-admin-edit>ویرایش</button>
+            <button class="btn btn-outline" type="button" data-admin-del>حذف</button>
+          </div>
+        </div>
       `;
     }).join('');
   }
 
-  function bindOrdersUI() {
-    if (markBound(document.documentElement, 'ordersUI')) return;
+  // --- Item modal (Catalog/News) ---
+  let adminEditingItem = { type: '', id: null };
 
-    // close actions
+  function openAdminItemModal(type, id) {
+    const m = qs('#adminItemModal');
+    const fields = qs('#adminItemFields');
+    const titleEl = qs('#adminItemModalTitle');
+    const msg = qs('#adminItemFormMsg');
+    if (!m || !fields) return;
+
+    adminEditingItem = { type, id: id || null };
+
+    if (msg) { msg.hidden = true; msg.textContent = ''; }
+
+    let data = null;
+    if (type === 'catalog') data = getCatalog().find((x) => x.id === id) || null;
+    if (type === 'news') data = getNews().find((x) => x.id === id) || null;
+
+    if (titleEl) titleEl.textContent = id ? 'ویرایش' : 'افزودن مورد';
+
+    if (type === 'catalog') {
+      fields.innerHTML = `
+        <input class="input" id="aiId" type="text" placeholder="کد (مثلاً prd-010)" required>
+        <select class="input" id="aiType" required>
+          <option value="product">محصول</option>
+          <option value="service">خدمت</option>
+        </select>
+        <input class="input" id="aiTitle" type="text" placeholder="عنوان" required>
+        <input class="input" id="aiCategory" type="text" placeholder="دسته‌بندی">
+        <input class="input" id="aiPrice" type="number" inputmode="numeric" placeholder="قیمت (تومان)">
+      `;
+      qs('#aiId') && (qs('#aiId').value = data?.id || '');
+      qs('#aiType') && (qs('#aiType').value = data?.type || 'product');
+      qs('#aiTitle') && (qs('#aiTitle').value = data?.title || '');
+      qs('#aiCategory') && (qs('#aiCategory').value = data?.category || '');
+      qs('#aiPrice') && (qs('#aiPrice').value = data?.price ?? '');
+      const idEl = qs('#aiId');
+      if (idEl) idEl.disabled = !!id;
+    } else {
+      const today = new Date().toLocaleDateString('fa-IR');
+      fields.innerHTML = `
+        <input class="input" id="aiId" type="text" placeholder="کد (مثلاً nw-010)" required>
+        <input class="input" id="aiTitle" type="text" placeholder="عنوان" required>
+        <input class="input" id="aiDate" type="text" placeholder="تاریخ (مثلاً 1404/11/07)">
+        <input class="input" id="aiBody" type="text" placeholder="متن کوتاه">
+      `;
+      qs('#aiId') && (qs('#aiId').value = data?.id || '');
+      qs('#aiTitle') && (qs('#aiTitle').value = data?.title || '');
+      qs('#aiDate') && (qs('#aiDate').value = data?.date || today);
+      qs('#aiBody') && (qs('#aiBody').value = data?.body || '');
+      const idEl = qs('#aiId');
+      if (idEl) idEl.disabled = !!id;
+    }
+
+    m.hidden = false;
+    document.body.classList.add('modal-open');
+  }
+
+  function closeAdminItemModal() {
+    const m = qs('#adminItemModal');
+    if (!m) return;
+    m.hidden = true;
+    const adminOv = qs('#adminOverlay');
+    if (!adminOv || adminOv.hidden) document.body.classList.remove('modal-open');
+  }
+
+  function saveAdminItem() {
+    const type = adminEditingItem.type;
+    const msg = qs('#adminItemFormMsg');
+    const id = String(qs('#aiId')?.value || '').trim();
+    const title = String(qs('#aiTitle')?.value || '').trim();
+
+    if (!id || !title) {
+      if (msg) { msg.textContent = 'کد و عنوان الزامی است.'; msg.hidden = false; }
+      return;
+    }
+
+    if (type === 'catalog') {
+      const list = getCatalog();
+      if (!adminEditingItem.id && list.some((x) => x.id === id)) {
+        if (msg) { msg.textContent = 'این کد قبلاً ثبت شده است.'; msg.hidden = false; }
+        return;
+      }
+      const item = {
+        id,
+        type: String(qs('#aiType')?.value || 'product'),
+        title,
+        category: String(qs('#aiCategory')?.value || '').trim(),
+        price: Number(qs('#aiPrice')?.value || 0)
+      };
+      const next = adminEditingItem.id ? list.map((x) => x.id === id ? item : x) : [...list, item];
+      setCatalog(next);
+      if (msg) { msg.textContent = 'ذخیره شد.'; msg.hidden = false; }
+      renderAdminCatalog();
+      setTimeout(() => closeAdminItemModal(), 250);
+      return;
+    }
+
+    // news
+    const list = getNews();
+    if (!adminEditingItem.id && list.some((x) => x.id === id)) {
+      if (msg) { msg.textContent = 'این کد قبلاً ثبت شده است.'; msg.hidden = false; }
+      return;
+    }
+    const item = {
+      id,
+      title,
+      date: String(qs('#aiDate')?.value || '').trim(),
+      body: String(qs('#aiBody')?.value || '').trim()
+    };
+    const next = adminEditingItem.id ? list.map((x) => x.id === id ? item : x) : [...list, item];
+    setNews(next);
+    if (msg) { msg.textContent = 'ذخیره شد.'; msg.hidden = false; }
+    renderAdminNews();
+    setTimeout(() => closeAdminItemModal(), 250);
+  }
+
+  function deleteAdminItem(type, id) {
+    if (type === 'catalog') {
+      setCatalog(getCatalog().filter((x) => x.id !== id));
+      renderAdminCatalog();
+    }
+    if (type === 'news') {
+      setNews(getNews().filter((x) => x.id !== id));
+      renderAdminNews();
+    }
+  }
+
+  // --- Reports ---
+  function productTitleById(pid) {
+    const cat = getCatalog();
+    const it = cat.find((x) => x.id === pid);
+    return it?.title || pid;
+  }
+
+  function renderAdminReports() {
+    const sumEl = qs('#adminReportSummary');
+    const detEl = qs('#adminReportDetails');
+    if (!sumEl || !detEl) return;
+
+    const orders = getOrders();
+    const summary = {};
+    orders.forEach((o) => {
+      const items = Array.isArray(o.items) ? o.items : [];
+      items.forEach((it) => {
+        const pid = String(it.productId || '');
+        if (!pid) return;
+        if (!summary[pid]) summary[pid] = { pid, qty: 0, revenue: 0, satSum: 0, satCnt: 0 };
+        summary[pid].qty += Number(it.qty || 0);
+        summary[pid].revenue += Number(it.qty || 0) * Number(it.unitPrice || 0);
+        if (Number(o.satisfaction || 0) > 0) {
+          summary[pid].satSum += Number(o.satisfaction || 0);
+          summary[pid].satCnt += 1;
+        }
+      });
+    });
+
+    const rows = Object.values(summary).sort((a,b) => b.revenue - a.revenue);
+
+    sumEl.innerHTML = rows.length ? rows.map((r) => {
+      const avg = r.satCnt ? (r.satSum / r.satCnt).toFixed(1) : '—';
+      return `
+        <div class="admin-row">
+          <div class="admin-row__main">
+            <div class="admin-row__title">${escapeHTML(productTitleById(r.pid))}</div>
+            <div class="admin-row__meta">تعداد فروش: ${r.qty} • فروش: ${formatIR(r.revenue)} تومان • رضایت: ${avg}</div>
+          </div>
+        </div>
+      `;
+    }).join('') : '<div class="admin-hint">داده‌ای برای نمایش وجود ندارد.</div>';
+
+    // details with filters
+    const users = LS.get(KEYS.USERS, {});
+    const q = normalize(adminState.reportQ || qs('#adminReportQ')?.value);
+    const date = String(adminState.reportDate || qs('#adminReportDate')?.value || '').trim();
+
+    const filtered = orders
+      .filter((o) => {
+        if (date && String(o.createdAt || '') !== date) return false;
+        if (!q) return true;
+        const u = users[o.userId];
+        const name = u?.fullName || '';
+        return normalize(name).includes(q);
+      })
+      .slice()
+      .sort((a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+
+    detEl.innerHTML = filtered.length ? filtered.map((o) => {
+      const u = users[o.userId];
+      let ident = u ? `${u.fullName} — ${roleLabel(u.role)}` : `کاربر ${o.userId}`;
+      if (u?.role === 'student' && u.parentId) {
+        const p = users[u.parentId];
+        const pInfo = p ? `${p.fullName}${p.positionTitle ? ` (${p.positionTitle})` : ''}` : u.parentId;
+        ident += ` • فرزندِ ${pInfo}`;
+      }
+      const total = orderTotal(o);
+      const items = Array.isArray(o.items) ? o.items : [];
+      const itemsText = items.map((it) => `${it.title} × ${it.qty}`).join('، ');
+      return `
+        <div class="admin-row">
+          <div class="admin-row__main">
+            <div class="admin-row__title">${escapeHTML(o.id || '—')} • ${escapeHTML(o.createdAt || '—')}</div>
+            <div class="admin-row__meta">${escapeHTML(ident)}</div>
+            <div class="admin-row__meta">مبلغ: ${formatIR(total)} تومان • وضعیت: ${escapeHTML(o.status || '—')} • پرداخت: ${escapeHTML(o.paymentType || '—')}</div>
+            <div class="admin-row__meta">اقلام: ${escapeHTML(itemsText || '—')}</div>
+          </div>
+        </div>
+      `;
+    }).join('') : '<div class="admin-hint">نتیجه‌ای یافت نشد.</div>';
+  }
+
+  function bindAdminUI() {
+    if (markBound(document.documentElement, 'adminUI')) return;
+
+    // open via link (href has data-admin-open)
     on(document, 'click', (e) => {
       const t = e.target;
       if (!(t instanceof Element)) return;
-      if (t.matches('[data-orders-close]')) {
+
+      if (t.closest('[data-admin-open]')) {
         e.preventDefault();
-        closeOrdersOverlay();
+        openAdminOverlay();
+        return;
+      }
+
+      if (t.matches('[data-admin-close]')) {
+        e.preventDefault();
+        closeAdminOverlay();
+        return;
+      }
+
+      if (t.matches('[data-admin-user-close]')) {
+        e.preventDefault();
+        closeAdminUserModal();
+        return;
+      }
+
+      if (t.matches('[data-admin-item-close]')) {
+        e.preventDefault();
+        closeAdminItemModal();
+        return;
+      }
+
+      const tabBtn = t.closest('[data-admin-tab]');
+      if (tabBtn) {
+        const tab = tabBtn.getAttribute('data-admin-tab') || 'users';
+        setAdminTab(tab);
+        return;
+      }
+
+      // catalog/news edit/delete
+      const row = t.closest('[data-item-type][data-item-id]');
+      if (row && (t.matches('[data-admin-edit]') || t.closest('[data-admin-edit]'))) {
+        const type = row.getAttribute('data-item-type') || '';
+        const id = row.getAttribute('data-item-id') || '';
+        openAdminItemModal(type, id);
+        return;
+      }
+      if (row && (t.matches('[data-admin-del]') || t.closest('[data-admin-del]'))) {
+        const type = row.getAttribute('data-item-type') || '';
+        const id = row.getAttribute('data-item-id') || '';
+        deleteAdminItem(type, id);
+        return;
       }
     });
 
     on(document, 'keydown', (e) => {
-      const ov = qs('#ordersOverlay');
-      if (e.key === 'Escape' && ov && !ov.hidden) closeOrdersOverlay();
+      const ov = qs('#adminOverlay');
+      if (e.key === 'Escape' && ov && !ov.hidden) closeAdminOverlay();
     });
 
-    const select = qs('#ordersUserSelect');
-    on(select, 'change', () => {
-      const v = String(select?.value || '');
-      if (v) renderOrdersOverlay(v);
-    });
-  }
+    // Users tab inputs
+    on(qs('#adminUserQ'), 'input', () => renderAdminUsers());
+    on(qs('#adminUserRole'), 'change', () => renderAdminUsers());
+    on(qs('#adminCreditMode'), 'change', () => renderAdminUsers());
 
-  function bindCheckoutUI() {
-    // open checkout from cart
-    on(document, 'click', (e) => {
-      const t = e.target;
-      if (!(t instanceof Element)) return;
+    on(qs('#adminCreditApply'), 'click', () => applyCredit());
+    on(qs('#adminUsersExport'), 'click', () => exportUsersCsv());
 
-      if (t.closest('#cartCheckoutBtn')) {
-        e.preventDefault();
-        const user = getCurrentUser();
-        if (!user) {
-          // open login popover/sheet
-          const desktopBtn = qs('#headerAuthBtn');
-          if (desktopBtn && !desktopBtn.hidden) desktopBtn.click();
-          const msg = qs('#cartHint');
-          if (msg) msg.textContent = 'برای ادامه و پرداخت، ابتدا وارد شوید.';
-          return;
-        }
-        closeCartDrawer();
-        openCheckoutOverlay();
-      }
+    on(qs('#adminUserAddBtn'), 'click', () => openAdminUserModal(null));
+    on(qs('#adminUserForm'), 'submit', (e) => { e.preventDefault(); saveAdminUser(); });
 
-      if (t.matches('[data-checkout-close]')) {
-        closeCheckoutOverlay();
-      }
+    // catalog/news add
+    on(qs('#adminCatalogAdd'), 'click', () => openAdminItemModal('catalog', null));
+    on(qs('#adminNewsAdd'), 'click', () => openAdminItemModal('news', null));
+    on(qs('#adminItemForm'), 'submit', (e) => { e.preventDefault(); saveAdminItem(); });
 
-      if (t.matches('[data-pay-close]')) {
-        closePayModal();
-      }
-
-      const plan = t.closest('[data-plan]');
-      if (plan) {
-        const pid = plan.getAttribute('data-plan');
-        checkoutState.selectedPlanId = pid || '';
-        renderCheckout();
-      }
-    });
-
-    // pay method change
-    on(document, 'change', (e) => {
-      const t = e.target;
-      if (!(t instanceof Element)) return;
-      if (t.matches('input[name="payMethod"]')) {
-        checkoutState.payMethod = t.value === 'credit' ? 'credit' : 'cash';
-        renderCheckout();
-      }
-    });
-
-    // discount apply
-    const applyBtn = qs('#checkoutApplyDiscount');
-    on(applyBtn, 'click', () => {
-      const input = qs('#checkoutDiscountCode');
-      const code = String(input?.value || '').trim().toUpperCase();
-      checkoutState.discountCode = code;
-
-      // demo codes
-      if (code === 'BEHSAYAR10') checkoutState.discountPercent = 10;
-      else if (code === 'FAMILY15') checkoutState.discountPercent = 15;
-      else checkoutState.discountPercent = 0;
-
-      const msg = qs('#checkoutMsg');
-      if (msg) {
-        if (checkoutState.discountPercent > 0) {
-          msg.textContent = `کد تخفیف اعمال شد (${checkoutState.discountPercent}٪).`;
-          msg.hidden = false;
-        } else if (code) {
-          msg.textContent = 'کد تخفیف معتبر نیست.';
-          msg.hidden = false;
-        } else {
-          msg.textContent = '';
-          msg.hidden = true;
-        }
-      }
-      renderCheckout();
-    });
-
-    // cash pay
-    const cashBtn = qs('#checkoutPayCash');
-    on(cashBtn, 'click', () => {
-      const user = getCurrentUser();
-      if (!user) return;
-      const cart = getCart();
-      const { payable } = computeTotals(cart);
-      if (payable <= 0) return;
-      openPayModal(`${formatIR(payable)} تومان`);
-    });
-
-    // pay form submit -> success
-    const payForm = qs('#payForm');
-    on(payForm, 'submit', (e) => {
-      e.preventDefault();
-      const res = finalizeOrder({ paymentType: 'نقدی' });
-      const msg = qs('#checkoutMsg');
-      if (!res.ok) {
-        if (msg) { msg.textContent = res.msg; msg.hidden = false; }
-        return;
-      }
-      closePayModal();
-      if (msg) {
-        msg.textContent = `پرداخت موفق بود. کد رهگیری: ${res.order.id}`;
-        msg.hidden = false;
-      }
-      renderCheckout();
-    });
-
-    // credit confirm
-    const creditConfirm = qs('#checkoutConfirmCredit');
-    on(creditConfirm, 'click', () => {
-      const plans = getPlans();
-      const p = plans.find((x) => x.id === checkoutState.selectedPlanId);
-      const msg = qs('#checkoutMsg');
-      if (!p) {
-        if (msg) { msg.textContent = 'لطفاً یک شرایط اقساط را انتخاب کنید.'; msg.hidden = false; }
-        return;
-      }
-      const res = finalizeOrder({ paymentType: 'اعتباری/اقساط', installmentPlan: p });
-      if (!res.ok) {
-        if (msg) { msg.textContent = res.msg; msg.hidden = false; }
-        return;
-      }
-      if (msg) {
-        msg.textContent = `خرید با موفقیت ثبت شد. کد رهگیری: ${res.order.id}`;
-        msg.hidden = false;
-      }
-      renderCheckout();
+    // reports filter
+    on(qs('#adminReportApply'), 'click', () => {
+      adminState.reportQ = String(qs('#adminReportQ')?.value || '');
+      adminState.reportDate = String(qs('#adminReportDate')?.value || '');
+      renderAdminReports();
     });
   }
+
 
 // ---------- boot ----------
   function boot() {
     ensureSeedUsers();
     ensureSeedOrders();
+    ensureSeedProducts();
+    ensureSeedNews();
     bindHeaderAuth();
     bindUserMenu();
     bindSheets();
@@ -1348,8 +1514,6 @@ function ensureSeedUsers() {
     bindHeaderBottomCollapse();
     bindCartUI();
     bindAddToCart();
-    bindCheckoutUI();
-    bindOrdersUI();
     syncAuthUI();
     syncCartUI();
   }
