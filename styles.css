@@ -1438,21 +1438,14 @@ img{
 /* === StepF: Brand/Search tweaks (requested) === */
 .page-home .site-header .brand-title{
   font-weight:900;
-  font-size: 1.9rem;
+  font-size:2.15rem;
   line-height:1;
   letter-spacing:-0.2px;
   background:linear-gradient(90deg, rgba(14,165,233,0.95), rgba(124,58,237,0.92));
   -webkit-background-clip:text;
   background-clip:text;
-  color: rgb(253, 153, 3);
+  color:transparent;
 }
-
-.page-home .site-header .brand-title {
-  font-weight: 900;
-  font-size: 1.9rem;
-  line-height: 1;
-  letter-spacing: -0.2px;
-  color: rgb(253, 153, 3);
 
 .page-home .site-header .brand-img{
   width:65px;
