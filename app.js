@@ -179,7 +179,7 @@ const formatIR = (n) => {
     }
   }
 
-  function ensureSeedUsers() {
+function ensureSeedUsers() {
     const users = LS.get(KEYS.USERS, {});
     let changed = false;
 
