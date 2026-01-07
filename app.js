@@ -1351,6 +1351,7 @@ function ensureSeedUsers() {
     bindCheckoutUI();
     bindOrdersUI();
     syncAuthUI();
+    initProductsPage();
     syncCartUI();
   }
 
