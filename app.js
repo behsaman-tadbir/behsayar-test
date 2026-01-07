@@ -159,42 +159,37 @@ const formatIR = (n) => {
       LS.set(KEYS.ORDERS, DEMO_ORDERS);
     }
   }
-  function ensureSeedUsers() {
+
+function ensureSeedUsers() {
     const users = LS.get(KEYS.USERS, {});
     let changed = false;
 
     for (const u of DEMO_USERS) {
-      const ex = users[u.id];
+      const prev = users[u.id];
 
-      if (!ex) {
+      if (!prev) {
         users[u.id] = { ...u };
         changed = true;
         continue;
       }
 
-      // Merge: keep user-editable fields (credit/password/avatar/etc) but ALWAYS lock role info for demo users
-      const merged = { ...ex, ...u };
+      // Merge but NEVER allow stored role/roleLabel to override seed role (prevents admin leak)
+      const merged = { ...u, ...prev };
 
-      // keep user-entered password/credit if present
-      merged.password = (ex.password != null && String(ex.password).trim() !== '') ? ex.password : u.password;
-      merged.credit = Number.isFinite(Number(ex.credit)) ? Number(ex.credit) : u.credit;
-
-      // keep custom profile fields if they exist
-      merged.avatar = ex.avatar || u.avatar;
-      merged.fullName = ex.fullName || u.fullName;
-      merged.nationalId = ex.nationalId || u.nationalId;
-      merged.fatherName = ex.fatherName || u.fatherName;
-      merged.mobile = ex.mobile || u.mobile;
-      merged.address = ex.address || u.address;
-      merged.positionTitle = ex.positionTitle || u.positionTitle;
-
-      // IMPORTANT: lock role & roleLabel to the seeded demo definitions
+      // ✅ Authoritative identity fields from seed
       merged.role = u.role;
       merged.roleLabel = u.roleLabel;
 
-      // lock parent/children relations for seeded demo
-      merged.parentId = u.parentId;
-      merged.children = u.children;
+      // Keep password if user changed it (demo)
+      merged.password = prev.password || u.password;
+
+      // Keep credit if it was changed by admin; otherwise seed credit
+      const prevCredit = Number(prev.credit);
+      merged.credit = Number.isFinite(prevCredit) ? prevCredit : Number(u.credit || 0);
+
+      // Keep relationships from seed (stable)
+      if (u.parentId !== undefined) merged.parentId = u.parentId;
+      if (u.children !== undefined) merged.children = u.children;
 
       users[u.id] = merged;
       changed = true;
@@ -341,13 +336,6 @@ const formatIR = (n) => {
     on(logoutBtn, 'click', () => {
       logout();
       syncAuthUI();
-    });
-
-    const ordersLink = qs('#userMenuOrders');
-    on(ordersLink, 'click', (e) => {
-      e.preventDefault();
-      close();
-      openOrdersOverlay();
     });
   }
 
@@ -617,19 +605,16 @@ const formatIR = (n) => {
           parent.hidden = true;
         }
       }
-      
-      // Toggle menu options (SAFE + deterministic)
+
+      // Toggle menu options (HARD GATE: admin only for id=1003)
       const adminLink = qs('#userMenuAdminPage');
       const ordersLink = qs('#userMenuOrders');
-      
+
       const isAdmin = !!(user && String(user.id) === '1003');
-      
-      // Admin page: hidden by default, only show for admin
+
       if (adminLink) adminLink.hidden = !isAdmin;
-      
-      // Orders: only for non-admin
       if (ordersLink) ordersLink.hidden = isAdmin;
-      
+
       if (ordersLink && !isAdmin) {
         const cnt = ordersForUser(user.id).length;
         ordersLink.textContent = cnt > 0 ? `سوابق خرید (${cnt})` : 'سوابق خرید';
@@ -637,7 +622,7 @@ const formatIR = (n) => {
 
 
 
-      // Mobile
+// Mobile
       if (mobileLoginForm) mobileLoginForm.hidden = true;
       if (mobileUserMenu) mobileUserMenu.hidden = false;
 
@@ -693,7 +678,6 @@ const formatIR = (n) => {
   function setCart(cart) {
     LS.set(KEYS.CART, cart);
     syncCartUI();
-    initProductsPage();
   }
 
   function cartCount(cart = getCart()) {
@@ -1112,133 +1096,6 @@ const formatIR = (n) => {
     return { ok: true, order };
   }
 
-  // ---------- Orders (Overlay MVP) ----------
-  function openOrdersOverlay(targetUserId) {
-    const ov = qs('#ordersOverlay');
-    if (!ov) return;
-    const user = getCurrentUser();
-    if (!user) return;
-
-    // build user switcher for staff (own + children)
-    const select = qs('#ordersUserSelect');
-    const switchRow = qs('#ordersUserSwitch');
-    if (select && switchRow) {
-      const users = LS.get(KEYS.USERS, {});
-      const opts = [];
-      opts.push({ id: user.id, label: `خریدهای من (${user.fullName})` });
-      if (user.role === 'staff' && Array.isArray(user.children) && user.children.length) {
-        user.children.forEach((cid) => {
-          const cu = users[cid];
-          if (cu) opts.push({ id: cu.id, label: `خریدهای فرزند (${cu.fullName})` });
-        });
-      }
-
-      if (opts.length > 1) {
-        select.innerHTML = opts.map((o) => `<option value="${escapeHTML(o.id)}">${escapeHTML(o.label)}</option>`).join('');
-        switchRow.hidden = false;
-      } else {
-        select.innerHTML = '';
-        switchRow.hidden = true;
-      }
-    }
-
-    ov.hidden = false;
-    document.body.classList.add('modal-open');
-    const id = String(targetUserId || user.id);
-    if (select) select.value = id;
-    renderOrdersOverlay(id);
-  }
-
-  function closeOrdersOverlay() {
-    const ov = qs('#ordersOverlay');
-    if (!ov) return;
-    ov.hidden = true;
-    document.body.classList.remove('modal-open');
-  }
-
-  function orderTotal(o) {
-    const items = Array.isArray(o?.items) ? o.items : [];
-    return items.reduce((sum, it) => sum + (Number(it.qty || 0) * Number(it.unitPrice || 0)), 0);
-  }
-
-  function renderOrdersOverlay(userId) {
-    const list = qs('#ordersList');
-    const title = qs('#ordersOverlayTitle');
-    if (!list) return;
-
-    const users = LS.get(KEYS.USERS, {});
-    const u = users[userId];
-    if (title) title.textContent = u ? `سوابق خرید — ${u.fullName}` : 'سوابق خرید';
-
-    const orders = ordersForUser(userId)
-      .slice()
-      .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-
-    if (!orders.length) {
-      list.innerHTML = '<div class="orders-empty">هنوز خریدی ثبت نشده است.</div>';
-      return;
-    }
-
-    list.innerHTML = orders.map((o) => {
-      const total = orderTotal(o);
-      const items = Array.isArray(o.items) ? o.items : [];
-      const itemsHtml = items.map((it) => {
-        const name = escapeHTML(it.title || 'محصول');
-        const qty = Number(it.qty || 0);
-        const price = formatIR(Number(it.unitPrice || 0));
-        const line = formatIR(qty * Number(it.unitPrice || 0));
-        return `
-          <div class="orders-item">
-            <div class="orders-item__name">${name}</div>
-            <div class="orders-item__meta">تعداد: ${qty} • قیمت واحد: ${price}</div>
-            <div class="orders-item__price">${line} تومان</div>
-          </div>
-        `;
-      }).join('');
-
-      return `
-        <article class="orders-card">
-          <header class="orders-card__head">
-            <div class="orders-card__trk">کد رهگیری: <strong>${escapeHTML(o.id || '—')}</strong></div>
-            <div class="orders-card__date">${escapeHTML(o.createdAt || '—')}</div>
-          </header>
-          <div class="orders-card__meta">
-            <span class="pill">${escapeHTML(o.status || '—')}</span>
-            <span class="pill pill--muted">${escapeHTML(o.paymentType || '—')}</span>
-            <span class="pill pill--accent">مبلغ: ${formatIR(total)} تومان</span>
-          </div>
-          <div class="orders-card__addr">آدرس: ${escapeHTML(o.address || '—')}</div>
-          <div class="orders-card__items">${itemsHtml}</div>
-        </article>
-      `;
-    }).join('');
-  }
-
-  function bindOrdersUI() {
-    if (markBound(document.documentElement, 'ordersUI')) return;
-
-    // close actions
-    on(document, 'click', (e) => {
-      const t = e.target;
-      if (!(t instanceof Element)) return;
-      if (t.matches('[data-orders-close]')) {
-        e.preventDefault();
-        closeOrdersOverlay();
-      }
-    });
-
-    on(document, 'keydown', (e) => {
-      const ov = qs('#ordersOverlay');
-      if (e.key === 'Escape' && ov && !ov.hidden) closeOrdersOverlay();
-    });
-
-    const select = qs('#ordersUserSelect');
-    on(select, 'change', () => {
-      const v = String(select?.value || '');
-      if (v) renderOrdersOverlay(v);
-    });
-  }
-
   function bindCheckoutUI() {
     // open checkout from cart
     on(document, 'click', (e) => {
@@ -1366,100 +1223,6 @@ const formatIR = (n) => {
     });
   }
 
-  // ---------- Products page: filter/sort (SAFE) ----------
-  function initProductsPage() {
-    const isProductsPage = document.body && document.body.classList.contains('page-products');
-    if (!isProductsPage) return;
-    if (markBound(document.body, 'productsPage')) return;
-
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-
-    const q = document.getElementById('productsSearch');
-    const cat = document.getElementById('productsCategory');
-    const grade = document.getElementById('productsGrade');
-    const sort = document.getElementById('productsSort');
-
-    const cards = Array.from(grid.querySelectorAll('.product-card'));
-
-    const norm = (s) => (s || '').toString().trim().toLowerCase();
-
-    function applyFromQueryString() {
-      const params = new URLSearchParams(location.search);
-      const c = params.get('cat');
-      if (c && cat) cat.value = c;
-    }
-
-    function getTitle(card) {
-      // Prefer data-title; fallback to visible title text
-      const ds = card && card.dataset ? card.dataset.title : '';
-      if (ds) return ds;
-      const el = card ? card.querySelector('.product-title, .product-name') : null;
-      return el ? el.textContent : '';
-    }
-
-    function filterCards() {
-      const query = norm(q && q.value);
-      const catVal = (cat && cat.value) || 'all';
-      const gradeVal = (grade && grade.value) || 'all';
-
-      cards.forEach((card) => {
-        const title = norm(getTitle(card));
-        const c = (card.dataset && card.dataset.cat) ? card.dataset.cat : 'all';
-        const g = (card.dataset && card.dataset.grade) ? card.dataset.grade : 'all';
-
-        const matchQuery = !query || title.includes(query);
-        const matchCat = (catVal === 'all') || (c === catVal);
-        const matchGrade = (gradeVal === 'all') || (g === gradeVal);
-
-        card.style.display = (matchQuery && matchCat && matchGrade) ? '' : 'none';
-      });
-    }
-
-    function sortCards() {
-      const mode = (sort && sort.value) || 'best';
-      const visible = cards.filter((c) => c.style.display !== 'none');
-
-      const getNum = (el, key) => {
-        const v = el && el.dataset ? el.dataset[key] : undefined;
-        const n = Number(v);
-        return Number.isFinite(n) ? n : 0;
-      };
-
-      visible.sort((a, b) => {
-        if (mode === 'best') return getNum(b, 'sold') - getNum(a, 'sold');
-        if (mode === 'new') return (new Date(b.dataset.created || 0)) - (new Date(a.dataset.created || 0));
-        if (mode === 'discount_desc' || mode === 'discount') return getNum(b, 'discount') - getNum(a, 'discount');
-        if (mode === 'price_desc' || mode === 'priceHigh') return getNum(b, 'price') - getNum(a, 'price');
-        if (mode === 'price_asc' || mode === 'priceLow') return getNum(a, 'price') - getNum(b, 'price');
-        return 0;
-      });
-
-      // Reorder only visible cards, in a single DOM write (prevents interaction glitches)
-      const frag = document.createDocumentFragment();
-      visible.forEach((el) => frag.appendChild(el));
-      grid.appendChild(frag);
-    }
-
-    function refresh(mode) {
-      filterCards();
-      if (mode !== 'filter') sortCards();
-    }
-
-    applyFromQueryString();
-    refresh();
-
-    // Search: filter only (no resort on each keystroke)
-    if (q) {
-      q.addEventListener('input', () => refresh('filter'));
-      q.addEventListener('change', () => refresh('filter'));
-    }
-    // Filters/sort: refresh fully
-    if (cat) cat.addEventListener('change', () => refresh());
-    if (grade) grade.addEventListener('change', () => refresh());
-    if (sort) sort.addEventListener('change', () => refresh());
-  }
-
 // ---------- boot ----------
   function boot() {
     ensureSeedUsers();
@@ -1474,10 +1237,8 @@ const formatIR = (n) => {
     bindCartUI();
     bindAddToCart();
     bindCheckoutUI();
-    bindOrdersUI();
     syncAuthUI();
     syncCartUI();
-    initProductsPage();
   }
 
   if (document.readyState === 'loading') {
@@ -1560,4 +1321,83 @@ const formatIR = (n) => {
   start();
 })();
 
+(function initProductsPage(){
+  const isProductsPage = document.body && document.body.classList.contains('page-products');
+  if (!isProductsPage) return;
 
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+
+  const q = document.getElementById('productsSearch');
+  const cat = document.getElementById('productsCategory');
+  const grade = document.getElementById('productsGrade');
+  const sort = document.getElementById('productsSort');
+
+  const cards = Array.from(grid.querySelectorAll('.product-card[data-id]'));
+
+  function norm(s){
+    return (s || '').toString().trim().toLowerCase();
+  }
+
+  function applyFromQueryString(){
+    const params = new URLSearchParams(location.search);
+    const c = params.get('cat');
+    if (c && cat) cat.value = c;
+  }
+
+  function filterCards(){
+    const query = norm(q && q.value);
+    const catVal = (cat && cat.value) || 'all';
+    const gradeVal = (grade && grade.value) || 'all';
+
+    cards.forEach(card => {
+      const title = norm(card.dataset.title);
+      const c = card.dataset.cat || 'all';
+      const g = card.dataset.grade || 'all';
+
+      const matchQuery = !query || title.includes(query);
+      const matchCat = (catVal === 'all') || (c === catVal);
+      const matchGrade = (gradeVal === 'all') || (g === gradeVal);
+
+      card.style.display = (matchQuery && matchCat && matchGrade) ? '' : 'none';
+    });
+  }
+
+  function sortCards(){
+    const mode = (sort && sort.value) || 'best';
+
+    const visible = cards.filter(c => c.style.display !== 'none');
+
+    const getNum = (el, key) => {
+      const v = el.dataset[key];
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    visible.sort((a,b) => {
+      if (mode === 'best') return getNum(b,'sold') - getNum(a,'sold');
+      if (mode === 'new') return (new Date(b.dataset.created || 0)) - (new Date(a.dataset.created || 0));
+      if (mode === 'discount') return getNum(b,'discount') - getNum(a,'discount');
+      if (mode === 'priceHigh') return getNum(b,'price') - getNum(a,'price');
+      if (mode === 'priceLow') return getNum(a,'price') - getNum(b,'price');
+      return 0;
+    });
+
+    // فقط reorder روی آیتم‌های قابل مشاهده
+    visible.forEach(el => grid.appendChild(el));
+  }
+
+  function refresh(){
+    filterCards();
+    sortCards();
+  }
+
+  applyFromQueryString();
+  refresh();
+
+  [q,cat,grade,sort].forEach(el => {
+    if (!el) return;
+    el.addEventListener('input', refresh);
+    el.addEventListener('change', refresh);
+  });
+})();
