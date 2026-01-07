@@ -163,6 +163,7 @@ const formatIR = (n) => {
     if (!orders || !Array.isArray(orders) || orders.length === 0) {
       LS.set(KEYS.ORDERS, DEMO_ORDERS);
     }
+  }
 
   function ensureSeedProducts() {
     const items = LS.get(KEYS.PRODUCTS, null);
@@ -178,9 +179,7 @@ const formatIR = (n) => {
     }
   }
 
-  }
-
-function ensureSeedUsers() {
+  function ensureSeedUsers() {
     const users = LS.get(KEYS.USERS, {});
     let changed = false;
 
