@@ -1437,14 +1437,21 @@ img{
 
 /* === StepF: Brand/Search tweaks (requested) === */
 .page-home .site-header .brand-title{
-  font-weight:900;
-  font-size:2.15rem;
-  line-height:1;
-  letter-spacing:-0.2px;
-  background:linear-gradient(90deg, rgba(14,165,233,0.95), rgba(124,58,237,0.92));
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
+  font-weight: 950;                 /* حس لوگویی‌تر */
+  font-size: 1.9rem;
+  line-height: 1.05;                /* به‌جای -4 */
+  letter-spacing: -0.6px;           /* فشرده‌تر و لوگویی */
+  font-family: "Vazirmatn", sans-serif;
+
+  /* یک تکه نارنجی، شیک و خوانا */
+  background: linear-gradient(180deg, #ff8a1d 0%, #f97316 55%, #d94d00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* ظرافت: عمق و تفکیک روی زمینه روشن */
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
 
 .page-home .site-header .brand-img{
