@@ -66,10 +66,12 @@
 <div class="user-menu__dropdown" hidden="" id="userMenuDropdown">
 <div class="um-head">
 <div class="um-credit" id="userMenuCredit">اعتبار: —</div>
-
+<div class="um-name" id="userMenuName">نام و نام خانوادگی: —</div>
+<div class="um-meta" id="userMenuMeta">سمت: —</div>
+</div>
+<a class="user-menu__link" href="#" id="userMenuCart">سبد خرید</a>
 <a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
-<a class="user-menu__link" href="#" id="userMenuAdminPage" hidden>صفحه مدیر</a>
-<a class="user-menu__link" href="#" id="userMenuPassword">تغییر کلمه عبور</a>
+<a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
 <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
 </div>
 </div>
@@ -656,195 +658,110 @@
     </div>
   </footer>
 
-  <script>
-    (function () {
-      const qs = (s, r=document) => r.querySelector(s);
-      const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
+  
 
-      const search = qs('#productsSearch');
-      const catSel = qs('#productsCategory');
-      const sortSel = qs('#productsSort');
-      const grid = qs('#productsGrid');
-      if (!search || !catSel || !sortSel || !grid) return;
 
-      const cards = qsa('.product-card', grid);
-
-      function normalize(str){ return (str || '').toString().trim().toLowerCase(); }
-
-      function applyFilters(){
-        const q = normalize(search.value);
-        const cat = catSel.value;
-
-        cards.forEach(card => {
-          const title = normalize(card.dataset.title);
-          const c = card.dataset.cat || 'all';
-          const matchQ = !q || title.includes(q);
-          const matchCat = (cat === 'all') || (c === cat);
-          card.style.display = (matchQ && matchCat) ? '' : 'none';
-        });
-
-        applySort();
-      }
-
-      function applySort(){
-        const mode = sortSel.value;
-
-        const visible = cards.filter(c => c.style.display !== 'none');
-        const hidden = cards.filter(c => c.style.display === 'none');
-
-        const getNum = (el, key) => Number(el.dataset[key] || 0);
-
-        visible.sort((a,b) => {
-          if (mode === 'best') {
-            const w = {best:0, new:1, deal:2};
-            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
-          }
-          if (mode === 'new') {
-            const w = {new:0, best:1, deal:2};
-            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
-          }
-          if (mode === 'discount_desc') return getNum(b,'discount') - getNum(a,'discount');
-          if (mode === 'price_asc') return getNum(a,'price') - getNum(b,'price');
-          if (mode === 'price_desc') return getNum(b,'price') - getNum(a,'price');
-          return 0;
-        });
-
-        [...visible, ...hidden].forEach(el => grid.appendChild(el));
-      }
-
-      const url = new URL(window.location.href);
-      const urlCat = url.searchParams.get('cat');
-      const urlQ = url.searchParams.get('q');
-      if (urlCat) catSel.value = urlCat;
-      if (urlQ) search.value = urlQ;
-
-      search.addEventListener('input', applyFilters);
-      catSel.addEventListener('change', applyFilters);
-      sortSel.addEventListener('change', applySort);
-
-      applyFilters();
-    })();
-  </script>
-
-<!-- =========================
-     Cart Drawer + Checkout + Orders (Injected markup)
-     ========================= -->
-<div class="cart-drawer" id="cartDrawer" hidden>
-  <div class="cart-drawer__backdrop" data-cart-close></div>
-  <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="سبد خرید">
-    <div class="cart-drawer__head">
-      <div class="cart-drawer__title">سبد خرید</div>
-      <button class="cart-drawer__close" type="button" data-cart-close aria-label="بستن">×</button>
-    </div>
-    <div class="cart-drawer__body" id="cartItems"></div>
-    <div class="cart-drawer__foot">
-      <div class="cart-summary__row">
-        <span>جمع:</span>
-        <strong id="cartTotal">0</strong>
-      </div>
-      <div class="cart-summary__hint" id="cartHint"></div>
-      <div class="cart-actions">
-        <a class="btn btn-primary" href="#" id="cartCheckoutBtn">ادامه و پرداخت</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="checkout-overlay" id="checkoutOverlay" hidden>
+<!-- Checkout Overlay (MVP) -->
+<div class="checkout-overlay" id="checkoutOverlay" hidden role="dialog" aria-modal="true" aria-label="تسویه حساب">
   <div class="checkout-overlay__backdrop" data-checkout-close></div>
-  <div class="checkout-overlay__panel" role="dialog" aria-modal="true" aria-label="تکمیل خرید">
+  <div class="checkout-overlay__panel" role="document">
     <div class="checkout-head">
-      <div class="checkout-head__title">تکمیل خرید</div>
+      <div class="checkout-head__title">تسویه حساب</div>
       <button class="checkout-head__close" type="button" data-checkout-close aria-label="بستن">×</button>
     </div>
+
     <div class="checkout-body">
       <div class="checkout-grid">
-        <div class="checkout-left">
-          <div id="checkoutItems"></div>
-        </div>
-        <div class="checkout-right">
-          <div class="checkout-summary">
-            <div class="checkout-summary__row">
-              <span>جمع سبد</span>
-              <strong id="checkoutTotal">0</strong>
+        <section class="checkout-card">
+          <div class="checkout-card__title">خلاصه سفارش</div>
+          <div class="checkout-items" id="checkoutItems"></div>
+          <div class="checkout-totals">
+            <div class="checkout-row"><span>جمع کل</span><strong id="checkoutTotal">0</strong></div>
+            <div class="checkout-row"><span>میزان سود این خرید</span><strong id="checkoutSavings">0</strong></div>
+          </div>
+          <div class="checkout-discount">
+            <input class="input" id="checkoutDiscountCode" type="text" placeholder="کد تخفیف" autocomplete="off">
+            <button class="btn btn-outline" type="button" id="checkoutApplyDiscount">اعمال</button>
+          </div>
+          <div class="checkout-msg" id="checkoutMsg" hidden></div>
+        </section>
+
+        <aside class="checkout-side">
+          <section class="checkout-card checkout-card--credit">
+            <div class="checkout-card__title">اعتبار شما</div>
+            <div class="checkout-credit">
+              <div class="checkout-credit__value" id="checkoutCredit">0</div>
+              <div class="checkout-credit__unit">تومان</div>
             </div>
-            <div class="checkout-summary__row">
-              <span>سود شما</span>
-              <strong id="checkoutSavings">0</strong>
-            </div>
-            <div class="checkout-summary__row">
-              <span>اعتبار</span>
-              <strong id="checkoutCredit">0</strong>
-            </div>
-            <div class="checkout-summary__row">
-              <span>باقیمانده</span>
+            <div class="checkout-remaining">
+              <span>باقیمانده پس از خرید</span>
               <strong id="checkoutRemaining">0</strong>
             </div>
+          </section>
 
-            <div class="checkout-discount">
-              <input class="input" id="checkoutDiscountCode" type="text" placeholder="کد تخفیف">
-              <button class="btn" type="button" id="checkoutApplyDiscount">اعمال</button>
+          <section class="checkout-card">
+            <div class="checkout-card__title">روش پرداخت</div>
+            <div class="checkout-paymethod">
+              <label class="radio">
+                <input type="radio" name="payMethod" value="cash" checked>
+                <span>پرداخت نقدی</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="payMethod" value="credit">
+                <span>اعتباری / اقساط</span>
+              </label>
             </div>
 
-            <div class="checkout-pay">
-              <button class="btn btn-primary" type="button" id="checkoutPayCash">پرداخت نقدی</button>
-              <button class="btn" type="button" id="checkoutConfirmCredit">پرداخت اعتباری/اقساط</button>
+            <div class="checkout-method checkout-method--cash" id="checkoutCashBox">
+              <button class="btn btn-primary btn-block" type="button" id="checkoutPayCash">پرداخت نقدی</button>
             </div>
 
-            <div class="checkout-msg muted" id="checkoutMsg" hidden></div>
-          </div>
-
-          <div class="checkout-cash" id="checkoutCashBox" hidden></div>
-          <div class="checkout-credit" id="checkoutCreditBox" hidden></div>
-        </div>
+            <div class="checkout-method checkout-method--credit" id="checkoutCreditBox" hidden>
+              <div class="installments-title">انتخاب شرایط اقساط</div>
+              <div class="installments" id="installmentPlans"></div>
+              <div class="installments-preview" id="installmentPreview" hidden></div>
+              <button class="btn btn-primary btn-block" type="button" id="checkoutConfirmCredit" disabled>تایید و ثبت خرید</button>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
   </div>
 </div>
 
-<div class="pay-modal" id="payModal" hidden>
+<!-- Payment Modal (Symbolic Gateway) -->
+<div class="pay-modal" id="payModal" hidden role="dialog" aria-modal="true" aria-label="درگاه پرداخت">
   <div class="pay-modal__backdrop" data-pay-close></div>
-  <div class="pay-modal__panel" role="dialog" aria-modal="true" aria-label="درگاه پرداخت">
+  <div class="pay-modal__panel" role="document">
     <div class="pay-head">
       <div class="pay-head__title">درگاه پرداخت</div>
       <button class="pay-head__close" type="button" data-pay-close aria-label="بستن">×</button>
     </div>
-    <div class="pay-body">
-      <form id="payForm" class="pay-form">
-        <div class="form-row">
-          <label class="label">شماره کارت</label>
-          <input class="input" name="card" inputmode="numeric" placeholder="---- ---- ---- ----" required>
+    <form class="pay-form" id="payForm">
+      <div class="pay-row">
+        <label class="label">شماره کارت</label>
+        <input class="input" id="payCard" inputmode="numeric" autocomplete="cc-number" placeholder="____-____-____-____" required>
+      </div>
+      <div class="pay-grid">
+        <div class="pay-row">
+          <label class="label">تاریخ اعتبار</label>
+          <input class="input" id="payExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" required>
         </div>
-        <div class="form-row form-row--2">
-          <div>
-            <label class="label">تاریخ انقضا</label>
-            <input class="input" name="exp" placeholder="MM/YY" required>
-          </div>
-          <div>
-            <label class="label">CVV2</label>
-            <input class="input" name="cvv2" inputmode="numeric" placeholder="***" required>
-          </div>
+        <div class="pay-row">
+          <label class="label">CVV2</label>
+          <input class="input" id="payCvv" inputmode="numeric" autocomplete="cc-csc" placeholder="***" required>
         </div>
-        <div class="form-row">
-          <label class="label">رمز پویا</label>
-          <input class="input" name="otp" inputmode="numeric" placeholder="******" required>
-        </div>
+      </div>
+      <div class="pay-row">
+        <label class="label">رمز پویا</label>
+        <input class="input" id="payOtp" inputmode="numeric" placeholder="******" required>
+      </div>
+      <div class="pay-actions">
+        <button class="btn btn-outline" type="button" data-pay-close>انصراف</button>
         <button class="btn btn-primary" type="submit">پرداخت</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="checkout-overlay" id="ordersOverlay" hidden>
-  <div class="checkout-overlay__backdrop" data-orders-close></div>
-  <div class="checkout-overlay__panel" role="dialog" aria-modal="true" aria-label="سوابق خرید">
-    <div class="checkout-head">
-      <div class="checkout-head__title">سوابق خرید</div>
-      <button class="checkout-head__close" type="button" data-orders-close aria-label="بستن">×</button>
-    </div>
-    <div class="checkout-body">
-      <div id="ordersList"></div>
-    </div>
+      </div>
+      <div class="pay-hint" id="payHint"></div>
+    </form>
   </div>
 </div>
 
