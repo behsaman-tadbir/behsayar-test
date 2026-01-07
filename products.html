@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css"/>
   <script defer src="app.js"></script>
 </head>
-<body class="page-home">
+<body class="page-products">
 <header class="site-header">
 <div class="container">
 <!-- ===== Header Top (Desktop) ===== -->
@@ -66,25 +66,13 @@
 <div class="user-menu__dropdown" hidden="" id="userMenuDropdown">
 <div class="um-head">
 <div class="um-credit" id="userMenuCredit">اعتبار: —</div>
-<div class="um-name" id="userMenuName">نام و نام خانوادگی: —</div>
-<div class="um-meta" id="userMenuMeta">سمت: —</div>
-<div class="um-sub" id="userMenuIdentity">—</div>
-<div class="um-sub" id="userMenuParent">—</div>
-</div>
 
-          <a class="user-menu__link" href="dashboard.html" id="userMenuAdminPage" data-admin-open hidden>صفحه مدیر</a>
 <a class="user-menu__link" href="#" id="userMenuOrders">سوابق خرید</a>
-<a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
+<a class="user-menu__link" href="#" id="userMenuAdminPage" hidden>صفحه مدیر</a>
+<a class="user-menu__link" href="#" id="userMenuPassword">تغییر کلمه عبور</a>
 <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
 </div>
 </div>
-</div>
-
-<button class="header-cart" id="headerCartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="سبد خرید">
-  <span class="header-cart__ico" aria-hidden="true">🛒</span>
-  <span class="header-cart__badge" id="headerCartCount" aria-label="تعداد اقلام سبد">0</span>
-</button>
-  
 </div>
 </div>
 </div>
@@ -98,15 +86,15 @@
 </button>
 <div aria-label="دسته‌بندی‌ها" class="dropdown-panel" hidden="">
 <div class="dropdown-grid">
-<a href="products.html?cat=pre">پیش‌دبستان و دبستان</a>
-<a href="products.html?cat=mid1">متوسطه اول</a>
-<a href="products.html?cat=mid2">متوسطه دوم</a>
-<a href="products.html?cat=konkur">کنکور و دانشگاه</a>
-<a href="products.html?cat=online">کلاس‌های آنلاین</a>
-<a href="products.html?cat=lang">کلاس زبان</a><a href="products.html?cat=computer">کلاس کامپیوتر</a><a href="products.html?cat=skills">کلاس‌های مهارتی</a></div>
+<a href="services.html?cat=pre">پیش‌دبستان و دبستان</a>
+<a href="services.html?cat=mid1">متوسطه اول</a>
+<a href="services.html?cat=mid2">متوسطه دوم</a>
+<a href="services.html?cat=konkur">کنکور و دانشگاه</a>
+<a href="services.html?cat=online">کلاس‌های آنلاین</a>
+<a href="services.html?cat=lang">کلاس زبان</a><a href="services.html?cat=computer">کلاس کامپیوتر</a><a href="services.html?cat=skills">کلاس‌های مهارتی</a></div>
 </div>
 </li>
-<li class="nav-item"><a class="nav-link nav-link--muted" href="products.html">محصولات</a></li>
+<li class="nav-item"><a class="nav-link nav-link--muted" href="services.html">محصولات</a></li>
 <li class="nav-item"><a class="nav-link nav-link--muted" href="news.html">اخبار و مقالات</a></li>
 <li class="nav-item"><a class="nav-link nav-link--muted" href="contact.html">تماس با ما</a></li>
 <li class="nav-item"><a class="nav-link nav-link--muted" href="about.html">درباره بهسایار</a></li>
@@ -668,199 +656,195 @@
     </div>
   </footer>
 
-  <!-- Cart Drawer -->
-<div class="cart-drawer" id="cartDrawer" hidden role="dialog" aria-modal="true" aria-label="سبد خرید">
+  <script>
+    (function () {
+      const qs = (s, r=document) => r.querySelector(s);
+      const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+      const search = qs('#productsSearch');
+      const catSel = qs('#productsCategory');
+      const sortSel = qs('#productsSort');
+      const grid = qs('#productsGrid');
+      if (!search || !catSel || !sortSel || !grid) return;
+
+      const cards = qsa('.product-card', grid);
+
+      function normalize(str){ return (str || '').toString().trim().toLowerCase(); }
+
+      function applyFilters(){
+        const q = normalize(search.value);
+        const cat = catSel.value;
+
+        cards.forEach(card => {
+          const title = normalize(card.dataset.title);
+          const c = card.dataset.cat || 'all';
+          const matchQ = !q || title.includes(q);
+          const matchCat = (cat === 'all') || (c === cat);
+          card.style.display = (matchQ && matchCat) ? '' : 'none';
+        });
+
+        applySort();
+      }
+
+      function applySort(){
+        const mode = sortSel.value;
+
+        const visible = cards.filter(c => c.style.display !== 'none');
+        const hidden = cards.filter(c => c.style.display === 'none');
+
+        const getNum = (el, key) => Number(el.dataset[key] || 0);
+
+        visible.sort((a,b) => {
+          if (mode === 'best') {
+            const w = {best:0, new:1, deal:2};
+            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
+          }
+          if (mode === 'new') {
+            const w = {new:0, best:1, deal:2};
+            return (w[a.dataset.group] ?? 9) - (w[b.dataset.group] ?? 9);
+          }
+          if (mode === 'discount_desc') return getNum(b,'discount') - getNum(a,'discount');
+          if (mode === 'price_asc') return getNum(a,'price') - getNum(b,'price');
+          if (mode === 'price_desc') return getNum(b,'price') - getNum(a,'price');
+          return 0;
+        });
+
+        [...visible, ...hidden].forEach(el => grid.appendChild(el));
+      }
+
+      const url = new URL(window.location.href);
+      const urlCat = url.searchParams.get('cat');
+      const urlQ = url.searchParams.get('q');
+      if (urlCat) catSel.value = urlCat;
+      if (urlQ) search.value = urlQ;
+
+      search.addEventListener('input', applyFilters);
+      catSel.addEventListener('change', applyFilters);
+      sortSel.addEventListener('change', applySort);
+
+      applyFilters();
+    })();
+  </script>
+
+<!-- =========================
+     Cart Drawer + Checkout + Orders (Injected markup)
+     ========================= -->
+<div class="cart-drawer" id="cartDrawer" hidden>
   <div class="cart-drawer__backdrop" data-cart-close></div>
-  <div class="cart-drawer__panel" role="document">
+  <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="سبد خرید">
     <div class="cart-drawer__head">
       <div class="cart-drawer__title">سبد خرید</div>
       <button class="cart-drawer__close" type="button" data-cart-close aria-label="بستن">×</button>
     </div>
-    <div class="cart-drawer__body">
-      <div class="cart-items" id="cartItems"></div>
-    </div>
+    <div class="cart-drawer__body" id="cartItems"></div>
     <div class="cart-drawer__foot">
-      <div class="cart-summary">
-        <div class="cart-summary__row">
-          <span>جمع کل</span>
-          <strong id="cartTotal">0</strong>
-        </div>
-        <div class="cart-summary__hint" id="cartHint"></div>
+      <div class="cart-summary__row">
+        <span>جمع:</span>
+        <strong id="cartTotal">0</strong>
       </div>
+      <div class="cart-summary__hint" id="cartHint"></div>
       <div class="cart-actions">
-        <button class="btn btn-outline" type="button" data-cart-close>ادامه خرید</button>
-        <a class="btn btn-primary" href="checkout.html" id="cartCheckoutBtn">ادامه و پرداخت</a>
+        <a class="btn btn-primary" href="#" id="cartCheckoutBtn">ادامه و پرداخت</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Admin Overlay (MVP) -->
-<div class="admin-overlay" id="adminOverlay" hidden role="dialog" aria-modal="true" aria-label="پنل مدیریت">
-  <div class="admin-overlay__backdrop" data-admin-close></div>
-  <div class="admin-overlay__panel" role="document">
-    <div class="admin-head">
-      <div class="admin-head__title">پنل مدیر سیستم</div>
-      <button class="admin-head__close" type="button" data-admin-close aria-label="بستن">×</button>
+<div class="checkout-overlay" id="checkoutOverlay" hidden>
+  <div class="checkout-overlay__backdrop" data-checkout-close></div>
+  <div class="checkout-overlay__panel" role="dialog" aria-modal="true" aria-label="تکمیل خرید">
+    <div class="checkout-head">
+      <div class="checkout-head__title">تکمیل خرید</div>
+      <button class="checkout-head__close" type="button" data-checkout-close aria-label="بستن">×</button>
     </div>
-
-    <div class="admin-tabs" role="tablist" aria-label="بخش‌های مدیریت">
-      <button class="admin-tab is-active" type="button" data-admin-tab="users" role="tab" aria-selected="true">مدیریت کاربران</button>
-      <button class="admin-tab" type="button" data-admin-tab="catalog" role="tab" aria-selected="false">محصولات و خدمات</button>
-      <button class="admin-tab" type="button" data-admin-tab="news" role="tab" aria-selected="false">اخبار و رویدادها</button>
-      <button class="admin-tab" type="button" data-admin-tab="reports" role="tab" aria-selected="false">گزارشات</button>
-    </div>
-
-    <div class="admin-body">
-      <!-- USERS -->
-      <section class="admin-section" id="adminTabUsers" data-admin-section="users">
-        <div class="admin-card">
-          <div class="admin-card__title">جستجو و فیلتر</div>
-          <div class="admin-grid">
-            <input class="input" id="adminUserQ" type="text" placeholder="نام / کد ملی / موبایل / کد کاربری">
-            <select class="input" id="adminUserRole">
-              <option value="">همه نقش‌ها</option>
-              <option value="student">دانش‌آموز</option>
-              <option value="staff">پرسنل</option>
-              <option value="admin">مدیر سیستم</option>
-            </select>
-            <button class="btn btn-outline" type="button" id="adminUsersExport">خروجی CSV</button>
-          </div>
+    <div class="checkout-body">
+      <div class="checkout-grid">
+        <div class="checkout-left">
+          <div id="checkoutItems"></div>
         </div>
+        <div class="checkout-right">
+          <div class="checkout-summary">
+            <div class="checkout-summary__row">
+              <span>جمع سبد</span>
+              <strong id="checkoutTotal">0</strong>
+            </div>
+            <div class="checkout-summary__row">
+              <span>سود شما</span>
+              <strong id="checkoutSavings">0</strong>
+            </div>
+            <div class="checkout-summary__row">
+              <span>اعتبار</span>
+              <strong id="checkoutCredit">0</strong>
+            </div>
+            <div class="checkout-summary__row">
+              <span>باقیمانده</span>
+              <strong id="checkoutRemaining">0</strong>
+            </div>
 
-        <div class="admin-card">
-          <div class="admin-card__title">افزایش اعتبار</div>
-          <div class="admin-grid admin-grid--credit">
-            <input class="input" id="adminCreditAmount" type="number" inputmode="numeric" placeholder="مبلغ (تومان)">
-            <select class="input" id="adminCreditMode">
-              <option value="single">فردی</option>
-              <option value="role">براساس نقش</option>
-              <option value="all">همه کاربران</option>
-            </select>
-            <select class="input" id="adminCreditTarget"></select>
-            <button class="btn btn-primary" type="button" id="adminCreditApply">اعمال</button>
-            <div class="admin-hint" id="adminCreditMsg" hidden></div>
-          </div>
-        </div>
+            <div class="checkout-discount">
+              <input class="input" id="checkoutDiscountCode" type="text" placeholder="کد تخفیف">
+              <button class="btn" type="button" id="checkoutApplyDiscount">اعمال</button>
+            </div>
 
-        <div class="admin-card">
-          <div class="admin-card__title">لیست کاربران</div>
-          <div class="admin-table-wrap">
-            <table class="admin-table" id="adminUsersTable">
-              <thead>
-                <tr>
-                  <th>کد</th>
-                  <th>نام</th>
-                  <th>نقش</th>
-                  <th>کد ملی</th>
-                  <th>موبایل</th>
-                  <th>اعتبار</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div class="admin-actions">
-            <button class="btn btn-outline" type="button" id="adminUserAddBtn">ثبت کاربر جدید</button>
-          </div>
-        </div>
-      </section>
+            <div class="checkout-pay">
+              <button class="btn btn-primary" type="button" id="checkoutPayCash">پرداخت نقدی</button>
+              <button class="btn" type="button" id="checkoutConfirmCredit">پرداخت اعتباری/اقساط</button>
+            </div>
 
-      <!-- CATALOG -->
-      <section class="admin-section" id="adminTabCatalog" data-admin-section="catalog" hidden>
-        <div class="admin-card">
-          <div class="admin-card__title">محصولات و خدمات</div>
-          <div class="admin-actions">
-            <button class="btn btn-outline" type="button" id="adminCatalogAdd">افزودن مورد جدید</button>
+            <div class="checkout-msg muted" id="checkoutMsg" hidden></div>
           </div>
-          <div class="admin-list" id="adminCatalogList"></div>
-        </div>
-      </section>
 
-      <!-- NEWS -->
-      <section class="admin-section" id="adminTabNews" data-admin-section="news" hidden>
-        <div class="admin-card">
-          <div class="admin-card__title">اخبار و رویدادها</div>
-          <div class="admin-actions">
-            <button class="btn btn-outline" type="button" id="adminNewsAdd">افزودن خبر/رویداد</button>
-          </div>
-          <div class="admin-list" id="adminNewsList"></div>
+          <div class="checkout-cash" id="checkoutCashBox" hidden></div>
+          <div class="checkout-credit" id="checkoutCreditBox" hidden></div>
         </div>
-      </section>
-
-      <!-- REPORTS -->
-      <section class="admin-section" id="adminTabReports" data-admin-section="reports" hidden>
-        <div class="admin-card">
-          <div class="admin-card__title">گزارش کلی فروش و رضایت</div>
-          <div class="admin-list" id="adminReportSummary"></div>
-        </div>
-
-        <div class="admin-card">
-          <div class="admin-card__title">گزارش جزئی خریدها</div>
-          <div class="admin-grid admin-grid--report">
-            <input class="input" id="adminReportQ" type="text" placeholder="نام پرسنل/دانش‌آموز">
-            <input class="input" id="adminReportDate" type="text" placeholder="تاریخ (مثلاً 1404/10/05)">
-            <button class="btn btn-outline" type="button" id="adminReportApply">اعمال فیلتر</button>
-          </div>
-          <div class="admin-list" id="adminReportDetails"></div>
-        </div>
-      </section>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Admin: Add/Edit User Modal -->
-<div class="admin-modal" id="adminUserModal" hidden role="dialog" aria-modal="true" aria-label="ثبت/ویرایش کاربر">
-  <div class="admin-modal__backdrop" data-admin-user-close></div>
-  <div class="admin-modal__panel" role="document">
-    <div class="admin-head">
-      <div class="admin-head__title" id="adminUserModalTitle">ثبت کاربر جدید</div>
-      <button class="admin-head__close" type="button" data-admin-user-close aria-label="بستن">×</button>
+<div class="pay-modal" id="payModal" hidden>
+  <div class="pay-modal__backdrop" data-pay-close></div>
+  <div class="pay-modal__panel" role="dialog" aria-modal="true" aria-label="درگاه پرداخت">
+    <div class="pay-head">
+      <div class="pay-head__title">درگاه پرداخت</div>
+      <button class="pay-head__close" type="button" data-pay-close aria-label="بستن">×</button>
     </div>
-    <form class="admin-form" id="adminUserForm">
-      <div class="admin-grid admin-grid--form">
-        <input class="input" id="auId" type="text" placeholder="کد/نام کاربری (مثلاً 1004)" required>
-        <input class="input" id="auPassword" type="text" placeholder="رمز عبور" required>
-        <select class="input" id="auRole" required>
-          <option value="student">دانش‌آموز</option>
-          <option value="staff">پرسنل</option>
-          <option value="admin">مدیر سیستم</option>
-        </select>
-        <input class="input" id="auFullName" type="text" placeholder="نام و نام خانوادگی" required>
-        <input class="input" id="auNationalId" type="text" placeholder="کد ملی">
-        <input class="input" id="auMobile" type="text" placeholder="موبایل">
-        <input class="input" id="auFatherName" type="text" placeholder="نام پدر">
-        <input class="input" id="auPosition" type="text" placeholder="سمت در سازمان (برای پرسنل)">
-        <input class="input" id="auParentId" type="text" placeholder="کد پرسنلِ والد (برای دانش‌آموز)">
-        <input class="input" id="auAvatar" type="text" placeholder="مسیر آواتار (قابل جایگزینی)">
-        <input class="input" id="auCredit" type="number" inputmode="numeric" placeholder="اعتبار (تومان)">
-        <input class="input" id="auAddress" type="text" placeholder="آدرس">
-      </div>
-      <div class="admin-form__actions">
-        <button class="btn btn-outline" type="button" data-admin-user-close>انصراف</button>
-        <button class="btn btn-primary" type="submit">ذخیره</button>
-      </div>
-      <div class="admin-hint" id="adminUserFormMsg" hidden></div>
-    </form>
+    <div class="pay-body">
+      <form id="payForm" class="pay-form">
+        <div class="form-row">
+          <label class="label">شماره کارت</label>
+          <input class="input" name="card" inputmode="numeric" placeholder="---- ---- ---- ----" required>
+        </div>
+        <div class="form-row form-row--2">
+          <div>
+            <label class="label">تاریخ انقضا</label>
+            <input class="input" name="exp" placeholder="MM/YY" required>
+          </div>
+          <div>
+            <label class="label">CVV2</label>
+            <input class="input" name="cvv2" inputmode="numeric" placeholder="***" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="label">رمز پویا</label>
+          <input class="input" name="otp" inputmode="numeric" placeholder="******" required>
+        </div>
+        <button class="btn btn-primary" type="submit">پرداخت</button>
+      </form>
+    </div>
   </div>
 </div>
 
-<!-- Admin: Add/Edit Item Modal (Catalog/News) -->
-<div class="admin-modal" id="adminItemModal" hidden role="dialog" aria-modal="true" aria-label="افزودن/ویرایش">
-  <div class="admin-modal__backdrop" data-admin-item-close></div>
-  <div class="admin-modal__panel" role="document">
-    <div class="admin-head">
-      <div class="admin-head__title" id="adminItemModalTitle">افزودن مورد</div>
-      <button class="admin-head__close" type="button" data-admin-item-close aria-label="بستن">×</button>
+<div class="checkout-overlay" id="ordersOverlay" hidden>
+  <div class="checkout-overlay__backdrop" data-orders-close></div>
+  <div class="checkout-overlay__panel" role="dialog" aria-modal="true" aria-label="سوابق خرید">
+    <div class="checkout-head">
+      <div class="checkout-head__title">سوابق خرید</div>
+      <button class="checkout-head__close" type="button" data-orders-close aria-label="بستن">×</button>
     </div>
-    <form class="admin-form" id="adminItemForm">
-      <div class="admin-grid admin-grid--form" id="adminItemFields"></div>
-      <div class="admin-form__actions">
-        <button class="btn btn-outline" type="button" data-admin-item-close>انصراف</button>
-        <button class="btn btn-primary" type="submit">ذخیره</button>
-      </div>
-      <div class="admin-hint" id="adminItemFormMsg" hidden></div>
-    </form>
+    <div class="checkout-body">
+      <div id="ordersList"></div>
+    </div>
   </div>
 </div>
 
