@@ -170,11 +170,25 @@ function ensureSeedUsers() {
         changed = true;
       } else {
         // keep existing but ensure required fields exist
-        const merged = { ...u, ...users[u.id] };
-        // password should remain user-entered? for demo keep seed default
-        merged.password = users[u.id].password || u.password;
-        users[u.id] = merged;
-        changed = true;
+      const merged = { ...u, ...users[u.id] };
+      
+      // ✅ Role must be authoritative from DEMO seed (prevents accidental admin leak)
+      merged.role = u.role;
+      merged.roleLabel = u.roleLabel;
+      
+      // keep password if user changed it (demo)
+      merged.password = users[u.id].password || u.password;
+      
+      // credit can remain whatever is stored (admin changes etc.)
+      merged.credit = Number(users[u.id].credit ?? u.credit);
+      
+      // keep relationships from seed (safe + predictable)
+      merged.parentId = u.parentId ?? merged.parentId;
+      merged.children = u.children ?? merged.children;
+      
+      users[u.id] = merged;
+      changed = true;
+
       }
     }
     if (changed) LS.set(KEYS.USERS, users);
