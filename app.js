@@ -1434,7 +1434,7 @@ function ensureSeedUsers() {
   start();
 })();
 
-(function initProductsPage(){
+function initProductsPage(){
   const isProductsPage = document.body && document.body.classList.contains('page-products');
   if (!isProductsPage) return;
 
