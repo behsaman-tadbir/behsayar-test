@@ -319,6 +319,13 @@ function ensureSeedUsers() {
       logout();
       syncAuthUI();
     });
+
+    const ordersLink = qs('#userMenuOrders');
+    on(ordersLink, 'click', (e) => {
+      e.preventDefault();
+      close();
+      openOrdersOverlay();
+    });
   }
 
   // ---------- UI: Bottom sheets (Mobile) ----------
@@ -1074,6 +1081,133 @@ function ensureSeedUsers() {
     return { ok: true, order };
   }
 
+  // ---------- Orders (Overlay MVP) ----------
+  function openOrdersOverlay(targetUserId) {
+    const ov = qs('#ordersOverlay');
+    if (!ov) return;
+    const user = getCurrentUser();
+    if (!user) return;
+
+    // build user switcher for staff (own + children)
+    const select = qs('#ordersUserSelect');
+    const switchRow = qs('#ordersUserSwitch');
+    if (select && switchRow) {
+      const users = LS.get(KEYS.USERS, {});
+      const opts = [];
+      opts.push({ id: user.id, label: `خریدهای من (${user.fullName})` });
+      if (user.role === 'staff' && Array.isArray(user.children) && user.children.length) {
+        user.children.forEach((cid) => {
+          const cu = users[cid];
+          if (cu) opts.push({ id: cu.id, label: `خریدهای فرزند (${cu.fullName})` });
+        });
+      }
+
+      if (opts.length > 1) {
+        select.innerHTML = opts.map((o) => `<option value="${escapeHTML(o.id)}">${escapeHTML(o.label)}</option>`).join('');
+        switchRow.hidden = false;
+      } else {
+        select.innerHTML = '';
+        switchRow.hidden = true;
+      }
+    }
+
+    ov.hidden = false;
+    document.body.classList.add('modal-open');
+    const id = String(targetUserId || user.id);
+    if (select) select.value = id;
+    renderOrdersOverlay(id);
+  }
+
+  function closeOrdersOverlay() {
+    const ov = qs('#ordersOverlay');
+    if (!ov) return;
+    ov.hidden = true;
+    document.body.classList.remove('modal-open');
+  }
+
+  function orderTotal(o) {
+    const items = Array.isArray(o?.items) ? o.items : [];
+    return items.reduce((sum, it) => sum + (Number(it.qty || 0) * Number(it.unitPrice || 0)), 0);
+  }
+
+  function renderOrdersOverlay(userId) {
+    const list = qs('#ordersList');
+    const title = qs('#ordersOverlayTitle');
+    if (!list) return;
+
+    const users = LS.get(KEYS.USERS, {});
+    const u = users[userId];
+    if (title) title.textContent = u ? `سوابق خرید — ${u.fullName}` : 'سوابق خرید';
+
+    const orders = ordersForUser(userId)
+      .slice()
+      .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+
+    if (!orders.length) {
+      list.innerHTML = '<div class="orders-empty">هنوز خریدی ثبت نشده است.</div>';
+      return;
+    }
+
+    list.innerHTML = orders.map((o) => {
+      const total = orderTotal(o);
+      const items = Array.isArray(o.items) ? o.items : [];
+      const itemsHtml = items.map((it) => {
+        const name = escapeHTML(it.title || 'محصول');
+        const qty = Number(it.qty || 0);
+        const price = formatIR(Number(it.unitPrice || 0));
+        const line = formatIR(qty * Number(it.unitPrice || 0));
+        return `
+          <div class="orders-item">
+            <div class="orders-item__name">${name}</div>
+            <div class="orders-item__meta">تعداد: ${qty} • قیمت واحد: ${price}</div>
+            <div class="orders-item__price">${line} تومان</div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <article class="orders-card">
+          <header class="orders-card__head">
+            <div class="orders-card__trk">کد رهگیری: <strong>${escapeHTML(o.id || '—')}</strong></div>
+            <div class="orders-card__date">${escapeHTML(o.createdAt || '—')}</div>
+          </header>
+          <div class="orders-card__meta">
+            <span class="pill">${escapeHTML(o.status || '—')}</span>
+            <span class="pill pill--muted">${escapeHTML(o.paymentType || '—')}</span>
+            <span class="pill pill--accent">مبلغ: ${formatIR(total)} تومان</span>
+          </div>
+          <div class="orders-card__addr">آدرس: ${escapeHTML(o.address || '—')}</div>
+          <div class="orders-card__items">${itemsHtml}</div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function bindOrdersUI() {
+    if (markBound(document.documentElement, 'ordersUI')) return;
+
+    // close actions
+    on(document, 'click', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      if (t.matches('[data-orders-close]')) {
+        e.preventDefault();
+        closeOrdersOverlay();
+      }
+    });
+
+    on(document, 'keydown', (e) => {
+      const ov = qs('#ordersOverlay');
+      if (e.key === 'Escape' && ov && !ov.hidden) closeOrdersOverlay();
+    });
+
+    const select = qs('#ordersUserSelect');
+    on(select, 'change', () => {
+      const v = String(select?.value || '');
+      if (v) renderOrdersOverlay(v);
+    });
+  }
+
   function bindCheckoutUI() {
     // open checkout from cart
     on(document, 'click', (e) => {
@@ -1215,6 +1349,7 @@ function ensureSeedUsers() {
     bindCartUI();
     bindAddToCart();
     bindCheckoutUI();
+    bindOrdersUI();
     syncAuthUI();
     syncCartUI();
   }

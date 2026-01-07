@@ -1706,21 +1706,6 @@ body.modal-open{overflow:hidden}.auth-trigger {
   flex-wrap:nowrap;
 }
 
-/* Ensure auth + cart sit on one row (desktop + mobile) */
-.site-header .header-left--dk2{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:10px;
-}
-.auth-area{
-  position:relative;
-  z-index:2;
-}
-.header-cart{
-  flex:0 0 auto;
-}
-
 .site-header .header-top .container{
   width:100%;
   max-width:none;
@@ -1934,6 +1919,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
    (MVP – no new files)
 ================================== */
 .checkout-overlay,
+.orders-overlay,
 .pay-modal {
   position: fixed;
   inset: 0;
@@ -1943,9 +1929,11 @@ body.modal-open{overflow:hidden}.auth-trigger {
 
 }
 .checkout-overlay[hidden],
+.orders-overlay[hidden],
 .pay-modal[hidden] { display: none !important; }
 
 .checkout-overlay__backdrop,
+.orders-overlay__backdrop,
 .pay-modal__backdrop {
   position: absolute;
   inset: 0;
@@ -1954,6 +1942,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 
 .checkout-overlay__panel,
+.orders-overlay__panel,
 .pay-modal__panel {
   position: fixed; /* ✅ مهم */
   top: 24px;
@@ -1971,6 +1960,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 @media (max-width: 768px) {
   .checkout-overlay__panel,
+  .orders-overlay__panel,
   .pay-modal__panel {
     top: 0;
     left: 0;
@@ -1981,6 +1971,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
   }
 }
 .checkout-overlay__panel,
+.orders-overlay__panel,
 .pay-modal__panel{
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -1992,6 +1983,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 
 .checkout-head,
+.orders-head,
 .pay-head {
   display: flex;
   align-items: center;
@@ -2002,12 +1994,14 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 
 .checkout-head__title,
+.orders-head__title,
 .pay-head__title {
   font-weight: 800;
   font-size: 1.05rem;
 }
 
 .checkout-head__close,
+.orders-head__close,
 .pay-head__close {
   width: 40px;
   height: 40px;
@@ -2020,6 +2014,61 @@ body.modal-open{overflow:hidden}.auth-trigger {
 }
 
 .checkout-body { padding: 16px; overflow: auto; }
+.orders-body { padding: 16px; overflow: auto; }
+
+/* Orders list */
+.orders-switch { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.orders-switch .label { margin: 0; font-size: .9rem; color: rgba(20,41,74,.8); }
+.orders-switch .input { max-width: 360px; }
+
+.orders-list { display: grid; gap: 12px; }
+.orders-empty { padding: 12px; border: 1px dashed var(--border); border-radius: var(--r-lg); background: rgba(255,255,255,.9); color: rgba(20,41,74,.75); }
+
+.orders-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: rgba(255,255,255,.94);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.orders-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(34,197,94,.10), rgba(255,255,255,0));
+}
+.orders-card__trk { font-size: .95rem; }
+.orders-card__date { font-size: .85rem; color: rgba(20,41,74,.7); }
+.orders-card__meta { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
+.orders-card__addr { padding: 0 14px 10px; color: rgba(20,41,74,.78); font-size: .9rem; }
+.orders-card__items { padding: 0 14px 14px; display: grid; gap: 10px; }
+
+.orders-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 14px;
+  background: rgba(248,250,252,.65);
+}
+.orders-item__name { font-weight: 800; }
+.orders-item__meta { grid-column: 1 / -1; font-size: .82rem; color: rgba(20,41,74,.72); }
+.orders-item__price { font-weight: 800; white-space: nowrap; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15,23,42,.10);
+  background: rgba(255,255,255,.9);
+  font-size: .82rem;
+}
+.pill--muted { color: rgba(20,41,74,.74); }
+.pill--accent { border-color: rgba(34,197,94,.22); }
 
 .checkout-grid {
   display: grid;

@@ -1135,6 +1135,25 @@
 </div>
 
 
+<!-- Orders Overlay (MVP) -->
+<div class="orders-overlay" id="ordersOverlay" hidden role="dialog" aria-modal="true" aria-label="سوابق خرید">
+  <div class="orders-overlay__backdrop" data-orders-close></div>
+  <div class="orders-overlay__panel" role="document">
+    <div class="orders-head">
+      <div class="orders-head__title" id="ordersOverlayTitle">سوابق خرید</div>
+      <button class="orders-head__close" type="button" data-orders-close aria-label="بستن">×</button>
+    </div>
+    <div class="orders-body">
+      <div class="orders-switch" id="ordersUserSwitch" hidden>
+        <label class="label" for="ordersUserSelect">نمایش برای</label>
+        <select class="input" id="ordersUserSelect"></select>
+      </div>
+      <div class="orders-list" id="ordersList"></div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Checkout Overlay (MVP) -->
 <div class="checkout-overlay" id="checkoutOverlay" hidden role="dialog" aria-modal="true" aria-label="تسویه حساب">
   <div class="checkout-overlay__backdrop" data-checkout-close></div>
