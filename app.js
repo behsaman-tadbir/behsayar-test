@@ -160,42 +160,25 @@ const formatIR = (n) => {
     }
   }
 
-   function ensureSeedUsers() {
-     const users = LS.get(KEYS.USERS, {});
-     let changed = false;
-   
-     for (const u of DEMO_USERS) {
-       if (!users[u.id]) {
-         users[u.id] = { ...u };
-         changed = true;
-         continue;
-       }
-   
-       // Merge but NEVER allow stored role/roleLabel to override seed role
-       const prev = users[u.id] || {};
-       const merged = { ...u, ...prev };
-   
-       // ✅ lock role from seed (prevents admin leak)
-       merged.role = u.role;
-       merged.roleLabel = u.roleLabel;
-   
-       // keep password if user changed it (demo)
-       merged.password = prev.password || u.password;
-   
-       // keep credit if it was changed by admin
-       merged.credit = Number.isFinite(Number(prev.credit)) ? Number(prev.credit) : Number(u.credit || 0);
-   
-       // keep relationships from seed (stable)
-       if (u.parentId !== undefined) merged.parentId = u.parentId;
-       if (u.children !== undefined) merged.children = u.children;
-   
-       users[u.id] = merged;
-       changed = true;
-     }
-   
-     if (changed) LS.set(KEYS.USERS, users);
-   }
+function ensureSeedUsers() {
+    const users = LS.get(KEYS.USERS, {});
+    let changed = false;
 
+    for (const u of DEMO_USERS) {
+      if (!users[u.id]) {
+        users[u.id] = u;
+        changed = true;
+      } else {
+        // keep existing but ensure required fields exist
+        const merged = { ...u, ...users[u.id] };
+        // password should remain user-entered? for demo keep seed default
+        merged.password = users[u.id].password || u.password;
+        users[u.id] = merged;
+        changed = true;
+      }
+    }
+    if (changed) LS.set(KEYS.USERS, users);
+  }
 
   function getSession() {
     return LS.get(KEYS.SESSION, null);
@@ -611,24 +594,17 @@ const formatIR = (n) => {
           parent.hidden = true;
         }
       }
-      
-      // Toggle menu options (SAFE + deterministic)
+
+      // Toggle menu options
       const adminLink = qs('#userMenuAdminPage');
       const ordersLink = qs('#userMenuOrders');
-      
-      const isAdmin = user && user.role === 'admin';
-      
-      // Admin page: hidden by default, only show for admin
-      if (adminLink) adminLink.hidden = !isAdmin;
-      
-      // Orders: only for non-admin
-      if (ordersLink) ordersLink.hidden = isAdmin;
-      
-      if (ordersLink && !isAdmin) {
+      if (adminLink) adminLink.hidden = user.role !== 'admin';
+      if (ordersLink) ordersLink.hidden = user.role === 'admin';
+
+      if (ordersLink && user.role !== 'admin') {
         const cnt = ordersForUser(user.id).length;
         ordersLink.textContent = cnt > 0 ? `سوابق خرید (${cnt})` : 'سوابق خرید';
       }
-
 
 
       // Mobile
