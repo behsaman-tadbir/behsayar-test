@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css"/>
   <script defer src="app.js"></script>
 </head>
-<body class="page-home">
+<body class="page-products">
 <header class="site-header">
 <div class="container">
 <!-- ===== Header Top (Desktop) ===== -->
@@ -790,6 +790,30 @@
       </div>
       <div class="pay-hint" id="payHint"></div>
     </form>
+  </div>
+</div>
+
+	<!-- Cart Drawer -->
+<div class="cart-drawer" id="cartDrawer" hidden role="dialog" aria-modal="true" aria-label="سبد خرید">
+  <div class="cart-drawer__backdrop" data-cart-close></div>
+  <div class="cart-drawer__panel" role="document">
+    <div class="cart-drawer__head">
+      <div class="cart-drawer__title">سبد خرید</div>
+      <button class="cart-drawer__close" type="button" data-cart-close aria-label="بستن">×</button>
+    </div>
+    <div class="cart-drawer__body">
+      <div class="cart-items" id="cartItems"></div>
+    </div>
+    <div class="cart-drawer__foot">
+      <div class="cart-summary">
+        <div class="cart-summary__row">
+          <div class="cart-summary__label">جمع کل:</div>
+          <div class="cart-summary__val" id="cartTotal">0</div>
+        </div>
+        <div class="cart-summary__hint" id="cartHint"></div>
+      </div>
+      <a class="btn btn-primary cart-checkout" href="checkout.html" id="cartCheckoutBtn">ادامه و پرداخت</a>
+    </div>
   </div>
 </div>
 
