@@ -261,12 +261,15 @@ img{
   display:flex;
   align-items:center;
   gap:8px;
-  margin:0;
+  margin: ;
   padding:0;
   flex-wrap:wrap;
   overflow:visible;
   padding-bottom:0
 }
+.main-nav main-nav--muted{
+padding-inline: 32px;
+}  
 .nav-item{
   position:relative;
   flex:0 0 auto
