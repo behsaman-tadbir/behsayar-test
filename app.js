@@ -160,39 +160,42 @@ const formatIR = (n) => {
     }
   }
 
-function ensureSeedUsers() {
-    const users = LS.get(KEYS.USERS, {});
-    let changed = false;
+   function ensureSeedUsers() {
+     const users = LS.get(KEYS.USERS, {});
+     let changed = false;
+   
+     for (const u of DEMO_USERS) {
+       if (!users[u.id]) {
+         users[u.id] = { ...u };
+         changed = true;
+         continue;
+       }
+   
+       // Merge but NEVER allow stored role/roleLabel to override seed role
+       const prev = users[u.id] || {};
+       const merged = { ...u, ...prev };
+   
+       // ✅ lock role from seed (prevents admin leak)
+       merged.role = u.role;
+       merged.roleLabel = u.roleLabel;
+   
+       // keep password if user changed it (demo)
+       merged.password = prev.password || u.password;
+   
+       // keep credit if it was changed by admin
+       merged.credit = Number.isFinite(Number(prev.credit)) ? Number(prev.credit) : Number(u.credit || 0);
+   
+       // keep relationships from seed (stable)
+       if (u.parentId !== undefined) merged.parentId = u.parentId;
+       if (u.children !== undefined) merged.children = u.children;
+   
+       users[u.id] = merged;
+       changed = true;
+     }
+   
+     if (changed) LS.set(KEYS.USERS, users);
+   }
 
-    for (const u of DEMO_USERS) {
-      if (!users[u.id]) {
-        users[u.id] = u;
-        changed = true;
-      } else {
-        // keep existing but ensure required fields exist
-      const merged = { ...u, ...users[u.id] };
-      
-      // ✅ Role must be authoritative from DEMO seed (prevents accidental admin leak)
-      merged.role = u.role;
-      merged.roleLabel = u.roleLabel;
-      
-      // keep password if user changed it (demo)
-      merged.password = users[u.id].password || u.password;
-      
-      // credit can remain whatever is stored (admin changes etc.)
-      merged.credit = Number(users[u.id].credit ?? u.credit);
-      
-      // keep relationships from seed (safe + predictable)
-      merged.parentId = u.parentId ?? merged.parentId;
-      merged.children = u.children ?? merged.children;
-      
-      users[u.id] = merged;
-      changed = true;
-
-      }
-    }
-    if (changed) LS.set(KEYS.USERS, users);
-  }
 
   function getSession() {
     return LS.get(KEYS.SESSION, null);
