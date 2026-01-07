@@ -663,6 +663,7 @@ function ensureSeedUsers() {
   function setCart(cart) {
     LS.set(KEYS.CART, cart);
     syncCartUI();
+    initProductsPage();
   }
 
   function cartCount(cart = getCart()) {
@@ -1335,6 +1336,100 @@ function ensureSeedUsers() {
     });
   }
 
+  // ---------- Products page: filter/sort (SAFE) ----------
+  function initProductsPage() {
+    const isProductsPage = document.body && document.body.classList.contains('page-products');
+    if (!isProductsPage) return;
+    if (markBound(document.body, 'productsPage')) return;
+
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+
+    const q = document.getElementById('productsSearch');
+    const cat = document.getElementById('productsCategory');
+    const grade = document.getElementById('productsGrade');
+    const sort = document.getElementById('productsSort');
+
+    const cards = Array.from(grid.querySelectorAll('.product-card'));
+
+    const norm = (s) => (s || '').toString().trim().toLowerCase();
+
+    function applyFromQueryString() {
+      const params = new URLSearchParams(location.search);
+      const c = params.get('cat');
+      if (c && cat) cat.value = c;
+    }
+
+    function getTitle(card) {
+      // Prefer data-title; fallback to visible title text
+      const ds = card && card.dataset ? card.dataset.title : '';
+      if (ds) return ds;
+      const el = card ? card.querySelector('.product-title, .product-name') : null;
+      return el ? el.textContent : '';
+    }
+
+    function filterCards() {
+      const query = norm(q && q.value);
+      const catVal = (cat && cat.value) || 'all';
+      const gradeVal = (grade && grade.value) || 'all';
+
+      cards.forEach((card) => {
+        const title = norm(getTitle(card));
+        const c = (card.dataset && card.dataset.cat) ? card.dataset.cat : 'all';
+        const g = (card.dataset && card.dataset.grade) ? card.dataset.grade : 'all';
+
+        const matchQuery = !query || title.includes(query);
+        const matchCat = (catVal === 'all') || (c === catVal);
+        const matchGrade = (gradeVal === 'all') || (g === gradeVal);
+
+        card.style.display = (matchQuery && matchCat && matchGrade) ? '' : 'none';
+      });
+    }
+
+    function sortCards() {
+      const mode = (sort && sort.value) || 'best';
+      const visible = cards.filter((c) => c.style.display !== 'none');
+
+      const getNum = (el, key) => {
+        const v = el && el.dataset ? el.dataset[key] : undefined;
+        const n = Number(v);
+        return Number.isFinite(n) ? n : 0;
+      };
+
+      visible.sort((a, b) => {
+        if (mode === 'best') return getNum(b, 'sold') - getNum(a, 'sold');
+        if (mode === 'new') return (new Date(b.dataset.created || 0)) - (new Date(a.dataset.created || 0));
+        if (mode === 'discount_desc' || mode === 'discount') return getNum(b, 'discount') - getNum(a, 'discount');
+        if (mode === 'price_desc' || mode === 'priceHigh') return getNum(b, 'price') - getNum(a, 'price');
+        if (mode === 'price_asc' || mode === 'priceLow') return getNum(a, 'price') - getNum(b, 'price');
+        return 0;
+      });
+
+      // Reorder only visible cards, in a single DOM write (prevents interaction glitches)
+      const frag = document.createDocumentFragment();
+      visible.forEach((el) => frag.appendChild(el));
+      grid.appendChild(frag);
+    }
+
+    function refresh(mode) {
+      filterCards();
+      if (mode !== 'filter') sortCards();
+    }
+
+    applyFromQueryString();
+    refresh();
+
+    // Search: filter only (no resort on each keystroke)
+    if (q) {
+      q.addEventListener('input', () => refresh('filter'));
+      q.addEventListener('change', () => refresh('filter'));
+    }
+    // Filters/sort: refresh fully
+    if (cat) cat.addEventListener('change', () => refresh());
+    if (grade) grade.addEventListener('change', () => refresh());
+    if (sort) sort.addEventListener('change', () => refresh());
+  }
+
 // ---------- boot ----------
   function boot() {
     ensureSeedUsers();
@@ -1352,6 +1447,7 @@ function ensureSeedUsers() {
     bindOrdersUI();
     syncAuthUI();
     syncCartUI();
+    initProductsPage();
   }
 
   if (document.readyState === 'loading') {
@@ -1434,83 +1530,4 @@ function ensureSeedUsers() {
   start();
 })();
 
-(function initProductsPage(){
-  const isProductsPage = document.body && document.body.classList.contains('page-products');
-  if (!isProductsPage) return;
 
-  const grid = document.getElementById('productsGrid');
-  if (!grid) return;
-
-  const q = document.getElementById('productsSearch');
-  const cat = document.getElementById('productsCategory');
-  const grade = document.getElementById('productsGrade');
-  const sort = document.getElementById('productsSort');
-
-  const cards = Array.from(grid.querySelectorAll('.product-card[data-id]'));
-
-  function norm(s){
-    return (s || '').toString().trim().toLowerCase();
-  }
-
-  function applyFromQueryString(){
-    const params = new URLSearchParams(location.search);
-    const c = params.get('cat');
-    if (c && cat) cat.value = c;
-  }
-
-  function filterCards(){
-    const query = norm(q && q.value);
-    const catVal = (cat && cat.value) || 'all';
-    const gradeVal = (grade && grade.value) || 'all';
-
-    cards.forEach(card => {
-      const title = norm(card.dataset.title);
-      const c = card.dataset.cat || 'all';
-      const g = card.dataset.grade || 'all';
-
-      const matchQuery = !query || title.includes(query);
-      const matchCat = (catVal === 'all') || (c === catVal);
-      const matchGrade = (gradeVal === 'all') || (g === gradeVal);
-
-      card.style.display = (matchQuery && matchCat && matchGrade) ? '' : 'none';
-    });
-  }
-
-  function sortCards(){
-    const mode = (sort && sort.value) || 'best';
-
-    const visible = cards.filter(c => c.style.display !== 'none');
-
-    const getNum = (el, key) => {
-      const v = el.dataset[key];
-      const n = Number(v);
-      return Number.isFinite(n) ? n : 0;
-    };
-
-    visible.sort((a,b) => {
-      if (mode === 'best') return getNum(b,'sold') - getNum(a,'sold');
-      if (mode === 'new') return (new Date(b.dataset.created || 0)) - (new Date(a.dataset.created || 0));
-      if (mode === 'discount') return getNum(b,'discount') - getNum(a,'discount');
-      if (mode === 'priceHigh') return getNum(b,'price') - getNum(a,'price');
-      if (mode === 'priceLow') return getNum(a,'price') - getNum(b,'price');
-      return 0;
-    });
-
-    // فقط reorder روی آیتم‌های قابل مشاهده
-    visible.forEach(el => grid.appendChild(el));
-  }
-
-  function refresh(){
-    filterCards();
-    sortCards();
-  }
-
-  applyFromQueryString();
-  refresh();
-
-  [q,cat,grade,sort].forEach(el => {
-    if (!el) return;
-    el.addEventListener('input', refresh);
-    el.addEventListener('change', refresh);
-  });
-})();
