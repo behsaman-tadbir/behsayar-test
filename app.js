@@ -1513,6 +1513,7 @@ function ensureSeedUsers() {
     bindHeaderBottomCollapse();
     bindCartUI();
     bindAddToCart();
+    bindAdminUI();
     syncAuthUI();
     syncCartUI();
   }
