@@ -2135,8 +2135,7 @@ body.modal-open{overflow:hidden}.auth-trigger {
 .admin-overlay{
   position: fixed;
   inset: 0;
-  z-index: 1350;
-}
+  z-index: 200000;}
 .orders-overlay[hidden],
 .admin-overlay[hidden]{ display:none !important; }
 
