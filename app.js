@@ -1447,7 +1447,7 @@ function ensureSeedUsers() {
   const grade = document.getElementById('productsGrade');
   const sort = document.getElementById('productsSort');
 
-  const cards = Array.from(grid.querySelectorAll('.product-card[data-id]'));
+  const cards = Array.from(grid.querySelectorAll('.product-card'));
 
   function norm(s){
     return (s || '').toString().trim().toLowerCase();
