@@ -202,22 +202,38 @@ const formatIR = (n) => {
     if (changed) LS.set(KEYS.USERS, users);
   }
    
+       // Merge but NEVER allow stored role/roleLabel to override seed role
+       const prev = users[u.id] || {};
+       const merged = { ...u, ...prev };
+   
+       // ✅ lock role from seed (prevents admin leak)
+       merged.role = u.role;
+       merged.roleLabel = u.roleLabel;
+   
+       // keep password if user changed it (demo)
+       merged.password = prev.password || u.password;
+   
+       // keep credit if it was changed by admin
+       merged.credit = Number.isFinite(Number(prev.credit)) ? Number(prev.credit) : Number(u.credit || 0);
+   
+       // keep relationships from seed (stable)
+       if (u.parentId !== undefined) merged.parentId = u.parentId;
+       if (u.children !== undefined) merged.children = u.children;
+   
+       users[u.id] = merged;
+       changed = true;
+     }
+   
+     if (changed) LS.set(KEYS.USERS, users);
+   }
 
 
   function getSession() {
-    const s = LS.get(KEYS.SESSION, null);
-    if (!s || typeof s !== 'object') return { userId: null, role: 'guest', ts: 0 };
-    if (!('userId' in s)) s.userId = null;
-    if (!s.role) s.role = 'guest';
-    if (!s.ts) s.ts = 0;
-    return s;
+    return LS.get(KEYS.SESSION, null);
   }
 
   function setSession(userId) {
-    const users = LS.get(KEYS.USERS, {});
-    const u = users && users[userId] ? users[userId] : null;
-    const role = u && u.role ? u.role : 'guest';
-    LS.set(KEYS.SESSION, { userId, role, ts: Date.now() });
+    LS.set(KEYS.SESSION, { userId, ts: Date.now() });
   }
 
   function clearSession() {
@@ -267,6 +283,13 @@ const formatIR = (n) => {
   }
 
 
+    return {
+      downPayment: down,
+      eachInstallment: each,
+      count: n,
+      installments
+    };
+  }
 
 
   function login(username, password) {
@@ -395,6 +418,177 @@ const formatIR = (n) => {
       e.preventDefault();
       close();
       openOrdersOverlay();
+    });
+
+    const pwdLink = qs('#userMenuPassword');
+    on(pwdLink, 'click', (e) => {
+      e.preventDefault();
+      close();
+      openPasswordModal();
+    });
+  }
+
+  // ---------- UI: Password modal (Change / Reset) ----------
+  function openPasswordModal() {
+    const modal = qs('#passwordModal');
+    if (!modal) return;
+    // Default to change password view
+    setPwMode('change');
+    modal.hidden = false;
+    // focus
+    setTimeout(() => { qs('#pwOld')?.focus(); }, 0);
+  }
+
+  function closePasswordModal() {
+    const modal = qs('#passwordModal');
+    if (!modal) return;
+    modal.hidden = true;
+    // cleanup msgs / inputs
+    qsa('#pwOld,#pwNew1,#pwNew2,#pwMobile,#pwCode,#pwResetNew1,#pwResetNew2').forEach((el) => { if (el) el.value = ''; });
+    setText('#pwMsg', '');
+    setText('#pwResetMsg', '');
+  }
+
+  function setPwMode(mode) {
+    const changeForm = qs('#pwChangeForm');
+    const resetForm = qs('#pwResetForm');
+    const title = qs('#pwModalTitle');
+    if (!changeForm || !resetForm) return;
+
+    if (mode === 'reset') {
+      if (title) title.textContent = 'بازیابی / ریست رمز عبور';
+      changeForm.hidden = true;
+      resetForm.hidden = false;
+
+      // reset reset-flow UI
+      qs('#pwCodeRow')?.setAttribute('hidden', '');
+      qs('#pwResetNewRow')?.setAttribute('hidden', '');
+      qs('#pwResetNewRow2')?.setAttribute('hidden', '');
+      qs('#pwVerifyCode')?.setAttribute('hidden', '');
+      qs('#pwApplyReset')?.setAttribute('hidden', '');
+      const sendBtn = qs('#pwSendCode');
+      if (sendBtn) sendBtn.hidden = false;
+      setText('#pwResetMsg', '');
+      setTimeout(() => { qs('#pwMobile')?.focus(); }, 0);
+      return;
+    }
+
+    if (title) title.textContent = 'تغییر کلمه عبور';
+    changeForm.hidden = false;
+    resetForm.hidden = true;
+    setText('#pwMsg', '');
+  }
+
+  function setText(sel, txt) {
+    const el = qs(sel);
+    if (el) el.textContent = txt || '';
+  }
+
+  function bindPasswordModal() {
+    const modal = qs('#passwordModal');
+    if (!modal) return;
+    if (markBound(modal, 'pwModal')) return;
+
+    on(modal, 'click', (e) => {
+      const t = e.target;
+      if (t && t.matches('[data-pw-close]')) closePasswordModal();
+      if (t && t.matches('[data-pw-open-reset]')) setPwMode('reset');
+      if (t && t.matches('[data-pw-back]')) setPwMode('change');
+    });
+
+    on(document, 'keydown', (e) => {
+      if (e.key === 'Escape' && modal && !modal.hidden) closePasswordModal();
+    });
+
+    const changeForm = qs('#pwChangeForm');
+    on(changeForm, 'submit', (e) => {
+      e.preventDefault();
+      const u = getCurrentUser();
+      if (!u) { setText('#pwMsg', 'ابتدا وارد شوید.'); return; }
+
+      const oldV = String(qs('#pwOld')?.value || '');
+      const n1 = String(qs('#pwNew1')?.value || '');
+      const n2 = String(qs('#pwNew2')?.value || '');
+
+      if (!oldV || !n1 || !n2) { setText('#pwMsg', 'همه فیلدها را تکمیل کنید.'); return; }
+      if (String(u.password || '') !== oldV) { setText('#pwMsg', 'رمز فعلی صحیح نیست.'); return; }
+      if (n1.length < 3) { setText('#pwMsg', 'رمز جدید خیلی کوتاه است.'); return; }
+      if (n1 !== n2) { setText('#pwMsg', 'دو بار رمز جدید یکسان نیست.'); return; }
+
+      const users = LS.get(KEYS.USERS, {});
+      if (!users[u.id]) { setText('#pwMsg', 'کاربر یافت نشد.'); return; }
+      users[u.id].password = n1;
+      LS.set(KEYS.USERS, users);
+      setText('#pwMsg', 'رمز عبور با موفقیت تغییر کرد.');
+      setTimeout(closePasswordModal, 700);
+    });
+
+    // Reset flow (MVP: simulated SMS code)
+    const sendBtn = qs('#pwSendCode');
+    const verifyBtn = qs('#pwVerifyCode');
+    const applyBtn = qs('#pwApplyReset');
+
+    const KEY_RESET = 'bs_pw_reset'; // {mobile, code, exp}
+    const genCode = () => String(Math.floor(100000 + Math.random() * 900000));
+
+    on(sendBtn, 'click', () => {
+      const mobile = String(qs('#pwMobile')?.value || '').trim();
+      if (!mobile) { setText('#pwResetMsg', 'شماره موبایل را وارد کنید.'); return; }
+
+      const users = LS.get(KEYS.USERS, {});
+      const target = Object.values(users || {}).find((x) => String(x.mobile || '').trim() === mobile);
+      if (!target) { setText('#pwResetMsg', 'این شماره موبایل در سیستم پیدا نشد.'); return; }
+
+      const code = genCode();
+      LS.set(KEY_RESET, { mobile, code, exp: Date.now() + 5 * 60 * 1000 });
+
+      // reveal code input
+      qs('#pwCodeRow')?.removeAttribute('hidden');
+      verifyBtn.hidden = false;
+      sendBtn.hidden = true;
+
+      // Demo-friendly message (در نسخه واقعی: ارسال پیامک)
+      setText('#pwResetMsg', 'کد تایید ارسال شد. (دمو: ' + code + ')');
+      setTimeout(() => { qs('#pwCode')?.focus(); }, 0);
+    });
+
+    on(verifyBtn, 'click', () => {
+      const st = LS.get(KEY_RESET, null);
+      const code = String(qs('#pwCode')?.value || '').trim();
+      if (!st || !st.code) { setText('#pwResetMsg', 'ابتدا کد را ارسال کنید.'); return; }
+      if (Date.now() > Number(st.exp || 0)) { setText('#pwResetMsg', 'کد منقضی شده است. دوباره ارسال کنید.'); return; }
+      if (!code || code !== String(st.code)) { setText('#pwResetMsg', 'کد تایید صحیح نیست.'); return; }
+
+      // show new password fields
+      qs('#pwResetNewRow')?.removeAttribute('hidden');
+      qs('#pwResetNewRow2')?.removeAttribute('hidden');
+      applyBtn.hidden = false;
+      verifyBtn.hidden = true;
+      setText('#pwResetMsg', 'کد تایید شد. رمز جدید را وارد کنید.');
+      setTimeout(() => { qs('#pwResetNew1')?.focus(); }, 0);
+    });
+
+    on(applyBtn, 'click', () => {
+      const st = LS.get(KEY_RESET, null);
+      if (!st || !st.mobile) { setText('#pwResetMsg', 'ابتدا کد را ارسال کنید.'); return; }
+      if (Date.now() > Number(st.exp || 0)) { setText('#pwResetMsg', 'کد منقضی شده است. دوباره ارسال کنید.'); return; }
+
+      const n1 = String(qs('#pwResetNew1')?.value || '');
+      const n2 = String(qs('#pwResetNew2')?.value || '');
+      if (!n1 || !n2) { setText('#pwResetMsg', 'رمز جدید را کامل وارد کنید.'); return; }
+      if (n1.length < 3) { setText('#pwResetMsg', 'رمز جدید خیلی کوتاه است.'); return; }
+      if (n1 !== n2) { setText('#pwResetMsg', 'دو بار رمز جدید یکسان نیست.'); return; }
+
+      const users = LS.get(KEYS.USERS, {});
+      const target = Object.values(users || {}).find((x) => String(x.mobile || '').trim() === String(st.mobile || '').trim());
+      if (!target) { setText('#pwResetMsg', 'کاربر یافت نشد.'); return; }
+
+      // update by id
+      users[target.id].password = n1;
+      LS.set(KEYS.USERS, users);
+      LS.del(KEY_RESET);
+      setText('#pwResetMsg', 'رمز عبور با موفقیت ریست شد.');
+      setTimeout(closePasswordModal, 700);
     });
   }
 
@@ -624,10 +818,10 @@ const formatIR = (n) => {
 
 
     const isAdmin = isAdminUser(user);
+    // Hard gate admin UI at DOM level too
+    if (document.body) document.body.classList.toggle('is-admin', !!isAdmin);
     // Admin entry points are outside avatar menu (hard gated)
     qsa('[data-admin-link]').forEach((el) => { el.hidden = !isAdmin; });
-    const headerAdminBtn = qs('#headerAdminBtn');
-    if (headerAdminBtn) headerAdminBtn.hidden = !isAdmin;
     const authArea = qs('#authArea');
     const loginBtn = qs('#headerAuthBtn');
     const userMenu = qs('#headerUserMenu');
@@ -675,7 +869,7 @@ const formatIR = (n) => {
       const adminLink = qs('#userMenuAdminPage');
       const ordersLink = qs('#userMenuOrders');
       
-      const isAdmin = isAdminUser(user);
+      const isAdmin = user && user.role === 'admin';
       
       // Admin page: hidden by default, only show for admin
       if (adminLink) adminLink.hidden = !isAdmin;
@@ -1732,12 +1926,12 @@ const formatIR = (n) => {
     }).join('');
   }
 
-  function renderAdminReports() {
+    function renderAdminReports() {
     const q = String(qs('#adminReportQ')?.value || '').trim().toLowerCase();
     const users = LS.get(KEYS.USERS, {});
     const orders = getOrders();
 
-    // aggregate by product title
+    // ---------- Aggregate by product ----------
     const agg = new Map(); // key -> {title, count, revenue, satSum, satN}
     (Array.isArray(orders) ? orders : []).forEach((o) => {
       const sat = Number(o.satisfaction || 0);
@@ -1745,32 +1939,57 @@ const formatIR = (n) => {
       items.forEach((it) => {
         const key = String(it.productId || it.title || 'x');
         const cur = agg.get(key) || { title: it.title || '—', count: 0, revenue: 0, satSum: 0, satN: 0 };
-        cur.count += Number(it.qty || 0);
-        cur.revenue += Number(it.qty || 0) * Number(it.unitPrice || 0);
-        if (sat > 0) { cur.satSum += sat; cur.satN += 1; }
+        const qty = Number(it.qty || 1);
+        const price = Number(it.price || 0);
+        cur.count += qty;
+        cur.revenue += qty * price;
+        if (sat) { cur.satSum += sat; cur.satN += 1; }
         agg.set(key, cur);
       });
     });
 
-    const aggArr = Array.from(agg.values()).sort((a,b) => b.revenue - a.revenue);
+    const aggArr = Array.from(agg.values())
+      .filter((x) => !q || normText(x.title).includes(q))
+      .sort((a, b) => Number(b.revenue) - Number(a.revenue));
+
     const aggHost = qs('#adminAggReport');
     if (aggHost) {
-      aggHost.innerHTML = aggArr.map((x) => {
-        const avg = x.satN ? (x.satSum / x.satN).toFixed(1) : '—';
-        return `
-          <div class="admin-user-card">
-            <div>
-              <div class="admin-user-name">${escapeHTML(x.title)}</div>
-              <div class="admin-user-meta">فروش: ${formatIR(x.count)} • مبلغ: ${formatIR(x.revenue)} تومان • رضایت: ${avg}</div>
-            </div>
+      if (!aggArr.length) {
+        aggHost.innerHTML = '<div class="muted">داده‌ای برای نمایش نیست.</div>';
+      } else {
+        aggHost.innerHTML = `
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>محصول/خدمت</th>
+                  <th class="ta-center">تعداد</th>
+                  <th class="ta-left">مبلغ</th>
+                  <th class="ta-center">میانگین رضایت</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${aggArr.map((x) => {
+                  const avg = x.satN ? (x.satSum / x.satN).toFixed(1) : '—';
+                  return `
+                    <tr>
+                      <td>${escapeHTML(x.title)}</td>
+                      <td class="ta-center">${escapeHTML(formatIR(x.count))}</td>
+                      <td class="ta-left">${escapeHTML(formatIR(x.revenue))}</td>
+                      <td class="ta-center"><span class="badge">${escapeHTML(String(avg))}</span></td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
           </div>
         `;
-      }).join('') || '<div class="muted">داده‌ای برای نمایش نیست.</div>';
+      }
     }
 
+    // ---------- Detailed orders ----------
     const detHost = qs('#adminOrdersReport');
     if (detHost) {
-      const norm = (s) => String(s || '').toLowerCase();
       const filtered = (Array.isArray(orders) ? orders : []).filter((o) => {
         if (!q) return true;
         const u = users[o.userId];
@@ -1778,29 +1997,61 @@ const formatIR = (n) => {
         const hay = [
           o.id, o.createdAt, o.paymentType, u?.fullName, u?.nationalId, u?.id,
           parent?.fullName, parent?.positionTitle
-        ].map(norm).join(' ');
+        ].map(normText).join(' ');
         return hay.includes(q);
-      }).slice().sort((a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+      }).slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
 
-      detHost.innerHTML = filtered.map((o) => {
-        const u = users[o.userId];
-        const roleLabel = u?.roleLabel || '—';
-        let extra = '';
-        if (u && u.role === 'student' && u.parentId && users[u.parentId]) {
-          const p = users[u.parentId];
-          extra = ` • فرزندِ ${escapeHTML(p.fullName)}${p.positionTitle ? ' ('+escapeHTML(p.positionTitle)+')' : ''}`;
-        }
-        return `
-          <div class="admin-user-card">
-            <div>
-              <div class="admin-user-name">کد رهگیری: ${escapeHTML(o.id || '—')}</div>
-              <div class="admin-user-meta">${escapeHTML(o.createdAt || '—')} • ${escapeHTML(roleLabel)} • ${escapeHTML(u?.fullName || '—')}${extra}</div>
-              <div class="admin-user-meta">مبلغ: ${formatIR(orderTotal(o))} تومان • پرداخت: ${escapeHTML(o.paymentType || '—')} • رضایت: ${escapeHTML(String(o.satisfaction || '—'))}</div>
-            </div>
-          </div>
-        `;
-      }).join('') || '<div class="muted">سفارشی مطابق فیلتر یافت نشد.</div>';
+      if (!filtered.length) {
+        detHost.innerHTML = '<div class="muted">سفارشی مطابق فیلتر یافت نشد.</div>';
+        return;
+      }
+
+      detHost.innerHTML = `
+        <div class="admin-table-wrap">
+          <table class="admin-table admin-table--dense">
+            <thead>
+              <tr>
+                <th>تاریخ</th>
+                <th>کد رهگیری</th>
+                <th>کاربر</th>
+                <th class="ta-left">مبلغ</th>
+                <th class="ta-center">پرداخت</th>
+                <th class="ta-center">رضایت</th>
+                <th>اقلام</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered.map((o) => {
+                const u = users[o.userId];
+                const roleLabel = u?.roleLabel || '—';
+                const total = orderTotal(o);
+                const items = (Array.isArray(o.items) ? o.items : []).map((it) => it.title || '—').join('، ');
+                const pay = o.paymentType === 'installment' ? 'قسطی' : (o.paymentType === 'online' ? 'آنلاین' : (o.paymentType || '—'));
+                const sat = o.satisfaction ? String(o.satisfaction) : '—';
+                return `
+                  <tr>
+                    <td>${escapeHTML(String(o.createdAt || '—'))}</td>
+                    <td>${escapeHTML(String(o.id || '—'))}</td>
+                    <td>
+                      <div class="cell-title">${escapeHTML(u?.fullName || '—')}</div>
+                      <div class="cell-sub">${escapeHTML(roleLabel)}</div>
+                    </td>
+                    <td class="ta-left">${escapeHTML(formatIR(total))}</td>
+                    <td class="ta-center"><span class="pill">${escapeHTML(pay)}</span></td>
+                    <td class="ta-center"><span class="badge">${escapeHTML(sat)}</span></td>
+                    <td class="cell-wrap">${escapeHTML(items || '—')}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
+  }
+
+  function normText(s) {
+    return String(s || '').toLowerCase();
   }
 
   function bindAdminUI() {
@@ -1923,6 +2174,7 @@ const formatIR = (n) => {
     ensureSeedOrders();
     bindHeaderAuth();
     bindUserMenu();
+    bindPasswordModal();
     bindSheets();
     bindMobileAuth();
     bindMobileCats();

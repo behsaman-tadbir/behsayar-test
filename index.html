@@ -74,7 +74,7 @@
 </div>
 
 <a class="user-menu__link" data-open-orders="" href="#" id="userMenuOrders">سوابق خرید</a>
-<a class="user-menu__link" href="dashboard.html#password" id="userMenuPassword">تغییر کلمه عبور</a>
+<a class="user-menu__link" href="#" data-open-password="" id="userMenuPassword">تغییر کلمه عبور</a>
 <button class="user-menu__logout" id="userMenuLogout" type="button">خروج</button>
 </div>
 </div>
@@ -1210,6 +1210,75 @@
 <div class="pay-hint" id="payHint"></div>
 </form>
 </div>
+</div>
+<!-- Password Modal -->
+<div aria-label="تغییر رمز عبور" aria-modal="true" class="pw-modal" hidden id="passwordModal" role="dialog">
+  <div class="pw-modal__backdrop" data-pw-close=""></div>
+  <div class="pw-modal__panel" role="document">
+    <div class="pw-head">
+      <div class="pw-head__title" id="pwModalTitle">تغییر کلمه عبور</div>
+      <button aria-label="بستن" class="pw-head__close" data-pw-close="" type="button">×</button>
+    </div>
+
+    <div class="pw-body">
+      <!-- Change password -->
+      <form class="pw-form" id="pwChangeForm" novalidate>
+        <div class="pw-row">
+          <label class="pw-label" for="pwOld">رمز فعلی</label>
+          <input autocomplete="current-password" class="pw-input" id="pwOld" required type="password" />
+        </div>
+
+        <div class="pw-row">
+          <label class="pw-label" for="pwNew1">رمز جدید</label>
+          <input autocomplete="new-password" class="pw-input" id="pwNew1" required type="password" />
+        </div>
+
+        <div class="pw-row">
+          <label class="pw-label" for="pwNew2">تکرار رمز جدید</label>
+          <input autocomplete="new-password" class="pw-input" id="pwNew2" required type="password" />
+        </div>
+
+        <p class="pw-msg" id="pwMsg" role="status" aria-live="polite"></p>
+
+        <div class="pw-actions">
+          <button class="btn btn-primary" type="submit">ذخیره</button>
+          <button class="btn btn-outline" data-pw-open-reset="" type="button">فراموشی رمز عبور</button>
+        </div>
+      </form>
+
+      <!-- Reset password (mobile) -->
+      <form class="pw-form" hidden id="pwResetForm" novalidate>
+        <div class="pw-row">
+          <label class="pw-label" for="pwMobile">شماره موبایل</label>
+          <input class="pw-input" id="pwMobile" inputmode="tel" placeholder="مثلاً 0912..." required type="tel" />
+        </div>
+
+        <div class="pw-row pw-row--code" hidden id="pwCodeRow">
+          <label class="pw-label" for="pwCode">کد تایید</label>
+          <input class="pw-input" id="pwCode" inputmode="numeric" placeholder="******" type="text" />
+        </div>
+
+        <div class="pw-row" hidden id="pwResetNewRow">
+          <label class="pw-label" for="pwResetNew1">رمز جدید</label>
+          <input autocomplete="new-password" class="pw-input" id="pwResetNew1" type="password" />
+        </div>
+
+        <div class="pw-row" hidden id="pwResetNewRow2">
+          <label class="pw-label" for="pwResetNew2">تکرار رمز جدید</label>
+          <input autocomplete="new-password" class="pw-input" id="pwResetNew2" type="password" />
+        </div>
+
+        <p class="pw-msg" id="pwResetMsg" role="status" aria-live="polite"></p>
+
+        <div class="pw-actions">
+          <button class="btn btn-primary" id="pwSendCode" type="button">ارسال کد</button>
+          <button class="btn" id="pwVerifyCode" hidden type="button">تایید کد</button>
+          <button class="btn btn-primary" id="pwApplyReset" hidden type="button">ثبت رمز جدید</button>
+          <button class="btn btn-outline" data-pw-back="" type="button">بازگشت</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 </body>
 </html>
