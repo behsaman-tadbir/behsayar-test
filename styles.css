@@ -2392,14 +2392,15 @@ body.modal-open{overflow:hidden}.auth-trigger {
   margin: 0;
   z-index: 2;
 }
-.product-card .product-prices{
+.product-card .product-prices {
   position: absolute;
-  bottom: 14px;
-  left: 72px; /* space for discount badge */
+  bottom: 6px;
+  left: 72px;
   margin: 0;
   display: flex;
+  flex-direction: column;
+  gap: 0;
   align-items: baseline;
-  gap: 10px;
 }
 .product-card .product-prices .price-new{ font-weight: 900; }
 .product-card .product-prices .price-old{ opacity: .75; }
@@ -2415,8 +2416,8 @@ body.modal-open{overflow:hidden}.auth-trigger {
   gap: 10px;
 }
 .product-card .product-actions a.btn-outline{ display:none !important; }
-.product-card .product-actions .btn-primary{
-  padding: 8px 11px;
+.product-card .product-actions .btn-primary {
+  padding: 8px 6px;
   border-radius: 14px;
   font-size: 0.86rem;
   line-height: 1;
