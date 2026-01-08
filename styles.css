@@ -1025,8 +1025,7 @@ img{
 
 /* ===== Deals Rail Theme (قرمز و متمایز) ===== */
 .rail--deals{
-  background: linear-gradient(135deg, #fff1f2, #ffffff);
-  border:1px solid rgba(220,38,38,0.14);
+  background: linear-gradient(135deg, #ffffff, #fff0f0);
 }
 
 .rail-head--deals{
