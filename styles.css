@@ -185,24 +185,10 @@ img{
 }
 .product-actions{
   display:flex;
-  align-items:center;
-  justify-content:flex-end;
   gap:10px;
   margin-top:10px;
-  flex-wrap:nowrap;
-  order:90;
+  flex-wrap:wrap
 }
-.product-actions .btn-outline{ display:none !important; }
-
-.product-actions .js-add-to-cart{
-  padding:8px 10px;
-  border-radius:12px;
-  font-size:0.92rem;
-  line-height:1.15;
-  min-height:auto;
-  margin-inline-start:auto;
-}
-
 .product-actions .btn{
   padding:10px 12px;
   border-radius:14px
@@ -988,8 +974,7 @@ img{
   padding:14px;
   box-shadow:0 10px 22px rgba(15,23,42,0.06);
   scroll-snap-align:start;
-  display:flex;
-  flex-direction:column;
+  display:grid;
   gap:10px;
   border:1px solid rgba(99,102,241,0.10);
   position: relative;
@@ -1002,10 +987,8 @@ img{
 .product-top{
   display:flex;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:space-between;
   gap:10px;
-  margin-top:auto;
-  order:80;
 }
 
 /* درصد تخفیف: بزرگ‌تر و چشم‌گیرتر */
@@ -1013,10 +996,10 @@ img{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:5px 10px;
+  padding:6px 12px;
   border-radius:999px;
   font-weight:950;
-  font-size:0.88rem;
+  font-size:0.95rem;
   letter-spacing:-0.2px;
   background: linear-gradient(135deg, rgba(239,68,68,0.22), rgba(220,38,38,0.18));
   color:#7f1d1d;
@@ -1031,16 +1014,16 @@ img{
 }
 
 .product-provider .product-logo{
-  width:26px;
-  height:26px;
-  border-radius:9px;
+  width:32px;
+  height:32px;
+  border-radius:10px;
   object-fit:cover;
   border:1px solid rgba(15,23,42,0.10);
   background:#fff;
 }
 .product-provider .provider-name{
   font-weight:900;
-  font-size:0.82rem;
+  font-size:0.88rem;
   color:rgba(15,23,42,0.80);
   white-space:nowrap;
   overflow:hidden;
@@ -2389,4 +2372,109 @@ body.modal-open{overflow:hidden}.auth-trigger {
   }
   .header-admin__txt{ display:none; }
   .admin-input, .admin-select{ min-width: 0; flex: 1 1 140px; }
+}
+
+
+/* === Patch: Product cards layout (provider quarter circle + footer row) === */
+
+/* ensure card is positioning context + room for bottom actions */
+.product-card{
+  position: relative;
+  padding-bottom: 68px;
+}
+
+/* collapse the old top row spacing; elements will be absolutely positioned */
+.product-card .product-top{
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Provider logo as quarter-circle badge (top-left) */
+.product-card .product-provider{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 78px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  gap: 0;
+  border-radius: 0 0 34px 0;
+  background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(99,102,241,0.14));
+  border: 1px solid rgba(99,102,241,0.22);
+  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
+}
+.product-card .product-provider .provider-name{ display:none; }
+.product-card .product-provider .product-logo{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+/* Bottom-left: discount + prices as one row */
+.product-card .product-off{
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  margin: 0;
+  z-index: 2;
+}
+.product-card .product-prices{
+  position: absolute;
+  bottom: 14px;
+  left: 72px; /* space for discount badge */
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.product-card .product-prices .price-new{ font-weight: 900; }
+.product-card .product-prices .price-old{ opacity: .75; }
+
+/* Bottom-right: add to cart button (smaller, cleaner) */
+.product-card .product-actions{
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.product-card .product-actions a.btn-outline{ display:none !important; }
+.product-card .product-actions .btn-primary{
+  padding: 8px 11px;
+  border-radius: 14px;
+  font-size: 0.86rem;
+  line-height: 1;
+  min-height: 38px;
+}
+
+/* Typography order at bottom */
+.product-card .product-name,
+.product-card .product-title{
+  font-weight: 900;
+  line-height: 1.35;
+}
+.product-card .product-desc{
+  margin-top: 4px;
+  color: rgba(15,23,42,0.70);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive tweaks */
+@media (max-width: 560px){
+  .product-card{ padding-bottom: 76px; }
+  .product-card .product-provider{ width: 72px; height: 72px; border-radius: 0 0 30px 0; }
+  .product-card .product-provider .product-logo{ width: 40px; height: 40px; border-radius: 13px; }
+  .product-card .product-prices{ left: 68px; gap: 8px; }
+  .product-card .product-actions .btn-primary{ padding: 8px 10px; font-size: 0.84rem; }
 }
