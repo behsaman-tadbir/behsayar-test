@@ -1737,60 +1737,7 @@ const formatIR = (n) => {
     const users = LS.get(KEYS.USERS, {});
     const orders = getOrders();
 
-    // ---------- Overall (Behsayar) ----------
-    const overallHost = qs('#adminOverallReport');
-    if (overallHost) {
-      const families = new Set();
-      let totalService = 0;
-      let behsayarDiscount = 0;
-      let supplierDiscount = 0;
-
-      (Array.isArray(orders) ? orders : []).forEach((o) => {
-        const u = users[o.userId];
-        const familyKey = (u && u.role === 'student' && u.parentId) ? String(u.parentId) : String(o.userId || '');
-        if (familyKey) families.add(familyKey);
-
-        totalService += orderTotal(o);
-        behsayarDiscount += Number(o.discount || 0);
-        supplierDiscount += Number(o.savings || 0);
-      });
-
-      overallHost.innerHTML = `
-        <div class="admin-report-overall">
-          <div class="admin-report-overall__head">
-            <div class="admin-report-overall__title">گزارشات کلی بهسایار</div>
-          </div>
-          <div class="admin-kpis">
-            <div class="admin-kpi">
-              <div class="admin-kpi__label">به چند خانواده خدمت‌رسانی شده</div>
-              <div class="admin-kpi__value">${formatIR(families.size)}</div>
-            </div>
-            <div class="admin-kpi">
-              <div class="admin-kpi__label">مبلغ کل خدمت‌رسانی</div>
-              <div class="admin-kpi__value">${formatIR(totalService)} <span class="admin-kpi__unit">تومان</span></div>
-            </div>
-            <div class="admin-kpi">
-              <div class="admin-kpi__label">مجموع تخفیف داده‌شده (تخفیف بهسایار)</div>
-              <div class="admin-kpi__value">${formatIR(behsayarDiscount)} <span class="admin-kpi__unit">تومان</span></div>
-            </div>
-            <div class="admin-kpi">
-              <div class="admin-kpi__label">مجموع تخفیف تامین‌کننده</div>
-              <div class="admin-kpi__value">${formatIR(supplierDiscount)} <span class="admin-kpi__unit">تومان</span></div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    const stars = (val) => {
-      const n = Number(val);
-      if (!Number.isFinite(n) || n <= 0) return '<span class="rating rating--na">—</span>';
-      const full = Math.max(0, Math.min(5, Math.round(n)));
-      const s = '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
-      return `<span class="rating"><span class="rating__stars">${s}</span><span class="rating__num">${n.toFixed(1)}</span></span>`;
-    };
-
-    // ---------- Aggregate by product ----------
+    // aggregate by product title
     const agg = new Map(); // key -> {title, count, revenue, satSum, satN}
     (Array.isArray(orders) ? orders : []).forEach((o) => {
       const sat = Number(o.satisfaction || 0);
@@ -1805,51 +1752,26 @@ const formatIR = (n) => {
       });
     });
 
-    let aggArr = Array.from(agg.values()).sort((a,b) => b.revenue - a.revenue);
-    if (q) {
-      aggArr = aggArr.filter((x) => String(x.title || '').toLowerCase().includes(q));
-    }
-
+    const aggArr = Array.from(agg.values()).sort((a,b) => b.revenue - a.revenue);
     const aggHost = qs('#adminAggReport');
     if (aggHost) {
-      if (!aggArr.length) {
-        aggHost.innerHTML = '<div class="muted">داده‌ای برای نمایش نیست.</div>';
-      } else {
-        aggHost.innerHTML = `
-          <div class="admin-table-wrap">
-            <table class="admin-table" aria-label="گزارش تجمیعی کالا/خدمت">
-              <thead>
-                <tr>
-                  <th>کالا/خدمت</th>
-                  <th class="t-center">تعداد</th>
-                  <th class="t-left">مبلغ</th>
-                  <th class="t-center">امتیاز</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${aggArr.map((x) => {
-                  const avg = x.satN ? (x.satSum / x.satN) : 0;
-                  return `
-                    <tr>
-                      <td>${escapeHTML(x.title)}</td>
-                      <td class="t-center">${formatIR(x.count)}</td>
-                      <td class="t-left">${formatIR(x.revenue)} تومان</td>
-                      <td class="t-center">${stars(avg)}</td>
-                    </tr>
-                  `;
-                }).join('')}
-              </tbody>
-            </table>
+      aggHost.innerHTML = aggArr.map((x) => {
+        const avg = x.satN ? (x.satSum / x.satN).toFixed(1) : '—';
+        return `
+          <div class="admin-user-card">
+            <div>
+              <div class="admin-user-name">${escapeHTML(x.title)}</div>
+              <div class="admin-user-meta">فروش: ${formatIR(x.count)} • مبلغ: ${formatIR(x.revenue)} تومان • رضایت: ${avg}</div>
+            </div>
           </div>
         `;
-      }
+      }).join('') || '<div class="muted">داده‌ای برای نمایش نیست.</div>';
     }
 
-    // ---------- Orders (detailed) ----------
     const detHost = qs('#adminOrdersReport');
     if (detHost) {
       const norm = (s) => String(s || '').toLowerCase();
-      let filtered = (Array.isArray(orders) ? orders : []).filter((o) => {
+      const filtered = (Array.isArray(orders) ? orders : []).filter((o) => {
         if (!q) return true;
         const u = users[o.userId];
         const parent = u && u.role === 'student' && u.parentId ? users[u.parentId] : null;
@@ -1860,49 +1782,24 @@ const formatIR = (n) => {
         return hay.includes(q);
       }).slice().sort((a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
 
-      if (!filtered.length) {
-        detHost.innerHTML = '<div class="muted">سفارشی مطابق فیلتر یافت نشد.</div>';
-      } else {
-        detHost.innerHTML = `
-          <div class="admin-table-wrap">
-            <table class="admin-table" aria-label="گزارش جزئی سفارش‌ها">
-              <thead>
-                <tr>
-                  <th>کد رهگیری</th>
-                  <th>تاریخ</th>
-                  <th>پرداخت</th>
-                  <th>کاربر</th>
-                  <th class="t-left">مبلغ</th>
-                  <th class="t-center">امتیاز</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${filtered.map((o) => {
-                  const u = users[o.userId];
-                  const roleLabel = u?.roleLabel || '—';
-                  let name = u?.fullName || '—';
-                  if (u && u.role === 'student' && u.parentId && users[u.parentId]) {
-                    const p = users[u.parentId];
-                    name += ` • فرزندِ ${p.fullName}${p.positionTitle ? ' ('+p.positionTitle+')' : ''}`;
-                  }
-                  const amount = orderTotal(o);
-                  const sat = Number(o.satisfaction || 0);
-                  return `
-                    <tr>
-                      <td>${escapeHTML(o.id || '—')}</td>
-                      <td>${escapeHTML(o.createdAt || '—')}</td>
-                      <td>${escapeHTML(o.paymentType || '—')}</td>
-                      <td>${escapeHTML(roleLabel)} • ${escapeHTML(name)}</td>
-                      <td class="t-left">${formatIR(amount)} تومان</td>
-                      <td class="t-center">${stars(sat)}</td>
-                    </tr>
-                  `;
-                }).join('')}
-              </tbody>
-            </table>
+      detHost.innerHTML = filtered.map((o) => {
+        const u = users[o.userId];
+        const roleLabel = u?.roleLabel || '—';
+        let extra = '';
+        if (u && u.role === 'student' && u.parentId && users[u.parentId]) {
+          const p = users[u.parentId];
+          extra = ` • فرزندِ ${escapeHTML(p.fullName)}${p.positionTitle ? ' ('+escapeHTML(p.positionTitle)+')' : ''}`;
+        }
+        return `
+          <div class="admin-user-card">
+            <div>
+              <div class="admin-user-name">کد رهگیری: ${escapeHTML(o.id || '—')}</div>
+              <div class="admin-user-meta">${escapeHTML(o.createdAt || '—')} • ${escapeHTML(roleLabel)} • ${escapeHTML(u?.fullName || '—')}${extra}</div>
+              <div class="admin-user-meta">مبلغ: ${formatIR(orderTotal(o))} تومان • پرداخت: ${escapeHTML(o.paymentType || '—')} • رضایت: ${escapeHTML(String(o.satisfaction || '—'))}</div>
+            </div>
           </div>
         `;
-      }
+      }).join('') || '<div class="muted">سفارشی مطابق فیلتر یافت نشد.</div>';
     }
   }
 

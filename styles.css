@@ -185,10 +185,24 @@ img{
 }
 .product-actions{
   display:flex;
+  align-items:center;
+  justify-content:flex-end;
   gap:10px;
   margin-top:10px;
-  flex-wrap:wrap
+  flex-wrap:nowrap;
+  order:90;
 }
+.product-actions .btn-outline{ display:none !important; }
+
+.product-actions .js-add-to-cart{
+  padding:8px 10px;
+  border-radius:12px;
+  font-size:0.92rem;
+  line-height:1.15;
+  min-height:auto;
+  margin-inline-start:auto;
+}
+
 .product-actions .btn{
   padding:10px 12px;
   border-radius:14px
@@ -974,9 +988,10 @@ img{
   padding:14px;
   box-shadow:0 10px 22px rgba(15,23,42,0.06);
   scroll-snap-align:start;
-  display:grid;
+  display:flex;
+  flex-direction:column;
   gap:10px;
-  border:1px solid rgba(99,102,241,0.10)
+  border:1px solid rgba(99,102,241,0.10);
   position: relative;
 }
 .product-card--new{
@@ -987,8 +1002,10 @@ img{
 .product-top{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start;
   gap:10px;
+  margin-top:auto;
+  order:80;
 }
 
 /* درصد تخفیف: بزرگ‌تر و چشم‌گیرتر */
@@ -996,10 +1013,10 @@ img{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:6px 12px;
+  padding:5px 10px;
   border-radius:999px;
   font-weight:950;
-  font-size:0.95rem;
+  font-size:0.88rem;
   letter-spacing:-0.2px;
   background: linear-gradient(135deg, rgba(239,68,68,0.22), rgba(220,38,38,0.18));
   color:#7f1d1d;
@@ -1014,16 +1031,16 @@ img{
 }
 
 .product-provider .product-logo{
-  width:32px;
-  height:32px;
-  border-radius:10px;
+  width:26px;
+  height:26px;
+  border-radius:9px;
   object-fit:cover;
   border:1px solid rgba(15,23,42,0.10);
   background:#fff;
 }
 .product-provider .provider-name{
   font-weight:900;
-  font-size:0.88rem;
+  font-size:0.82rem;
   color:rgba(15,23,42,0.80);
   white-space:nowrap;
   overflow:hidden;
@@ -2372,141 +2389,4 @@ body.modal-open{overflow:hidden}.auth-trigger {
   }
   .header-admin__txt{ display:none; }
   .admin-input, .admin-select{ min-width: 0; flex: 1 1 140px; }
-}
-
-
-/* === Admin Reports: Overall KPIs + Professional Tables === */
-.admin-report-block--overall .admin-list{ gap: 0; }
-
-.admin-report-overall{
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 18px;
-  padding: 14px;
-  background: rgba(255,255,255,.98);
-}
-
-.admin-report-overall__head{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.admin-report-overall__title{
-  font-weight: 900;
-  font-size: 1.05rem;
-  letter-spacing: -0.2px;
-}
-
-.admin-kpis{
-  display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.admin-kpi{
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 16px;
-  padding: 12px;
-  background: linear-gradient(180deg, rgba(2,132,199,.06), rgba(255,255,255,.95));
-  min-height: 78px;
-  display:flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.admin-kpi__label{
-  color: rgba(0,0,0,.65);
-  font-size: .88rem;
-  line-height: 1.5;
-}
-
-.admin-kpi__value{
-  font-weight: 900;
-  font-size: 1.15rem;
-  letter-spacing: -0.3px;
-}
-
-.admin-kpi__unit{
-  font-weight: 700;
-  font-size: .85rem;
-  color: rgba(0,0,0,.6);
-}
-
-.admin-table-wrap{
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 16px;
-  border: 1px solid rgba(0,0,0,.08);
-  background: rgba(255,255,255,.98);
-}
-
-.admin-table{
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 720px;
-}
-
-.admin-table thead th{
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: rgba(248,250,252,.98);
-  backdrop-filter: blur(6px);
-  font-weight: 900;
-  font-size: .9rem;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(0,0,0,.08);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.admin-table tbody td{
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(0,0,0,.06);
-  font-size: .92rem;
-  vertical-align: top;
-}
-
-.admin-table tbody tr:nth-child(even){
-  background: rgba(2,132,199,.03);
-}
-
-.t-center{ text-align:center; }
-.t-left{ text-align:left; }
-
-.rating{
-  display:inline-flex;
-  align-items:center;
-  gap: 8px;
-  justify-content:center;
-  direction:ltr;
-  white-space: nowrap;
-}
-
-.rating__stars{
-  font-size: 1rem;
-  letter-spacing: 1px;
-}
-
-.rating__num{
-  font-weight: 900;
-  font-size: .9rem;
-  color: rgba(0,0,0,.75);
-}
-
-.rating--na{
-  color: rgba(0,0,0,.5);
-}
-
-/* Responsive: KPIs */
-@media (max-width: 980px){
-  .admin-kpis{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .admin-table{ min-width: 680px; }
-}
-
-@media (max-width: 560px){
-  .admin-kpis{ grid-template-columns: 1fr; }
-  .admin-table{ min-width: 620px; }
 }
