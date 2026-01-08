@@ -1028,7 +1028,6 @@ img{
 .rail-head--deals{
   background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(255,255,255,0.92));
   border:1px solid rgba(220,38,38,0.16);
-  display: none;
 }
 
 .rail--deals .rail-link{
