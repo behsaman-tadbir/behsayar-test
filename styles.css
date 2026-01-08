@@ -903,7 +903,7 @@ img{
   margin-top:6px
 }
 .rail{
-  background:linear-gradient(135deg,#e0e7ff,#fce7f3);
+  background:linear-gradient(135deg, #ffffff, #eefce7)
   border-radius:18px;
   padding:16px;
   box-shadow:0 14px 30px rgba(15,23,42,0.06)
